@@ -36,3 +36,5 @@ celerybeat-schedule
 # Logs & backups
 *.log
 *.sql
+
+CLAUDE.md
