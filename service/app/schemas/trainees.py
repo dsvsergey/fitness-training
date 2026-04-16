@@ -5,6 +5,14 @@ from datetime import datetime
 from app.schemas.programs import ProgramSchema
 
 
+class TraineeRegister(BaseModel):
+    """Minimal schema for self-registration (email + password)."""
+    email: EmailStr
+    first_name: str
+    last_name: str
+    password: str
+
+
 class TraineeBase(BaseModel):
     email: EmailStr
     first_name: str
@@ -47,6 +55,7 @@ class TraineeUpdate(BaseModel):
 
 class TraineeInDBBase(TraineeBase):
     id: int
+    email_verified: bool = False
     created_at: datetime
     updated_at: datetime
 

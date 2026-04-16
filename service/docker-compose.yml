@@ -16,7 +16,7 @@ services:
       - fitness_network
 
   db:
-    image: postgres:latest
+    image: postgres:16
     container_name: fitness_db
     environment:
       POSTGRES_USER: postgres

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, Integer, String, Float
+from sqlalchemy import Column, DateTime, Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -10,7 +10,7 @@ class Trainee(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    hashed_password = Column(String, nullable=True)
     first_name = Column(String)
     last_name = Column(String)
     mobile_phone = Column(String, nullable=True)
@@ -24,6 +24,15 @@ class Trainee(Base):
     notes = Column(String, nullable=True)
     weight = Column(Float, nullable=True)
     height = Column(Float, nullable=True)
+
+    # OAuth fields
+    oauth_provider = Column(String, nullable=True)   # "google" or None for local
+    oauth_id = Column(String, nullable=True, index=True)
+
+    # Email verification
+    email_verified = Column(Boolean, default=False)
+    email_verified_at = Column(DateTime, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

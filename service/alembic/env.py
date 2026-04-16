@@ -23,15 +23,21 @@ sys.path.append(str(BASE_DIR))
 # access to the values within the .ini file in use.
 config = context.config
 
-POSTGRES_USER: str = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER")
-POSTGRES_PORT: str = os.getenv("POSTGRES_PORT")
-POSTGRES_DB: str = os.getenv("POSTGRES_DB")
-
-DATABASE_URL: str = (
-    f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+_database_url = os.getenv("DATABASE_URL")
+if _database_url:
+    # Normalise to psycopg2 driver
+    if _database_url.startswith("postgresql://"):
+        _database_url = _database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+    DATABASE_URL = _database_url
+else:
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER") or os.getenv("DB_USERNAME")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD") or os.getenv("DB_PASSWORD")
+    POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER") or os.getenv("DB_HOST", "localhost")
+    POSTGRES_PORT: str = os.getenv("POSTGRES_PORT") or os.getenv("DB_PORT", "5432")
+    POSTGRES_DB: str = os.getenv("POSTGRES_DB") or os.getenv("DB_NAME")
+    DATABASE_URL = (
+        f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    )
 
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 

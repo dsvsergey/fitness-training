@@ -87,7 +87,7 @@ def start_application():
     logger.info(f"Starting {settings.PROJECT_TITLE} v{settings.PROJECT_VERSION}")
     logger.info(f"Database URL configured: {bool(settings.DATABASE_URL)}")
     logger.info(
-        f"MindBody configured: {bool(settings.MINDBODY_API_KEY and settings.MINDBODY_BASE_URL)}"
+        f"Google OAuth configured: {bool(settings.GOOGLE_CLIENT_ID)}"
     )
 
     return app
