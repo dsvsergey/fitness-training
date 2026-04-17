@@ -73,9 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (state is RegisterSuccess) {
           showFToast(
             context: context,
-            title: const Text(
-              'Account created! Check your email for a verification link.',
-            ),
+            title: const Text('Account created! You can now sign in.'),
             variant: FToastVariant.primary,
           );
           context.router.pop();
@@ -124,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Create your trainee account',
+                      'Create your trainer account',
                       style: typography.sm.copyWith(
                         color: colors.mutedForeground,
                       ),

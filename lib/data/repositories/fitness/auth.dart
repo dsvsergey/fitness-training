@@ -13,16 +13,14 @@ abstract class AuthRepository {
     required String password,
   });
 
-  Future<TraineeModel> register({
+  Future<CoachModel> register({
     required String email,
     required String firstName,
     required String lastName,
     required String password,
   });
 
-  Future<String> getGoogleAuthUrl({String role = 'trainee'});
-
-  Future<UserFitnessModel> getTraineeMe(String token);
+  Future<String> getGoogleAuthUrl();
 
   Future<UserFitnessModel> getCoachMe(String token);
 }
@@ -46,42 +44,29 @@ class AuthRepositoryImpl extends AuthRepository with FitnessRepository {
           .catchError(onException);
 
   @override
-  Future<TraineeModel> register({
+  Future<CoachModel> register({
     required String email,
     required String firstName,
     required String lastName,
     required String password,
   }) =>
       _auth.dio
-          .post('/trainees/register/', data: {
+          .post('/coaches/register/', data: {
             'email': email,
             'first_name': firstName,
             'last_name': lastName,
             'password': password,
           })
           .then(
-            (r) => TraineeModel.fromJson(r.data as Map<String, dynamic>),
+            (r) => CoachModel.fromJson(r.data as Map<String, dynamic>),
           )
           .catchError(onException);
 
   @override
-  Future<String> getGoogleAuthUrl({String role = 'trainee'}) =>
+  Future<String> getGoogleAuthUrl() =>
       _auth.dio
-          .get('/google/authorize', queryParameters: {'role': role})
+          .get('/google/authorize')
           .then((r) => r.data['url'] as String)
-          .catchError(onException);
-
-  @override
-  Future<UserFitnessModel> getTraineeMe(String token) =>
-      _auth.dio
-          .get(
-            '/trainees/me/',
-            options: Options(headers: {'Authorization': 'Bearer $token'}),
-          )
-          .then((r) => UserFitnessModel.fromJson({
-                'access_token': token,
-                'trainee': r.data,
-              }))
           .catchError(onException);
 
   @override

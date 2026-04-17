@@ -5,15 +5,29 @@ All endpoints: `{base_url}/api/v1/...`
 
 ---
 
+## ⚠️ Зміни — що потрібно оновити у Flutter додатку
+
+| # | Що змінилось | Було | Стало |
+|---|-------------|------|-------|
+| 1 | **URL реєстрації** | `POST /api/v1/trainees/register/` | `POST /api/v1/coaches/register/` |
+| 2 | **URL профілю поточного користувача** | `GET /api/v1/trainees/me/` | `GET /api/v1/coaches/me/` |
+| 3 | **Google OAuth** | `GET /google/authorize?role=trainee` | `GET /google/authorize` (role=coach за замовч.) |
+| 4 | **Тип акаунту після реєстрації** | створювався `Trainee` | створюється `Coach + User` |
+| 5 | **JWT sub після логіну** | `"trainee:42"` | `"coach:7"` |
+
+> Старі ендпоїнти `/trainees/register/` і `/trainees/me/` тимчасово залишені як deprecated aliases — вони ще працюють, але будуть видалені. Оновіть URL якнайшвидше.
+
+---
+
 ## Table of Contents
 
 1. [Overview](#overview)
 2. [Token Usage](#token-usage)
-3. [Email + Password Registration & Login](#email--password)
+3. [Registration & Login (Email + Password)](#registration--login-email--password)
 4. [Google OAuth](#google-oauth)
-5. [Email Verification](#email-verification)
-6. [Password Reset](#password-reset)
-7. [User Profile](#user-profile)
+5. [Password Reset](#password-reset)
+6. [Coach Profile](#coach-profile)
+7. [Trainee & Coach CRUD](#trainee--coach-crud)
 8. [Error Responses](#error-responses)
 9. [Flutter Implementation Notes](#flutter-implementation-notes)
 
@@ -21,21 +35,23 @@ All endpoints: `{base_url}/api/v1/...`
 
 ## Overview
 
-The API supports two user roles:
+Додаток призначений для **тренерів (coach)**, які керують тренуваннями своїх клієнтів (trainee).
 
 | Role | Description |
 |------|-------------|
-| `trainee` | End user (client of the fitness app) |
-| `coach` | Trainer / staff member |
+| `coach` | Тренер — основний користувач додатку |
+| `trainee` | Клієнт/спортсмен — керується тренером |
 
-JWT tokens encode the role as a prefix in the `sub` field: `"trainee:42"` or `"coach:7"`.  
-All protected endpoints require `Authorization: Bearer <token>` header.
+При реєстрації завжди створюється **Coach + User** (обліковий запис для автентифікації).
+
+JWT токен кодує роль у полі `sub`: `"coach:7"` або `"trainee:42"`.  
+Всі захищені ендпоїнти вимагають заголовок `Authorization: Bearer <token>`.
 
 ---
 
 ## Token Usage
 
-After any successful login/register flow, the API returns:
+Після успішного входу або реєстрації API повертає:
 
 ```json
 {
@@ -44,112 +60,27 @@ After any successful login/register flow, the API returns:
 }
 ```
 
-Store the token securely (e.g. `flutter_secure_storage`) and attach it to every authenticated request:
+Зберігайте токен у захищеному сховищі (`flutter_secure_storage`) та додавайте до кожного запиту:
 
 ```
 Authorization: Bearer eyJhbGci...
 ```
 
-Token lifetime: **8 days** (default). No refresh token — user must re-authenticate after expiry.
+Термін дії токену: **8 днів**. Refresh token відсутній — після закінчення терміну користувач повинен увійти знову.
 
 ---
 
-## Email + Password
-
-### Register Trainee
-
-Creates a new trainee account and sends a verification email.  
-The account is usable immediately, but `email_verified` will be `false` until the user confirms their email.
-
-```
-POST /api/v1/trainees/register/
-```
-
-**Request body:**
-```json
-{
-  "email": "user@example.com",
-  "first_name": "John",
-  "last_name": "Doe",
-  "password": "secret123"
-}
-```
-
-**Response `201 Created`:**
-```json
-{
-  "id": 1,
-  "email": "user@example.com",
-  "first_name": "John",
-  "last_name": "Doe",
-  "email_verified": false,
-  "mobile_phone": null,
-  "address1": null,
-  "city": null,
-  "state": null,
-  "country": null,
-  "weight": null,
-  "height": null,
-  "created_at": "2026-04-16T12:00:00",
-  "updated_at": "2026-04-16T12:00:00"
-}
-```
-
-**Error `400`** — email already registered:
-```json
-{ "detail": "A user with this email already exists." }
-```
-
----
-
-### Login (Trainee or Coach)
-
-Universal login endpoint — tries coach first, then trainee.
-
-```
-POST /api/v1/login/
-```
-
-**Request body:**
-```json
-{
-  "email": "user@example.com",
-  "password": "secret123"
-}
-```
-
-**Response `200 OK`:**
-```json
-{
-  "access_token": "eyJhbGci...",
-  "token_type": "bearer",
-  "trainee": { ...trainee object... }
-}
-```
-
-or if coach logged in:
-```json
-{
-  "access_token": "eyJhbGci...",
-  "token_type": "bearer",
-  "coach": { ...coach object... }
-}
-```
-
-**Error `401`:**
-```json
-{ "detail": "Incorrect email or password" }
-```
-
-> **Tip:** Check whether the response contains `trainee` or `coach` key to determine which profile screen to show.
-
----
+## Registration & Login (Email + Password)
 
 ### Register Coach
+
+Створює новий обліковий запис тренера (Coach + User). Токен не потрібен.
 
 ```
 POST /api/v1/coaches/register/
 ```
+
+> **Deprecated alias:** `POST /api/v1/trainees/register/` — досі працює, але буде видалено. Оновіть URL у Flutter додатку на `/coaches/register/`.
 
 **Request body:**
 ```json
@@ -162,14 +93,52 @@ POST /api/v1/coaches/register/
 }
 ```
 
-**Response `200 OK`:** full coach object.
+Обов'язкові поля: `email`, `first_name`, `last_name`, `password`.  
+Всі інші поля опціональні.
+
+**Response `201 Created`:**
+```json
+{
+  "id": 1,
+  "email": "coach@example.com",
+  "first_name": "Anna",
+  "last_name": "Smith",
+  "mobile_phone": "+380501234567",
+  "work_phone": null,
+  "address1": null,
+  "address2": null,
+  "city": null,
+  "state": null,
+  "postal_code": null,
+  "country": null,
+  "gender": null,
+  "biography": null,
+  "image_url": null,
+  "note": null,
+  "created_at": "2026-04-17T12:00:00",
+  "updated_at": "2026-04-17T12:00:00"
+}
+```
+
+**Error `400`** — email вже зареєстровано:
+```json
+{ "detail": "Coach with this email already exists" }
+```
+
+> Після реєстрації одразу можна входити — email верифікація для coach не потрібна.
+
+#### Deprecated alias
+
+`POST /api/v1/trainees/register/` — приймає той самий body і повертає той самий результат, але буде видалено. **Замініть URL на `/coaches/register/`.**
 
 ---
 
-### Login Coach (dedicated)
+### Login
+
+Універсальний ендпоїнт — спочатку перевіряє coach, потім trainee.
 
 ```
-POST /api/v1/coaches/login/
+POST /api/v1/login/
 ```
 
 **Request body:**
@@ -180,36 +149,67 @@ POST /api/v1/coaches/login/
 }
 ```
 
-**Response `200 OK`:**
+**Response `200 OK` (coach):**
 ```json
 {
   "access_token": "eyJhbGci...",
-  "token_type": "bearer"
+  "token_type": "bearer",
+  "coach": {
+    "id": 1,
+    "email": "coach@example.com",
+    "first_name": "Anna",
+    "last_name": "Smith",
+    "mobile_phone": null,
+    "biography": null,
+    "image_url": null,
+    "created_at": "2026-04-17T12:00:00",
+    "updated_at": "2026-04-17T12:00:00"
+  },
+  "trainee": null
 }
 ```
+
+**Response `200 OK` (trainee):**
+```json
+{
+  "access_token": "eyJhbGci...",
+  "token_type": "bearer",
+  "coach": null,
+  "trainee": { ...trainee object... }
+}
+```
+
+**Error `401`:**
+```json
+{ "detail": "Incorrect email or password" }
+```
+
+> Перевіряйте наявність ключа `coach` або `trainee` у відповіді, щоб визначити тип облікового запису.
 
 ---
 
 ## Google OAuth
 
-The flow uses the standard **Authorization Code** redirect:
+Після Google OAuth автоматично створюється **Coach** (за замовчуванням).
 
 ```
-Flutter app  →  GET /google/authorize  →  open WebView/browser
-Google       →  redirect to callback URL with ?code=&state=
-Backend      →  exchanges code, creates/finds user, returns JWT
-Flutter app  ←  receives JWT (via redirect to FRONTEND_URL or direct JSON)
+Flutter app  →  GET /google/authorize  →  відкрити WebView/браузер
+Google       →  redirect з ?code=&state=
+Backend      →  обмін кодом, створює/знаходить coach, повертає JWT
+Flutter app  ←  отримує JWT
 ```
 
-### Step 1 — Get Authorization URL
+### Step 1 — Отримати URL авторизації
 
 ```
-GET /api/v1/google/authorize?role=trainee
+GET /api/v1/google/authorize
 ```
 
-| Query param | Values | Description |
-|-------------|--------|-------------|
-| `role` | `trainee` (default), `coach` | Determines what account type to create for new users |
+Параметр `role` за замовчуванням — `coach`. Передавати не обов'язково.
+
+| Query param | Values | Default |
+|-------------|--------|---------|
+| `role` | `coach`, `trainee` | `coach` |
 
 **Response `200 OK`:**
 ```json
@@ -218,25 +218,25 @@ GET /api/v1/google/authorize?role=trainee
 }
 ```
 
-### Step 2 — Open in WebView
+### Step 2 — Відкрити у WebView
 
-Open the returned `url` in a WebView or `url_launcher`. Google shows its consent screen.
+Відкрийте отриманий `url` у WebView або через `url_launcher`.
 
-### Step 3 — Handle Callback
+### Step 3 — Обробити callback
 
-After the user consents, Google redirects to:
+Після підтвердження Google робить redirect на:
 ```
 http://207.126.161.154:8000/api/v1/google/callback?code=...&state=...
 ```
 
-The backend exchanges the code and either:
+Бекенд обмінює код та:
 
-**Option A — FRONTEND_URL configured (production):**  
-Redirects to `{FRONTEND_URL}/auth/callback?token=<jwt>&sub=trainee:42`  
-→ Intercept this URL in the WebView, extract `token` from query params.
+**Option A — FRONTEND_URL налаштований (production):**  
+Redirects на `{FRONTEND_URL}/auth/callback?token=<jwt>&sub=coach:7`  
+→ Перехопіть цей URL у WebView, витягніть `token` з query params.
 
-**Option B — FRONTEND_URL not configured (staging/local):**  
-Returns JSON directly:
+**Option B — FRONTEND_URL не налаштований (staging):**  
+Повертає JSON:
 ```json
 {
   "access_token": "eyJhbGci...",
@@ -244,54 +244,23 @@ Returns JSON directly:
 }
 ```
 
-> **Current staging behaviour:** returns JSON directly (Option B).  
-> To use Option A, set `FRONTEND_URL` in `.env` to your app's deep link scheme, e.g. `fitnessapp://auth`.
+> **Поточний staging:** повертає JSON напряму (Option B).
 
-### Behaviour for existing users
+### Поведінка для існуючих користувачів
 
-| Situation | Result |
-|-----------|--------|
-| Google email matches existing trainee account | Links Google to existing account, returns JWT |
-| Google ID already linked | Returns JWT immediately |
-| Brand new email | Creates new trainee/coach, `email_verified = true` |
-
----
-
-## Email Verification
-
-After registration with email/password, a verification link is sent to the user's inbox.
-
-The link format: `{FRONTEND_URL}/verify-email?token=<jwt_token>`
-
-### Deep Link Handling
-
-Configure your Flutter app to handle the deep link and extract the `token` parameter, then call:
-
-```
-GET /api/v1/verify-email?token=<token_from_link>
-```
-
-**Response `200 OK`:**
-```json
-{ "message": "Email verified successfully." }
-```
-
-**Error `400`** — expired or invalid token:
-```json
-{ "detail": "Invalid or expired verification token." }
-```
-
-> After successful verification, the user's profile will have `"email_verified": true`.  
-> Verification token is valid for **48 hours**.  
-> The account works before verification — you may show a banner prompting the user to verify.
+| Ситуація | Результат |
+|----------|-----------|
+| Google email збігається з існуючим coach | Прив'язує Google до акаунту, повертає JWT |
+| Google ID вже прив'язаний | Повертає JWT одразу |
+| Новий email | Створює нового Coach, `email_verified = true` |
 
 ---
 
 ## Password Reset
 
-Two-step flow: request a reset link → confirm new password.
+Двокроковий флоу: запит посилання → підтвердження нового пароля.
 
-### Step 1 — Request Reset Email
+### Step 1 — Запит листа для скидання
 
 ```
 POST /api/v1/password-reset/request
@@ -299,23 +268,21 @@ POST /api/v1/password-reset/request
 
 **Request body:**
 ```json
-{ "email": "user@example.com" }
+{ "email": "coach@example.com" }
 ```
 
-**Response `200 OK`** (always, even if email not found — prevents enumeration):
+**Response `200 OK`** (завжди, навіть якщо email не знайдено):
 ```json
 {
   "message": "If an account with that email exists, a password reset link has been sent."
 }
 ```
 
-The email contains a link: `{FRONTEND_URL}/reset-password?token=<jwt_token>`
+Лист містить посилання: `{FRONTEND_URL}/reset-password?token=<jwt_token>`
 
 ---
 
-### Step 2 — Confirm New Password
-
-Handle the deep link, extract `token`, show a "new password" form, then call:
+### Step 2 — Підтвердження нового пароля
 
 ```
 POST /api/v1/password-reset/confirm
@@ -334,71 +301,88 @@ POST /api/v1/password-reset/confirm
 { "message": "Password reset successfully." }
 ```
 
-**Error `400`** — expired or invalid token:
+**Error `400`** — прострочений або невірний токен:
 ```json
 { "detail": "Invalid or expired reset token." }
 ```
 
-> Reset token is valid for **24 hours**.
+> Токен для скидання діє **24 години**.
 
 ---
 
-## User Profile
+## Coach Profile
 
-### Get Current Trainee
+### Отримати свій профіль
 
 ```
-GET /api/v1/trainees/me/
-Authorization: Bearer <token>
+GET /api/v1/coaches/me/
+Authorization: Bearer <coach_token>
 ```
+
+> **Deprecated alias:** `GET /api/v1/trainees/me/` — ще працює, але буде видалено. Замініть на `/coaches/me/`.
 
 **Response `200 OK`:**
 ```json
 {
   "id": 1,
-  "email": "user@example.com",
-  "first_name": "John",
-  "last_name": "Doe",
-  "email_verified": true,
+  "email": "coach@example.com",
+  "first_name": "Anna",
+  "last_name": "Smith",
   "mobile_phone": "+380501234567",
+  "work_phone": null,
   "address1": null,
   "city": null,
-  "state": null,
   "country": null,
   "gender": null,
-  "weight": 75.5,
-  "height": 180.0,
-  "programs": [],
-  "created_at": "2026-04-16T12:00:00",
-  "updated_at": "2026-04-16T12:00:00"
+  "biography": null,
+  "image_url": null,
+  "note": null,
+  "created_at": "2026-04-17T12:00:00",
+  "updated_at": "2026-04-17T12:00:00"
 }
 ```
 
-**Error `403`** — token belongs to a coach, not a trainee.
+**Error `403`** — токен належить trainee.
 
 ---
 
-### Get Current Coach
+### Оновити свій профіль
 
 ```
-GET /api/v1/coaches/me/
-Authorization: Bearer <token>
+PUT /api/v1/coaches/me/
+Authorization: Bearer <coach_token>
 ```
+
+**Request body** (всі поля опціональні):
+```json
+{
+  "first_name": "Anna",
+  "last_name": "Smith",
+  "mobile_phone": "+380501234567",
+  "work_phone": "+380441234567",
+  "city": "Kyiv",
+  "country": "Ukraine",
+  "biography": "Certified trainer with 10 years experience",
+  "image_url": "https://example.com/photo.jpg"
+}
+```
+
+**Response `200 OK`:** оновлений об'єкт coach.
 
 ---
 
-### Change Coach Password
+### Змінити пароль
 
 ```
 PUT /api/v1/coaches/me/password/
-Authorization: Bearer <token>
+Authorization: Bearer <coach_token>
 ```
 
 **Request body:**
 ```json
 {
   "current_password": "oldPassword",
-  "new_password": "newPassword"
+  "new_password": "newPassword123"
 }
 ```
 
@@ -407,26 +391,35 @@ Authorization: Bearer <token>
 { "message": "Password updated successfully" }
 ```
 
+**Error `400`** — поточний пароль невірний.
+
+---
+
+## Trainee & Coach CRUD
+
+Управління профілями клієнтів (trainee) та тренерів — см. окремий документ:  
+[trainee-coach-api-flutter.md](trainee-coach-api-flutter.md)
+
+> **Правила доступу:** тільки coach може створювати, редагувати та видаляти trainee.
+
 ---
 
 ## Error Responses
-
-All errors follow FastAPI's standard format:
 
 ```json
 { "detail": "Human-readable error message" }
 ```
 
-| HTTP Code | Meaning |
+| HTTP Code | Значення |
 |-----------|---------|
-| `400` | Bad request (validation, duplicate email, invalid token) |
-| `401` | Wrong credentials or missing/expired JWT |
-| `403` | Authenticated but wrong role (e.g. trainee token on coach endpoint) |
-| `404` | Resource not found |
-| `422` | Request body validation failed (Pydantic) |
-| `500` | Server error |
-| `502` | Google OAuth upstream error |
-| `503` | Google OAuth not configured on server |
+| `400` | Помилка запиту (дублікат email, невірний токен, невірний пароль) |
+| `401` | Відсутній або прострочений JWT токен |
+| `403` | Авторизований, але неправильна роль |
+| `404` | Ресурс не знайдено |
+| `422` | Помилка валідації тіла запиту (Pydantic) |
+| `500` | Помилка сервера |
+| `502` | Помилка Google OAuth (upstream) |
+| `503` | Google OAuth не налаштовано на сервері |
 
 ---
 
@@ -436,11 +429,11 @@ All errors follow FastAPI's standard format:
 
 ```yaml
 dependencies:
-  flutter_secure_storage: ^9.0.0   # store JWT
-  dio: ^5.0.0                       # HTTP client
-  url_launcher: ^6.0.0              # open Google OAuth URL
-  webview_flutter: ^4.0.0           # OR use for OAuth WebView
-  app_links: ^6.0.0                 # deep link handling (email verify, password reset)
+  flutter_secure_storage: ^9.0.0   # зберігання JWT
+  dio: ^5.0.0                       # HTTP клієнт
+  url_launcher: ^6.0.0              # відкрити Google OAuth URL
+  webview_flutter: ^4.0.0           # WebView для OAuth
+  app_links: ^6.0.0                 # deep link (password reset)
 ```
 
 ---
@@ -449,26 +442,21 @@ dependencies:
 
 ```
 Registration (email/password)
-  └─ POST /trainees/register/
-       ├─ success → save token → show "check your email" banner
+  └─ POST /coaches/register/
+       ├─ success → save token → navigate to home
        └─ 400 → show "email already exists"
 
 Login
   └─ POST /login/
-       ├─ success → check response for "trainee" or "coach" key
+       ├─ success → check response for "coach" or "trainee" key
        │            → save token → navigate to home
        └─ 401 → show error
 
-Google OAuth
-  └─ GET /google/authorize?role=trainee → get URL
+Google OAuth (реєстрація або вхід)
+  └─ GET /google/authorize  (role=coach за замовчуванням)
        └─ open URL in WebView/browser
             └─ intercept callback redirect
                  └─ extract token → save → navigate to home
-
-Email Verification (deep link)
-  └─ app://verify-email?token=...
-       └─ GET /verify-email?token=...
-            └─ show success/error
 
 Password Reset (deep link)
   └─ app://reset-password?token=...
@@ -479,12 +467,12 @@ Password Reset (deep link)
 
 ---
 
-### JWT Decoding (to get role & ID without API call)
+### JWT Decoding
 
-The JWT payload contains:
+JWT payload містить:
 ```json
 {
-  "sub": "trainee:42",
+  "sub": "coach:7",
   "type": "access_token",
   "exp": 1234567890
 }
@@ -502,9 +490,9 @@ Map<String, dynamic> decodeJwtPayload(String token) {
 
 // Usage
 final payload = decodeJwtPayload(token);
-final sub = payload['sub'] as String;       // "trainee:42"
-final role = sub.split(':')[0];             // "trainee"
-final userId = int.parse(sub.split(':')[1]); // 42
+final sub = payload['sub'] as String;        // "coach:7"
+final role = sub.split(':')[0];              // "coach"
+final userId = int.parse(sub.split(':')[1]); // 7
 final exp = payload['exp'] as int;
 final isExpired = DateTime.now().millisecondsSinceEpoch ~/ 1000 > exp;
 ```
@@ -513,11 +501,8 @@ final isExpired = DateTime.now().millisecondsSinceEpoch ~/ 1000 > exp;
 
 ### Deep Link Configuration
 
-For email verification and password reset to work, configure deep links so your app intercepts URLs like:
-- `http://207.126.161.154:3000/verify-email?token=...`
+Для password reset налаштуйте deep links:
 - `http://207.126.161.154:3000/reset-password?token=...`
-
-Or set `FRONTEND_URL` on the server to your custom scheme (e.g. `fitnessapp://`) and handle accordingly.
 
 **Android** (`android/app/src/main/AndroidManifest.xml`):
 ```xml

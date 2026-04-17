@@ -13,12 +13,17 @@ class UserInfoWidget extends StatelessWidget {
     final fullName = coach?.fullName.trim() ?? 'N/A';
 
     return FCard(
-      title: Text(
-        fullName,
-        textAlign: TextAlign.center,
-        style: context.theme.typography.lg
-            .copyWith(fontWeight: FontWeight.w600),
+      title: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Text(
+          fullName,
+          textAlign: TextAlign.center,
+          style: context.theme.typography.lg.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
+
       child: FTileGroup(
         divider: FItemDivider.indented,
         children: [

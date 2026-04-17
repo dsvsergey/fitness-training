@@ -5,6 +5,7 @@ import 'package:forui/forui.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/router/router.dart';
+import '../../../domain/entities/fitness/coach_entity.dart';
 import '../../widgets/button_widget.dart';
 import '../../widgets/user_info_widget.dart';
 
@@ -40,15 +41,14 @@ class SettingsScreen extends StatelessWidget {
                                     state.user!.coach!.imageUrl!,
                                   ),
                                   fallback: Text(initials),
-                                  size: 96,
+                                  size: 120,
                                 )
                               : FAvatar.raw(
-                                  size: 96,
+                                  size: 120,
                                   child: Text(
                                     initials,
-                                    style: context.theme.typography.xl2.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: context.theme.typography.xl2
+                                        .copyWith(fontWeight: FontWeight.bold),
                                   ),
                                 ),
                           Positioned(
@@ -56,7 +56,7 @@ class SettingsScreen extends StatelessWidget {
                             bottom: 0,
                             child: CircleAvatar(
                               radius: 16,
-                              backgroundColor: const Color(0xFFC8CE37),
+                              backgroundColor: const Color(0xFF1E1E1E),
                               child: IconButton(
                                 onPressed: () {},
                                 padding: EdgeInsets.zero,
@@ -75,24 +75,42 @@ class SettingsScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       ButtonWidget(
                         onPressed: () {
-                          if (state.user?.coach != null) {
-                            AutoRouter.of(context).push(
-                              ChangeInfoRoute(coach: state.user!.coach!),
-                            );
-                          }
+                          AutoRouter.of(context).push(
+                            ChangeInfoRoute(
+                              coach: state.user?.coach ?? CoachEntity(),
+                            ),
+                          );
                         },
                         title: 'Change Info',
                       ),
                       const SizedBox(height: 12),
-                      FButton(
-                        onPress: () {
-                          BlocProvider.of<ApplicationBloc>(context)
-                              .add(LogoutEvent());
-                          AutoRouter.of(context)
-                              .replaceAll([const LoginRoute()]);
-                        },
-                        variant: FButtonVariant.destructive,
-                        child: const Text('Log Out'),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            BlocProvider.of<ApplicationBloc>(
+                              context,
+                            ).add(LogoutEvent());
+                            AutoRouter.of(
+                              context,
+                            ).replaceAll([const LoginRoute()]);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFFD32F2F),
+                            side: const BorderSide(color: Color(0xFFD32F2F)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Log Out',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
