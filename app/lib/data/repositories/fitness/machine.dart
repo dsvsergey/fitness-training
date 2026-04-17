@@ -8,10 +8,7 @@ import '../../models/fitness/fitness.dart';
 import 'fitness.dart';
 
 abstract class MachineRepository {
-  Future<List<MachineModel>> getMachines({
-    int skip = 0,
-    int limit = 100,
-  });
+  Future<List<MachineModel>> getMachines({int skip = 0, int limit = 100});
   Future<MachineModel> getMachine(int machineId);
   Future<MachineModel> createMachine(MachineModel machine);
   Future<MachineModel> updateMachine(int machineId, MachineModel machine);
@@ -29,75 +26,93 @@ class MachineRepositoryImpl
   Future<List<MachineModel>> getMachines({
     int skip = 0,
     int limit = 100,
-  }) =>
-      fitness.dio
-          .get(
+  }) async {
+    try {
+      final response = await fitness.dio.get(
         "/machines/",
-        queryParameters: {
-          "skip": skip,
-          "limit": limit,
-        },
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-      )
-          .then((value) {
-        return (value.data as List)
-            .map((item) => MachineModel.fromJson(item))
-            .toList();
-      }).catchError(onException);
+        queryParameters: {"skip": skip, "limit": limit},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                GetIt.I<ApplicationBloc>().state.user?.authorization,
+          },
+        ),
+      );
+      return (response.data as List)
+          .map((item) => MachineModel.fromJson(item))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return [];
+      return onException(e);
+    }
+  }
 
   @override
   Future<MachineModel> getMachine(int machineId) => fitness.dio
-          .get(
+      .get(
         "/machines/$machineId",
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                GetIt.I<ApplicationBloc>().state.user?.authorization,
+          },
+        ),
       )
-          .then((value) {
+      .then((value) {
         return MachineModel.fromJson(value.data);
-      }).catchError(onException);
+      })
+      .catchError(onException);
 
   @override
   Future<MachineModel> createMachine(MachineModel machine) => fitness.dio
-          .post(
+      .post(
         "/machines/",
         data: machine.toJson(),
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                GetIt.I<ApplicationBloc>().state.user?.authorization,
+          },
+        ),
       )
-          .then((value) {
+      .then((value) {
         return MachineModel.fromJson(value.data);
-      }).catchError(onException);
+      })
+      .catchError(onException);
 
   @override
   Future<MachineModel> updateMachine(int machineId, MachineModel machine) =>
       fitness.dio
           .put(
-        "/machines/$machineId",
-        data: machine.toJson(),
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-      )
+            "/machines/$machineId",
+            data: machine.toJson(),
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization':
+                    GetIt.I<ApplicationBloc>().state.user?.authorization,
+              },
+            ),
+          )
           .then((value) {
-        return MachineModel.fromJson(value.data);
-      }).catchError(onException);
+            return MachineModel.fromJson(value.data);
+          })
+          .catchError(onException);
 
   @override
   Future<void> deleteMachine(int machineId) => fitness.dio
       .delete(
         "/machines/$machineId",
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                GetIt.I<ApplicationBloc>().state.user?.authorization,
+          },
+        ),
       )
       .catchError(onException);
 }

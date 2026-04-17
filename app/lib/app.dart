@@ -33,10 +33,10 @@ class _MyAppState extends State<MyApp> {
   // ForUI theme with app's color palette
   static final _forUiTheme = FThemes.zinc.light.touch.copyWith(
     colors: FThemes.zinc.light.touch.colors.copyWith(
-      primary: const Color(0xFFC8CE37),
-      primaryForeground: const Color(0xFF1E1E1E),
-      secondary: const Color(0xFF587DBD),
-      secondaryForeground: Colors.white,
+      primary: const Color(0xFF1E1E1E),
+      primaryForeground: Colors.white,
+      secondary: const Color(0xFFF5F5F5),
+      secondaryForeground: const Color(0xFF1E1E1E),
     ),
   );
   @override

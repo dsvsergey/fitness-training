@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.fitness_training"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -35,6 +35,15 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    // Workaround for 16KB page size warning on Android 15+ devices.
+    // Libraries (rive, flutter) not yet rebuilt with 16KB alignment are extracted
+    // to disk instead of mmap'd from the APK, bypassing the alignment check.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 }

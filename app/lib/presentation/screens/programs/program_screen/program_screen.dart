@@ -24,26 +24,32 @@ class ProgramScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: BlocBuilder<ProgramScreenBloc, ProgramScreenState>(
           buildWhen: (_, current) => current is LoadedTrainee,
-          builder: (context, state) => FHeader.nested(
+          builder: (context, state) => AppBar(
+            backgroundColor: context.theme.colors.background,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+              onPressed: () {
+                BlocProvider.of<ApplicationBloc>(context)
+                    .add(SelectTraineeEvent(selectedTrainee: null));
+                AutoRouter.of(context).pop();
+              },
+            ),
             title: Text(
               state is LoadedTrainee ? state.trainee.fullName : '',
-            ),
-            prefixes: [
-              FHeaderAction.back(
-                onPress: () {
-                  BlocProvider.of<ApplicationBloc>(context)
-                      .add(SelectTraineeEvent(selectedTrainee: null));
-                  AutoRouter.of(context).pop();
-                },
+              style: context.theme.typography.lg.copyWith(
+                color: context.theme.colors.foreground,
+                fontWeight: FontWeight.w600,
               ),
-            ],
-            suffixes: [
-              FHeaderAction(
-                icon: const Icon(FIcons.squarePen),
-                onPress: () => _onEditPressed(context, state),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(FIcons.squarePen, color: context.theme.colors.foreground),
+                onPressed: () => _onEditPressed(context, state),
               ),
             ],
           ),

@@ -52,15 +52,15 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction.back(
-              onPress: () =>
-                  AutoRouter.of(context).pop(const ContactsRoute()),
-            ),
-          ],
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => AutoRouter.of(context).pop(const ContactsRoute()),
+          ),
         ),
       ),
       body: SingleChildScrollView(

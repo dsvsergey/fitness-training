@@ -39,14 +39,15 @@ class CalendarInfoScreens extends StatelessWidget {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction.back(
-              onPress: () => context.router.maybePop(),
-            ),
-          ],
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => context.router.maybePop(),
+          ),
         ),
       ),
       body: SingleChildScrollView(

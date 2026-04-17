@@ -53,25 +53,18 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction.back(
-              onPress: () => AutoRouter.of(context).pop(const ContactsRoute()),
-            ),
-          ],
-          suffixes: [
-            FHeaderAction(
-              icon: Text(
-                AppLocalizations.of(context)!.addMachine,
-                style: context.theme.typography.lg.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: context.theme.colors.primary,
-                  fontSize: isTablet ? 25 : 20,
-                ),
-              ),
-              onPress: () =>
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => AutoRouter.of(context).pop(const ContactsRoute()),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () =>
                   DialogUtils.showEditMachineDialog(context: context)
                       .then((value) {
                     if (value != null) {
@@ -86,6 +79,14 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
                               .add(MachinesLoadedEvent()));
                     }
                   }),
+              child: Text(
+                AppLocalizations.of(context)!.addMachine,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: context.theme.colors.foreground,
+                  fontSize: 15,
+                ),
+              ),
             ),
           ],
         ),
@@ -93,153 +94,182 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
       body: BlocBuilder<CreateProgramBloc, CreateProgramState>(
         buildWhen: (_, current) => current is LoadedMachines,
         builder: (context, state) {
+          final machines = state.machines ?? [];
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$_title $_programTitle',
-                textAlign: TextAlign.center,
-                style: isTablet
-                    ? context.theme.typography.xl3
-                        .copyWith(fontWeight: FontWeight.w800)
-                    : context.theme.typography.xl2
-                        .copyWith(fontWeight: FontWeight.w800),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
+                child: Text(
+                  '${_title ?? ''} ${_programTitle ?? ''}',
+                  style: context.theme.typography.lg.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF1E1E1E),
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
+              const Divider(height: 1, color: Color(0xFFE0E0E0)),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Wrap(
-                      spacing: 20,
-                      runSpacing: 20,
-                      children: [
-                        for (final machine in state.machines ?? [])
-                          GestureDetector(
-                            onLongPressStart: (details) {
-                              final offset = details.globalPosition;
-                              showMenu(
-                                context: context,
-                                position: RelativeRect.fromLTRB(
-                                  offset.dx,
-                                  offset.dy,
-                                  MediaQuery.of(context).size.width - offset.dx,
-                                  MediaQuery.of(context).size.height -
+                child: machines.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.fitness_center_outlined,
+                              size: 56,
+                              color: const Color(0xFFBDBDBD),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No machines yet',
+                              style: context.theme.typography.sm.copyWith(
+                                color: const Color(0xFF9E9E9E),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tap "Add machine" to get started',
+                              style: context.theme.typography.xs.copyWith(
+                                color: const Color(0xFFBDBDBD),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            for (final machine in machines)
+                              GestureDetector(
+                                onLongPressStart: (details) {
+                                  final offset = details.globalPosition;
+                                  showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(
+                                      offset.dx,
                                       offset.dy,
-                                ),
-                                items: [
-                                  PopupMenuItem(
-                                    value: 'Edit',
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.edit,
-                                            color: Color(0xFF1E1E1E)),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          AppLocalizations.of(context)!.edit,
-                                          style: TextStyle(
-                                            color: const Color(0xFF1E1E1E),
-                                            fontSize: isTablet ? 25 : 20,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
+                                      MediaQuery.of(context).size.width -
+                                          offset.dx,
+                                      MediaQuery.of(context).size.height -
+                                          offset.dy,
                                     ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 'Delete',
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.delete,
-                                            color: Colors.red),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          AppLocalizations.of(context)!.delete,
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: isTablet ? 25 : 20,
-                                            fontFamily: 'Inter',
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                    items: [
+                                      PopupMenuItem(
+                                        value: 'Edit',
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.edit,
+                                                color: Color(0xFF1E1E1E)),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              AppLocalizations.of(context)!
+                                                  .edit,
+                                              style: const TextStyle(
+                                                color: Color(0xFF1E1E1E),
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ).then((value) {
-                                if (value == 'Edit') {
-                                  DialogUtils.showEditMachineDialog(
-                                          context: context,
-                                          name: machine.name)
-                                      .then((value) {
-                                    if (value != null) {
-                                      GetIt.I<MachineUsecase>()
-                                          .updateMachine(
-                                              machine.id!,
-                                              machine.rebuild((p0) =>
-                                                  p0..name = value['name']))
-                                          .then((_) => context
-                                              .read<CreateProgramBloc>()
-                                              .add(MachinesLoadedEvent()));
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'Delete',
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.delete,
+                                                color: Colors.red),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              AppLocalizations.of(context)!
+                                                  .delete,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ).then((value) {
+                                    if (value == 'Edit') {
+                                      DialogUtils.showEditMachineDialog(
+                                              context: context,
+                                              name: machine.name)
+                                          .then((value) {
+                                        if (value != null) {
+                                          GetIt.I<MachineUsecase>()
+                                              .updateMachine(
+                                                  machine.id!,
+                                                  machine.rebuild((p0) =>
+                                                      p0..name =
+                                                          value['name']))
+                                              .then((_) => context
+                                                  .read<CreateProgramBloc>()
+                                                  .add(MachinesLoadedEvent()));
+                                        }
+                                      });
+                                    } else if (value == 'Delete') {
+                                      DialogUtils.showConfirmationDialog(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .confirmation,
+                                        '${AppLocalizations.of(context)!.deleteMachine} ${machine.name}?',
+                                      ).then((confirmed) {
+                                        if (confirmed ?? false) {
+                                          _selectedMachines.remove(machine);
+                                          GetIt.I<MachineUsecase>()
+                                              .deleteMachine(machine.id!)
+                                              .then((_) => context
+                                                  .read<CreateProgramBloc>()
+                                                  .add(MachinesLoadedEvent()));
+                                        }
+                                      });
                                     }
                                   });
-                                } else if (value == 'Delete') {
-                                  DialogUtils.showConfirmationDialog(
-                                    context,
-                                    AppLocalizations.of(context)!.confirmation,
-                                    '${AppLocalizations.of(context)!.deleteMachine} ${machine.name}?',
-                                  ).then((confirmed) {
-                                    if (confirmed ?? false) {
-                                      _selectedMachines.remove(machine);
-                                      GetIt.I<MachineUsecase>()
-                                          .deleteMachine(machine.id!)
-                                          .then((_) => context
-                                              .read<CreateProgramBloc>()
-                                              .add(MachinesLoadedEvent()));
-                                    }
-                                  });
-                                }
-                              });
-                            },
-                            child: GestureDetector(
-                              onTap: () => setState(() {
-                                if (_selectedMachines.contains(machine)) {
-                                  _selectedMachines.remove(machine);
-                                } else {
-                                  _selectedMachines.add(machine);
-                                }
-                              }),
-                              child: Container(
-                                width: 65,
-                                height: 65,
-                                decoration: BoxDecoration(
-                                  color: _selectedMachines.contains(machine)
-                                      ? context.theme.colors.primary
-                                      : null,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Center(
+                                },
+                                onTap: () => setState(() {
+                                  if (_selectedMachines.contains(machine)) {
+                                    _selectedMachines.remove(machine);
+                                  } else {
+                                    _selectedMachines.add(machine);
+                                  }
+                                }),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: _selectedMachines.contains(machine)
+                                        ? const Color(0xFF1E1E1E)
+                                        : const Color(0xFFF5F5F5),
+                                    borderRadius: BorderRadius.circular(24),
+                                    border: Border.all(
+                                      color: _selectedMachines.contains(machine)
+                                          ? const Color(0xFF1E1E1E)
+                                          : const Color(0xFFE0E0E0),
+                                    ),
+                                  ),
                                   child: Text(
                                     machine.name.capitalizeEachWord(),
                                     style: TextStyle(
-                                      color: _selectedMachines.contains(machine)
-                                          ? context
-                                              .theme.colors.primaryForeground
-                                          : context
-                                              .theme.colors.mutedForeground,
-                                      fontSize: 40,
-                                      fontFamily: 'Inter',
+                                      color:
+                                          _selectedMachines.contains(machine)
+                                              ? Colors.white
+                                              : const Color(0xFF1E1E1E),
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
+                          ],
+                        ),
+                      ),
               ),
               const SizedBox(height: 30),
               Padding(

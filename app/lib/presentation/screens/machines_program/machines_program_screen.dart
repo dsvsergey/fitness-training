@@ -39,24 +39,18 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
         .add(ProgramFitnessUpdateEvent(programId: widget.program.id!));
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction.back(
-              onPress: () => AutoRouter.of(context).pop(),
-            ),
-          ],
-          suffixes: [
-            FHeaderAction(
-              icon: Text(
-                AppLocalizations.of(context)!.editProgram,
-                style: context.theme.typography.lg.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: context.theme.colors.primary,
-                ),
-              ),
-              onPress: () {
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => AutoRouter.of(context).pop(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
                 final state =
                     context.read<MachinesProgramScreenBloc>().state;
                 if (state is ProgramFitnessUpdated) {
@@ -68,6 +62,13 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                   );
                 }
               },
+              child: Text(
+                AppLocalizations.of(context)!.editProgram,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: context.theme.colors.primary,
+                ),
+              ),
             ),
           ],
         ),
