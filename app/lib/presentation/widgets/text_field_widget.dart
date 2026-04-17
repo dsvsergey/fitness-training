@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:forui/forui.dart';
 
-import '../../core/resources/themes/app_fonts.dart';
-
-class TextFieldWidget extends StatelessWidget {
+class TextFieldWidget extends StatefulWidget {
   const TextFieldWidget({
     super.key,
     this.controller,
@@ -15,8 +13,9 @@ class TextFieldWidget extends StatelessWidget {
     this.errorText,
     this.isPassword = false,
   });
+
   final TextEditingController? controller;
-  final Function(String)? onChanged;
+  final ValueChanged<String>? onChanged;
   final Widget? prefix;
   final Widget? suffix;
   final String? hintText;
@@ -25,59 +24,60 @@ class TextFieldWidget extends StatelessWidget {
   final bool isPassword;
 
   @override
+  State<TextFieldWidget> createState() => _TextFieldWidgetState();
+}
+
+class _TextFieldWidgetState extends State<TextFieldWidget> {
+  late final TextEditingController _controller;
+  bool _ownsController = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller != null) {
+      _controller = widget.controller!;
+    } else {
+      _controller = TextEditingController();
+      _ownsController = true;
+    }
+    if (widget.onChanged != null) {
+      _controller.addListener(_onChanged);
+    }
+  }
+
+  void _onChanged() => widget.onChanged?.call(_controller.text);
+
+  @override
+  void dispose() {
+    if (widget.onChanged != null) {
+      _controller.removeListener(_onChanged);
+    }
+    if (_ownsController) _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    return SizedBox(
-      width: screenWidth > 750 ? 230.w : double.infinity,
-      height: 60.h,
-      child: TextField(
-        style: screenWidth > 600 ? AppFonts.w500s25 : AppFonts.w500s18,
-        obscureText: isPassword,
-        keyboardType: keyboardType,
-        onChanged: onChanged,
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(
-                20.r,
-              ),
-            ),
-          ),
-          errorText: errorText,
-          contentPadding: EdgeInsets.all(
-            20.h,
-          ),
-          suffixIcon: suffix,
-          prefix: prefix,
-          hintText: hintText,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(
-                20.r,
-              ),
-            ),
-            borderSide: const BorderSide(
-              width: 2,
-              color: Colors.grey,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(
-                20.r,
-              ),
-            ),
-            borderSide: const BorderSide(
-              width: 2,
-              color: Color(0xFFC8CE37),
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
-        ),
-      ),
+    if (widget.isPassword) {
+      return FTextField.password(
+        control: FTextFieldControl.managed(controller: _controller),
+        hint: widget.hintText,
+        error: widget.errorText != null ? Text(widget.errorText!) : null,
+        keyboardType: widget.keyboardType,
+      );
+    }
+
+    return FTextField(
+      control: FTextFieldControl.managed(controller: _controller),
+      hint: widget.hintText,
+      error: widget.errorText != null ? Text(widget.errorText!) : null,
+      keyboardType: widget.keyboardType,
+      prefixBuilder: widget.prefix != null
+          ? (_, __, ___) => widget.prefix!
+          : null,
+      suffixBuilder: widget.suffix != null
+          ? (_, __, ___) => widget.suffix!
+          : null,
     );
   }
 }

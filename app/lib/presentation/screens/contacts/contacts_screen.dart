@@ -1,12 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
-import 'package:loading_animations/loading_animations.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
-import '../../../core/resources/themes/app_colors.dart';
-import '../../../core/resources/themes/app_fonts.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
@@ -24,58 +22,45 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-  final _clients = List<TraineeEntity>.empty(growable: true);
-  final _filteredClients = List<TraineeEntity>.empty(growable: true);
+  final _clients = <TraineeEntity>[];
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
-  bool isShowGridLoading = false;
 
   @override
   void initState() {
     super.initState();
+
+    // Forward controller changes to BLoC
     _searchController.addListener(() {
-      setState(() {
-        _filteredClients.clear();
-        _filteredClients.addAll(
-          _filterController(_searchController.text),
-        );
-      });
+      BlocProvider.of<ContactsBloc>(context).add(
+        FindByNameContactsList(searchQuery: _searchController.text),
+      );
     });
 
     _scrollController.addListener(_scrollListener);
 
     GetIt.I<WorkoutAppointmentUsecase>()
         .getAllWorkoutAppointments()
-        .then((value) => setState(() {
-              final trainees =
-                  value.appointments?.map((e) => e.trainee).toList() ?? [];
-              _clients.clear();
-              _clients.addAll(trainees);
-              _filteredClients.clear();
-              _filteredClients.addAll(trainees);
-            }));
+        .then((value) {
+      if (!mounted) return;
+      setState(() {
+        final trainees =
+            value.appointments?.map((e) => e.trainee).toList() ?? [];
+        _clients
+          ..clear()
+          ..addAll(trainees);
+      });
+    });
   }
 
   void _scrollListener() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        BlocProvider.of<ContactsBloc>(context).add(GetContactsList());
+        if (mounted) {
+          BlocProvider.of<ContactsBloc>(context).add(GetContactsList());
+        }
       });
-      // BlocProvider.of<ContactsBloc>(context).add(GetContactsList());
-    }
-  }
-
-  List<TraineeEntity> _filterController(String query) {
-    if (query.isEmpty) {
-      return List.from(_clients);
-    } else {
-      return _clients.where((client) {
-        final name = client.fullName;
-        return name.contains(
-          query.toLowerCase(),
-        );
-      }).toList();
     }
   }
 
@@ -86,183 +71,130 @@ class _ContactsScreenState extends State<ContactsScreen> {
     super.dispose();
   }
 
+  void _openClient(BuildContext context, TraineeEntity trainee) {
+    context
+        .read<ApplicationBloc>()
+        .add(SelectTraineeEvent(selectedTrainee: trainee));
+    BlocProvider.of<ProgramScreenBloc>(context)
+        .add(UpdateTraineeEvent(trainee: trainee));
+    AutoRouter.of(context).push(const ProgramRoute());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final size = screenWidth > 600;
-    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final isTablet = MediaQuery.of(context).size.width > 600;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Stack(
             children: [
+              // ── Contact list / grid ─────────────────────────────────────
               BlocBuilder<ContactsBloc, ContactsState>(
                 builder: (context, state) {
-                  if (state is ContactsSuccess ||
-                      state is FindByNameSuccess ||
-                      state is ContactsLoading) {
-                    return size
-                        ? GridView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.only(top: 80),
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            shrinkWrap: true,
-                            itemCount: (state.clients?.length ?? 0) +
-                                (state.hasMoreData! ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index < (state.clients?.length ?? 0)) {
-                                final trainee = state.clients?[index];
-                                return GridContactsWidget(
-                                  model: trainee!,
-                                  onTap: () {
-                                    context.read<ApplicationBloc>().add(
-                                        SelectTraineeEvent(
-                                            selectedTrainee: trainee));
-                                    BlocProvider.of<ProgramScreenBloc>(context)
-                                        .add(UpdateTraineeEvent(
-                                            trainee: trainee));
-                                    AutoRouter.of(context)
-                                        .push(const ProgramRoute());
-                                  },
-                                );
-                              } else {
-                                return SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: Center(
-                                    child: LoadingBouncingGrid.square(
-                                      borderColor: AppColors.colorMain,
-                                      borderSize: 3.0,
-                                      size: 30.0,
-                                      backgroundColor: AppColors.colorMain,
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: isPortrait ? 3 : 4,
-                              mainAxisSpacing: 0.0,
-                              crossAxisSpacing: 0.0,
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.only(top: 50),
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            shrinkWrap: state.clients?.isEmpty ?? true,
-                            itemCount: (state.clients?.length ?? 0) +
-                                (state.hasMoreData! ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              debugPrint(
-                                  'Index: $index, Clients length: ${state.clients?.length}, state is ${state.runtimeType}, state.hasMoreData: ${state.hasMoreData}');
-                              if (index < (state.clients?.length ?? 0)) {
-                                final trainee = state.clients?[index];
-                                return ListContactsWidget(
-                                  client: trainee!,
-                                  onTap: () {
-                                    context.read<ApplicationBloc>().add(
-                                        SelectTraineeEvent(
-                                            selectedTrainee: trainee));
-                                    BlocProvider.of<ProgramScreenBloc>(context)
-                                        .add(UpdateTraineeEvent(
-                                            trainee: trainee));
-                                    AutoRouter.of(context)
-                                        .push(const ProgramRoute());
-                                  },
-                                );
-                              } else {
-                                return SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: Center(
-                                    child: LoadingBouncingGrid.square(
-                                      borderColor: AppColors.colorMain,
-                                      borderSize: 3.0,
-                                      size: 30.0,
-                                      backgroundColor: AppColors.colorMain,
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                  }
                   if (state is ContactsError) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
+                          Text(
                             'Something went wrong',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
+                            style: context.theme.typography.md
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Please try again later',
+                            style: context.theme.typography.sm.copyWith(
+                              color: context.theme.colors.mutedForeground,
                             ),
                           ),
-                          const Text(
-                            'Please try againg later',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Try agaig'),
+                          const SizedBox(height: 24),
+                          FButton(
+                            onPress: () => BlocProvider.of<ContactsBloc>(
+                              context,
+                            ).add(GetContactsList()),
+                            variant: FButtonVariant.outline,
+                            child: const Text('Try again'),
                           ),
                         ],
                       ),
                     );
                   }
-                  return Center(
-                    child: LoadingBouncingGrid.square(
-                      borderColor: AppColors.colorMain,
-                      borderSize: 3.0,
-                      size: 30.0,
-                      backgroundColor: AppColors.colorMain,
-                      duration: const Duration(milliseconds: 500),
-                    ),
-                  );
+
+                  if (state is ContactsSuccess ||
+                      state is FindByNameSuccess ||
+                      state is ContactsLoading) {
+                    final clients = state.clients ?? [];
+                    final hasMore = state.hasMoreData ?? false;
+                    final itemCount = clients.length + (hasMore ? 1 : 0);
+
+                    if (isTablet) {
+                      return GridView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.only(top: 72),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        shrinkWrap: true,
+                        itemCount: itemCount,
+                        gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isPortrait ? 3 : 4,
+                        ),
+                        itemBuilder: (context, index) {
+                          if (index < clients.length) {
+                            return GridContactsWidget(
+                              model: clients[index],
+                              onTap: () =>
+                                  _openClient(context, clients[index]),
+                            );
+                          }
+                          return const Center(
+                            child: FCircularProgress(),
+                          );
+                        },
+                      );
+                    }
+
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(top: 72),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      shrinkWrap: clients.isEmpty,
+                      itemCount: itemCount,
+                      itemBuilder: (context, index) {
+                        if (index < clients.length) {
+                          return ListContactsWidget(
+                            client: clients[index],
+                            onTap: () =>
+                                _openClient(context, clients[index]),
+                          );
+                        }
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: FCircularProgress(),
+                          ),
+                        );
+                      },
+                    );
+                  }
+
+                  return const Center(child: FCircularProgress());
                 },
               ),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  hintStyle:
-                      screenWidth > 600 ? AppFonts.w700s26 : AppFonts.w400s18,
-                  fillColor: AppColors.colotSearch.withAlpha(235),
-                  filled: true,
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.white,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.white,
-                    ),
-                  ),
+
+              // ── Search bar ──────────────────────────────────────────────
+              FTextField(
+                control: FTextFieldControl.managed(
+                  controller: _searchController,
                 ),
-                // controller: _searchController,
-                onChanged: (value) => BlocProvider.of<ContactsBloc>(context)
-                    .add(FindByNameContactsList(searchQuery: value)),
+                hint: 'Search',
+                prefixBuilder: (_, __, ___) => const Icon(FIcons.search),
               ),
             ],
           ),

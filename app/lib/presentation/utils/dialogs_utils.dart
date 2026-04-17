@@ -1,11 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:fitness_training/core/resources/localization/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../core/bloc/bloc_application/application_bloc.dart';
-import '../../core/resources/themes/app_colors.dart';
-import '../../core/resources/themes/app_fonts.dart';
 import '../../domain/entities/fitness/fitness.dart';
 import '../widgets/settings_for_widget.dart';
 import '../widgets/settings_for_widget_slider.dart';
@@ -17,10 +16,11 @@ class DialogUtils {
   static const double buttonHeight = 42;
   static const double buttonWidth = 102;
 
-  static Future<ProgramMachineEntity?> showSettingsDialog(
-      {required BuildContext context,
-      required MachineEntity machine,
-      ProgramMachineEntity? programMachine}) {
+  static Future<ProgramMachineEntity?> showSettingsDialog({
+    required BuildContext context,
+    required MachineEntity machine,
+    ProgramMachineEntity? programMachine,
+  }) {
     final controllerSeats = TextEditingController();
     final controllerBack = TextEditingController();
     final controllerHandle = TextEditingController();
@@ -51,9 +51,7 @@ class DialogUtils {
       controllerThighs.text = programMachine.thighs?.toString() ?? '';
     }
 
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-
+    final isTablet = MediaQuery.of(context).size.width > 600;
     final buttonEnabledNotifier = ValueNotifier<bool>(false);
 
     void checkButtonState() {
@@ -70,273 +68,229 @@ class DialogUtils {
           controllerWeight.text.isNotEmpty;
     }
 
-    controllerSeats.addListener(checkButtonState);
-    controllerBack.addListener(checkButtonState);
-    controllerHandle.addListener(checkButtonState);
-    controllerPin.addListener(checkButtonState);
-    controllerWeight.addListener(checkButtonState);
-    controllerKnees.addListener(checkButtonState);
-    controllerAndel.addListener(checkButtonState);
-    controllerChest.addListener(checkButtonState);
-    controllerLegs.addListener(checkButtonState);
-    controllerGrip.addListener(checkButtonState);
-    controllerThighs.addListener(checkButtonState);
+    for (final c in [
+      controllerSeats, controllerBack, controllerHandle, controllerPin,
+      controllerWeight, controllerKnees, controllerAndel, controllerChest,
+      controllerLegs, controllerGrip, controllerThighs,
+    ]) {
+      c.addListener(checkButtonState);
+    }
 
     return showDialog<ProgramMachineEntity>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          contentTextStyle: const TextStyle(),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(10),
-            ),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: contentPaddingHorizontal,
-            vertical: contentPaddingVertical,
-          ),
-          title: Text(
-            "${AppLocalizations.of(context)!.settingsFor} ${machine.name}",
-            textAlign: TextAlign.center,
-            style: screenWidth > 600 ? AppFonts.w800s30 : AppFonts.w800s24,
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SettingsForWidget(
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: contentPaddingHorizontal,
+          vertical: contentPaddingVertical,
+        ),
+        title: Text(
+          '${AppLocalizations.of(context)!.settingsFor} ${machine.name}',
+          textAlign: TextAlign.center,
+          style: isTablet
+              ? context.theme.typography.xl3
+                  .copyWith(fontWeight: FontWeight.w800)
+              : context.theme.typography.xl2
+                  .copyWith(fontWeight: FontWeight.w800),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SettingsForWidget(
                       controller: controllerSeats,
-                      text: AppLocalizations.of(context)!.seats,
-                    ),
-                    const SizedBox(width: 20),
-                    SettingsForWidget(
+                      text: AppLocalizations.of(context)!.seats),
+                  const SizedBox(width: 20),
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.back,
-                      controller: controllerBack,
-                    ),
-                  ],
-                ),
-                10.hsb,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SettingsForWidget(
+                      controller: controllerBack),
+                ],
+              ),
+              10.hsb,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.pin,
-                      controller: controllerPin,
-                    ),
-                    const SizedBox(width: 20),
-                    SettingsForWidget(
+                      controller: controllerPin),
+                  const SizedBox(width: 20),
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.handle,
-                      controller: controllerHandle,
-                    ),
-                  ],
-                ),
-                10.hsb,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SettingsForWidget(
+                      controller: controllerHandle),
+                ],
+              ),
+              10.hsb,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.knees,
-                      controller: controllerKnees,
-                    ),
-                    const SizedBox(width: 20),
-                    SettingsForWidget(
+                      controller: controllerKnees),
+                  const SizedBox(width: 20),
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.chest,
-                      controller: controllerChest,
-                    ),
-                  ],
-                ),
-                10.hsb,
-                SettingsForWidgetSlider(
-                  text: AppLocalizations.of(context)!.feet,
-                  controller: controllerLegs,
-                  sliderValueNotifier: sliderValueNotifier,
-                ),
-                10.hsb,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SettingsForWidget(
+                      controller: controllerChest),
+                ],
+              ),
+              10.hsb,
+              SettingsForWidgetSlider(
+                text: AppLocalizations.of(context)!.feet,
+                controller: controllerLegs,
+                sliderValueNotifier: sliderValueNotifier,
+              ),
+              10.hsb,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.thighs,
-                      controller: controllerThighs,
-                    ),
-                    20.wsb,
-                    SettingsForWidget(
+                      controller: controllerThighs),
+                  20.wsb,
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.grip,
-                      controller: controllerGrip,
-                    ),
-                    // const SizedBox(width: 20),
-                  ],
-                ),
-                10.hsb,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SettingsForWidget(
+                      controller: controllerGrip),
+                ],
+              ),
+              10.hsb,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.angle,
-                      controller: controllerAndel,
-                    ),
-                    20.wsb,
-                    SettingsForWidget(
+                      controller: controllerAndel),
+                  20.wsb,
+                  SettingsForWidget(
                       text: AppLocalizations.of(context)!.weightLb,
-                      controller: controllerWeight,
-                    ),
-                    // const SizedBox(width: 20),
-                  ],
+                      controller: controllerWeight),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Spacer(),
+                  Column(
+                    children: [
+                      5.hsb,
+                      Text(
+                        AppLocalizations.of(context)!
+                            .weightCurrentDescription,
+                        softWrap: true,
+                        textAlign: TextAlign.center,
+                        style: context.theme.typography.sm.copyWith(
+                          color: context.theme.colors.mutedForeground,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 20),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: contentPaddingHorizontal),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FButton(
+                  onPress: () => Navigator.of(context).pop(),
+                  variant: FButtonVariant.ghost,
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
-                // const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Spacer(),
-                    Column(
-                      children: [
-                        5.hsb,
-                        Text(
-                            AppLocalizations.of(context)!
-                                .weightCurrentDescription,
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 14,
-                                color: Colors.grey)),
-                      ],
+                ValueListenableBuilder<bool>(
+                  valueListenable: buttonEnabledNotifier,
+                  builder: (context, isEnabled, _) => SizedBox(
+                    height: buttonHeight,
+                    width: buttonWidth,
+                    child: FButton(
+                      onPress: isEnabled
+                          ? () {
+                              final currentTrainee = GetIt.I<ApplicationBloc>()
+                                  .state
+                                  .currentTrainee;
+                              final coach = GetIt.I<ApplicationBloc>()
+                                  .state
+                                  .user
+                                  ?.coach;
+                              final settings = programMachine?.rebuild(
+                                (e0) => e0
+                                  ..machineId = machine.id
+                                  ..seats =
+                                      int.tryParse(controllerSeats.text)
+                                  ..back = int.tryParse(controllerBack.text)
+                                  ..handle =
+                                      controllerHandle.text.isEmpty
+                                          ? null
+                                          : controllerHandle.text
+                                  ..pin = int.tryParse(controllerPin.text)
+                                  ..forTwoLegs =
+                                      sliderValueNotifier.value == 1
+                                  ..knees = controllerKnees.text.isEmpty
+                                      ? null
+                                      : controllerKnees.text
+                                  ..legs = controllerLegs.text.isEmpty
+                                      ? null
+                                      : controllerLegs.text
+                                  ..angal = controllerAndel.text.isEmpty
+                                      ? null
+                                      : controllerAndel.text
+                                  ..chest = controllerChest.text.isEmpty
+                                      ? null
+                                      : controllerChest.text
+                                  ..thighs = controllerThighs.text.isEmpty
+                                      ? null
+                                      : controllerThighs.text
+                                  ..grip = controllerGrip.text.isEmpty
+                                      ? null
+                                      : controllerGrip.text
+                                  ..workouts =
+                                      programMachine.workouts.isNotEmpty
+                                          ? programMachine.workouts
+                                              .rebuild((wb) => wb.map((w) =>
+                                                  w.dateSession == null
+                                                      ? w.rebuild((p) =>
+                                                          p.weight =
+                                                              int.tryParse(
+                                                                  controllerWeight
+                                                                      .text))
+                                                      : w))
+                                              .toBuiltList()
+                                              .toBuilder()
+                                          : ListBuilder([
+                                              WorkoutSessionEntity((p) => p
+                                                ..coachId = coach?.id
+                                                ..traineeId =
+                                                    currentTrainee?.id
+                                                ..programMachineId =
+                                                    programMachine.id
+                                                ..sessionStatus =
+                                                    SessionStatusEnumEntity
+                                                        .planned
+                                                ..weight = int.tryParse(
+                                                    controllerWeight.text))
+                                            ]),
+                              );
+                              Navigator.of(context).pop(settings);
+                            }
+                          : null,
+                      child: Text(AppLocalizations.of(context)!.ok),
                     ),
-                    const SizedBox(width: 20),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: contentPaddingHorizontal),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancel,
-                      style: screenWidth > 600
-                          ? AppFonts.w800s24.copyWith(
-                              color: AppColors.colorMain,
-                            )
-                          : AppFonts.w800s18,
-                    ),
-                  ),
-                  ValueListenableBuilder<bool>(
-                      valueListenable: buttonEnabledNotifier,
-                      builder: (context, isEnabled, _) {
-                        return SizedBox(
-                          height: buttonHeight,
-                          width: buttonWidth,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.colorMain,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(39),
-                              ),
-                            ),
-                            onPressed: isEnabled
-                                ? () {
-                                    final TraineeEntity? currentTrainee =
-                                        GetIt.I<ApplicationBloc>()
-                                            .state
-                                            .currentTrainee;
-                                    final CoachEntity? coach =
-                                        GetIt.I<ApplicationBloc>()
-                                            .state
-                                            .user
-                                            ?.coach;
-                                    final settings = programMachine?.rebuild(
-                                        (e0) => e0
-                                          ..machineId = machine.id
-                                          ..seats =
-                                              int.tryParse(controllerSeats.text)
-                                          ..back =
-                                              int.tryParse(controllerBack.text)
-                                          ..handle =
-                                              controllerHandle.text.isEmpty
-                                                  ? null
-                                                  : controllerHandle.text
-                                          ..pin =
-                                              int.tryParse(controllerPin.text)
-                                          ..forTwoLegs =
-                                              sliderValueNotifier.value == 1
-                                          ..knees = controllerKnees.text.isEmpty
-                                              ? null
-                                              : controllerKnees.text
-                                          ..legs = controllerLegs.text.isEmpty
-                                              ? null
-                                              : controllerLegs.text
-                                          ..angal = controllerAndel.text.isEmpty
-                                              ? null
-                                              : controllerAndel.text
-                                          ..chest = controllerChest.text.isEmpty
-                                              ? null
-                                              : controllerChest.text
-                                          ..thighs =
-                                              controllerThighs.text.isEmpty
-                                                  ? null
-                                                  : controllerThighs.text
-                                          ..grip = controllerGrip.text.isEmpty
-                                              ? null
-                                              : controllerGrip.text
-                                          ..workouts = programMachine
-                                                  .workouts.isNotEmpty
-                                              ? programMachine.workouts
-                                                  .rebuild((workouts) => workouts
-                                                      .map((p0) => p0.dateSession ==
-                                                              null
-                                                          ? p0.rebuild((p0) => p0
-                                                                  .weight =
-                                                              int.tryParse(
-                                                                  controllerWeight
-                                                                      .text))
-                                                          : p0))
-                                                  .toBuiltList()
-                                                  .toBuilder()
-                                              : ListBuilder([
-                                                  WorkoutSessionEntity((p0) =>
-                                                      p0
-                                                        ..coachId = coach?.id
-                                                        ..traineeId =
-                                                            currentTrainee?.id
-                                                        ..programMachineId =
-                                                            programMachine.id
-                                                        ..sessionStatus =
-                                                            SessionStatusEnumEntity
-                                                                .planned
-                                                        ..weight = int.tryParse(
-                                                            controllerWeight
-                                                                .text))
-                                                ]));
-                                    Navigator.of(context).pop(settings);
-                                  }
-                                : null,
-                            child: Text(
-                              AppLocalizations.of(context)!.ok,
-                              textAlign: TextAlign.center,
-                              style: screenWidth > 600
-                                  ? AppFonts.w700s24
-                                  : AppFonts.w700s18,
-                            ),
-                          ),
-                        );
-                      }),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -345,173 +299,131 @@ class DialogUtils {
     required int weight,
     required MachineEntity machine,
   }) {
-    final controllerWeight = TextEditingController();
-    controllerWeight.text = weight.toString();
+    final controllerWeight = TextEditingController(text: weight.toString());
+    final isTablet = MediaQuery.of(context).size.width > 600;
+    final buttonEnabledNotifier = ValueNotifier<bool>(true);
 
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-
-    final buttonEnabledNotifier = ValueNotifier<bool>(false);
-
-    void checkButtonState() {
+    controllerWeight.addListener(() {
       buttonEnabledNotifier.value = controllerWeight.text.isNotEmpty;
-    }
-
-    controllerWeight.addListener(checkButtonState);
+    });
 
     return showDialog<int?>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          contentTextStyle: const TextStyle(),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
-            ),
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: contentPaddingHorizontal,
-            vertical: contentPaddingVertical,
-          ),
-          title: Text(
-            "${AppLocalizations.of(context)!.settingsFor} ${machine.name}",
-            textAlign: TextAlign.center,
-            style: screenWidth > 600 ? AppFonts.w800s30 : AppFonts.w800s24,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SettingsForWidget(
-                text: AppLocalizations.of(context)!.weightLb,
-                controller: controllerWeight,
-              ),
-              const SizedBox(width: 20),
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(AppLocalizations.of(context)!.weightNextDescription,
-                      softWrap: true,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 12,
-                          color: Colors.grey)),
-                ],
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: contentPaddingHorizontal),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancel,
-                      style: screenWidth > 600
-                          ? AppFonts.w800s24.copyWith(
-                              color: AppColors.colorMain,
-                            )
-                          : AppFonts.w800s18,
-                    ),
-                  ),
-                  ValueListenableBuilder<bool>(
-                      valueListenable: buttonEnabledNotifier,
-                      builder: (context, isEnabled, _) {
-                        return SizedBox(
-                          height: buttonHeight,
-                          width: buttonWidth,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.colorMain,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(39),
-                              ),
-                            ),
-                            onPressed: isEnabled
-                                ? () {
-                                    final weight =
-                                        int.tryParse(controllerWeight.text);
-                                    Navigator.of(context).pop(weight);
-                                  }
-                                : null,
-                            child: Text(
-                              AppLocalizations.of(context)!.ok,
-                              textAlign: TextAlign.center,
-                              style: screenWidth > 600
-                                  ? AppFonts.w700s24
-                                  : AppFonts.w700s18,
-                            ),
-                          ),
-                        );
-                      }),
-                ],
-              ),
-            ),
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: contentPaddingHorizontal,
+          vertical: contentPaddingVertical,
+        ),
+        title: Text(
+          '${AppLocalizations.of(context)!.settingsFor} ${machine.name}',
+          textAlign: TextAlign.center,
+          style: isTablet
+              ? context.theme.typography.xl3
+                  .copyWith(fontWeight: FontWeight.w800)
+              : context.theme.typography.xl2
+                  .copyWith(fontWeight: FontWeight.w800),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             const SizedBox(height: 20),
+            SettingsForWidget(
+              text: AppLocalizations.of(context)!.weightLb,
+              controller: controllerWeight,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              AppLocalizations.of(context)!.weightNextDescription,
+              softWrap: true,
+              textAlign: TextAlign.center,
+              style: context.theme.typography.xs.copyWith(
+                color: context.theme.colors.mutedForeground,
+              ),
+            ),
+            const SizedBox(height: 10),
           ],
-        );
-      },
-    );
-  }
-
-  static Future<bool?> showConfirmationDialog(
-      BuildContext context, String title, String question) async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            title,
-            style: const TextStyle(color: Colors.black54),
-          ),
-          content: Text(
-            question,
-            style: const TextStyle(color: Colors.black),
-          ),
-          actions: [
-            OverflowBar(
-              alignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.yes,
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 51, 146, 57),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
-                  ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: contentPaddingHorizontal),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FButton(
+                  onPress: () => Navigator.of(context).pop(),
+                  variant: FButtonVariant.ghost,
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.no,
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 240, 49, 36),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600),
+                ValueListenableBuilder<bool>(
+                  valueListenable: buttonEnabledNotifier,
+                  builder: (context, isEnabled, _) => SizedBox(
+                    height: buttonHeight,
+                    width: buttonWidth,
+                    child: FButton(
+                      onPress: isEnabled
+                          ? () => Navigator.of(context)
+                              .pop(int.tryParse(controllerWeight.text))
+                          : null,
+                      child: Text(AppLocalizations.of(context)!.ok),
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
-        );
-      },
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  static Future<bool?> showConfirmationDialog(
+    BuildContext context,
+    String title,
+    String question,
+  ) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title,
+            style: const TextStyle(color: Colors.black54)),
+        content: Text(question,
+            style: const TextStyle(color: Colors.black)),
+        actions: [
+          OverflowBar(
+            alignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  AppLocalizations.of(context)!.yes,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 51, 146, 57),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  AppLocalizations.of(context)!.no,
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 240, 49, 36),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -522,84 +434,52 @@ class DialogUtils {
     int? weight,
     int? height,
   }) async {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
+    final weightController =
+        TextEditingController(text: weight?.toString() ?? '');
+    final heightController =
+        TextEditingController(text: height?.toString() ?? '');
 
-    final ageController = TextEditingController();
-    final weightController = TextEditingController();
-    final heightController = TextEditingController();
-
-    ageController.text = age?.toString() ?? '';
-    weightController.text = weight?.toString() ?? '';
-    heightController.text = height?.toString() ?? '';
-
-    return await showDialog<Map<String, dynamic>>(
+    return showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            title,
-            style: const TextStyle(color: Colors.black54),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                children: [
-                  SettingsForWidget(
-                    text: AppLocalizations.of(context)!.weight,
-                    controller: weightController,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SettingsForWidget(
-                    text: AppLocalizations.of(context)!.height,
-                    controller: heightController,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            OverflowBar(
-              alignment: MainAxisAlignment.spaceAround,
+      builder: (context) => AlertDialog(
+        title: Text(title,
+            style: const TextStyle(color: Colors.black54)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
               children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop({
-                      'age': ageController.text,
-                      'weight': weightController.text,
-                      'height': heightController.text,
-                    });
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.save,
-                    style: screenWidth > 600
-                        ? AppFonts.w800s24.copyWith(
-                            color: AppColors.colorMain,
-                          )
-                        : AppFonts.w800s18,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.cancel,
-                    style: screenWidth > 600
-                        ? AppFonts.w800s24.copyWith(
-                            color: AppColors.colorMain,
-                          )
-                        : AppFonts.w800s18,
-                  ),
-                ),
+                SettingsForWidget(
+                    text: AppLocalizations.of(context)!.weight,
+                    controller: weightController),
+                const SizedBox(width: 10),
+                SettingsForWidget(
+                    text: AppLocalizations.of(context)!.height,
+                    controller: heightController),
               ],
             ),
           ],
-        );
-      },
+        ),
+        actions: [
+          OverflowBar(
+            alignment: MainAxisAlignment.spaceAround,
+            children: [
+              FButton(
+                onPress: () => Navigator.of(context).pop({
+                  'weight': weightController.text,
+                  'height': heightController.text,
+                }),
+                child: Text(AppLocalizations.of(context)!.save),
+              ),
+              FButton(
+                onPress: () => Navigator.of(context).pop(),
+                variant: FButtonVariant.ghost,
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -607,63 +487,39 @@ class DialogUtils {
     required BuildContext context,
     String? name,
   }) async {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
+    final nameController =
+        TextEditingController(text: name?.toString() ?? '');
 
-    final nameController = TextEditingController();
-
-    nameController.text = name?.toString() ?? '';
-
-    return await showDialog<Map<String, dynamic>>(
+    return showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (BuildContext context) {
-        final newMachineTitle = AppLocalizations.of(context)!.newMachine;
-        final editMachineTitle = AppLocalizations.of(context)!.editMachine;
+      builder: (context) {
+        final title = nameController.text.isEmpty
+            ? AppLocalizations.of(context)!.newMachine
+            : AppLocalizations.of(context)!.editMachine;
         return AlertDialog(
-          title: Text(
-            nameController.text.isEmpty ? newMachineTitle : editMachineTitle,
-            style: const TextStyle(color: Colors.black54),
-          ),
+          title: Text(title,
+              style: const TextStyle(color: Colors.black54)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
+            children: [
               SettingsForWidget(
-                text: AppLocalizations.of(context)!.machineName,
-                controller: nameController,
-              ),
+                  text: AppLocalizations.of(context)!.machineName,
+                  controller: nameController),
             ],
           ),
           actions: [
             OverflowBar(
               alignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop({
-                      'name': nameController.text,
-                    });
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.save,
-                    style: screenWidth > 600
-                        ? AppFonts.w800s24.copyWith(
-                            color: AppColors.colorMain,
-                          )
-                        : AppFonts.w800s18,
-                  ),
+                FButton(
+                  onPress: () =>
+                      Navigator.of(context).pop({'name': nameController.text}),
+                  child: Text(AppLocalizations.of(context)!.save),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.cancel,
-                    style: screenWidth > 600
-                        ? AppFonts.w800s24.copyWith(
-                            color: AppColors.colorMain,
-                          )
-                        : AppFonts.w800s18,
-                  ),
+                FButton(
+                  onPress: () => Navigator.of(context).pop(),
+                  variant: FButtonVariant.ghost,
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
               ],
             ),

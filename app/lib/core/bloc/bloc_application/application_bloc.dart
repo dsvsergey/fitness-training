@@ -18,59 +18,83 @@ part "application_state.dart";
 @singleton
 class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
   ApplicationBloc() : super(ApplicationInitial()) {
-    on<LoginEvent>(
-      (event, emit) async {
-        try {
-          emit(AuthLoading());
-          final user = await GetIt.I<AuthUsecase>()
-              .login(username: event.login, password: event.password);
-          final coaches = await GetIt.I<CoachUsecase>()
-              .getCoaches(authorization: user.authorization);
-          emit(AuthSucces(user: user, isAuth: true, coaches: coaches));
-        } catch (e) {
-          if (e is AuthException) {
-            emit(
-              ApplicationError(
-                state,
-                error: e.massage,
-              ),
-            );
-          } else if (e is ApplicationException) {
-            emit(
-              ApplicationError(
-                state,
-                error: e.massage,
-              ),
-            );
-          } else if (e is ConnectionException) {
-            emit(
-              ApplicationError(
-                state,
-                error: e.massage,
-              ),
-            );
-          } else {
-            emit(
-              ApplicationError(
-                state,
-                error: e.toString(),
-              ),
-            );
-          }
-        }
-      },
-    );
-
-    on<LogoutEvent>((event, emit) async {
-      emit(AuthLogout());
-    });
-
-    on<SelectTraineeEvent>((event, emit) => emit(SelectedCurrentTrainee(state,
+    on<LoginEvent>(_onLogin);
+    on<RegisterEvent>(_onRegister);
+    on<GoogleLoginEvent>(_onGoogleLogin);
+    on<LogoutEvent>((event, emit) => emit(AuthLogout()));
+    on<SelectTraineeEvent>(
+      (event, emit) => emit(SelectedCurrentTrainee(
+        state,
         currentTrainee: event.selectedTrainee,
-        currentAppointment: event.selectedAppointment)));
+        currentAppointment: event.selectedAppointment,
+      )),
+    );
+    on<UpdateCoachInfoEvent>(
+      (event, emit) => emit(UpdatedCoachInfo(
+        state,
+        user: state.user
+            ?.rebuild((p0) => p0..coach = event.coach.toBuilder()),
+      )),
+    );
+  }
 
-    on<UpdateCoachInfoEvent>((event, emit) => emit(UpdatedCoachInfo(state,
-        user:
-            state.user?.rebuild((p0) => p0..coach = event.coach.toBuilder()))));
+  Future<void> _onLogin(LoginEvent event, Emitter<ApplicationState> emit) async {
+    try {
+      emit(AuthLoading());
+      final user = await GetIt.I<AuthUsecase>()
+          .login(email: event.email, password: event.password);
+      final coaches = await _fetchCoaches(user.authorization);
+      emit(AuthSucces(user: user, isAuth: true, coaches: coaches));
+    } catch (e) {
+      emit(ApplicationError(state, error: _errorMessage(e)));
+    }
+  }
+
+  Future<void> _onRegister(
+    RegisterEvent event,
+    Emitter<ApplicationState> emit,
+  ) async {
+    try {
+      emit(AuthLoading());
+      await GetIt.I<AuthUsecase>().register(
+        email: event.email,
+        firstName: event.firstName,
+        lastName: event.lastName,
+        password: event.password,
+      );
+      emit(RegisterSuccess());
+    } catch (e) {
+      emit(ApplicationError(state, error: _errorMessage(e)));
+    }
+  }
+
+  Future<void> _onGoogleLogin(
+    GoogleLoginEvent event,
+    Emitter<ApplicationState> emit,
+  ) async {
+    try {
+      emit(AuthLoading());
+      final user = await GetIt.I<AuthUsecase>().loginWithToken(event.token);
+      final coaches = await _fetchCoaches(user.authorization);
+      emit(AuthSucces(user: user, isAuth: true, coaches: coaches));
+    } catch (e) {
+      emit(ApplicationError(state, error: _errorMessage(e)));
+    }
+  }
+
+  Future<List<CoachEntity>> _fetchCoaches(String? authorization) async {
+    try {
+      return await GetIt.I<CoachUsecase>()
+          .getCoaches(authorization: authorization);
+    } catch (_) {
+      return [];
+    }
+  }
+
+  String _errorMessage(dynamic e) {
+    if (e is AuthException) return e.massage;
+    if (e is ApplicationException) return e.massage;
+    if (e is ConnectionException) return e.massage;
+    return e.toString();
   }
 }

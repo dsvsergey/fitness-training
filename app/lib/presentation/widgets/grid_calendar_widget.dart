@@ -1,12 +1,7 @@
-import 'dart:core';
-
-import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:forui/forui.dart';
 import 'package:intl/intl.dart';
 
-import '../../core/resources/themes/app_colors.dart';
-import '../../core/resources/themes/app_fonts.dart';
 import '../../domain/entities/fitness/fitness.dart';
 
 class GridCalendarWidget extends StatelessWidget {
@@ -16,79 +11,90 @@ class GridCalendarWidget extends StatelessWidget {
     super.key,
   });
   final WorkoutAppointmentEntity appointment;
-  final Function() onTap;
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
-    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    var avatarSize = isPortrait ? 80.r : 120.r;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final avatarSize = isPortrait ? 80.0 : 120.0;
+    final isCompleted =
+        appointment.status == AppointmentStatusEnumEntity.completed;
+
+    final initials = appointment.trainee.fullName
+        .split(' ')
+        .map((w) => w.isNotEmpty ? w[0] : '')
+        .take(2)
+        .join();
+
+    final avatar = appointment.trainee.photoUrl != null
+        ? FAvatar(
+            image: NetworkImage(appointment.trainee.photoUrl!),
+            fallback: Text(initials),
+            size: avatarSize,
+          )
+        : FAvatar.raw(
+            size: avatarSize,
+            child: Text(
+              initials,
+              style: context.theme.typography.xl2
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+          );
+
+    final nameColor =
+        isCompleted ? context.theme.colors.mutedForeground : null;
+    final timeColor =
+        isCompleted ? context.theme.colors.mutedForeground : null;
+
+    final timeStr =
+        '${appointment.startAt.hour.toString().padLeft(2, '0')}:${appointment.startAt.minute.toString().padLeft(2, '0')}'
+        ' - '
+        '${appointment.endAt.hour.toString().padLeft(2, '0')}:${appointment.endAt.minute.toString().padLeft(2, '0')}';
 
     return Expanded(
-      child: Center(
-        child: InkWell(
-          onTap: onTap,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              appointment.trainee.photoUrl == null
-                  ? TextAvatar(
-                      size: avatarSize,
-                      shape: Shape.Circular,
-                      numberLetters: 2,
-                      fontSize: 40,
-                      text: appointment.trainee.fullName,
-                    )
-                  : ClipOval(
-                      child: Image.network(
-                        appointment.trainee.photoUrl!,
-                        width: avatarSize,
-                        height: avatarSize,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-              SizedBox(height: 5.h),
-              Text(
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                appointment.trainee.fullName,
-                style:
-                    appointment.status != AppointmentStatusEnumEntity.completed
-                        ? AppFonts.w500s24
-                        : AppFonts.w500s24.copyWith(
-                            color: AppColors.grey,
-                          ),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            avatar,
+            const SizedBox(height: 5),
+            Text(
+              appointment.trainee.fullName,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: context.theme.typography.xl2.copyWith(
+                fontWeight: FontWeight.w500,
+                color: nameColor,
               ),
-              SizedBox(width: 5.h),
-              Text(
-                  appointment.coach.lastName!
-                      .trimLeft()
-                      .replaceAll('@', '')
-                      .trim(),
-                  style: const TextStyle(
-                    color: Color(0xFFA3A3A3),
-                    fontSize: 16,
-                    fontFamily: "Inter",
-                    fontWeight: FontWeight.w300,
-                    height: 0,
-                  )),
-              Text(
-                  DateFormat.yMd().format(appointment
-                      .startAt), // Use DateFormat for short date format
-                  style: appointment.status !=
-                          AppointmentStatusEnumEntity.completed
-                      ? AppFonts.w700s19
-                      : AppFonts.w700s19.copyWith(
-                          color: AppColors.grey,
-                        )),
-              // SizedBox(width: 5.h),
-              Text(
-                '${appointment.startAt.hour.toString().padLeft(2, '0')}:${appointment.startAt.minute.toString().padLeft(2, '0')} - ${appointment.endAt.hour.toString().padLeft(2, '0')}:${appointment.endAt.minute.toString().padLeft(2, '0')}',
-                style:
-                    appointment.status != AppointmentStatusEnumEntity.completed
-                        ? AppFonts.w700s19
-                        : AppFonts.w700s19.copyWith(color: AppColors.grey),
+            ),
+            Text(
+              appointment.coach.lastName!
+                  .trimLeft()
+                  .replaceAll('@', '')
+                  .trim(),
+              style: context.theme.typography.md.copyWith(
+                color: context.theme.colors.mutedForeground,
+                fontWeight: FontWeight.w300,
               ),
-            ],
-          ),
+            ),
+            Text(
+              DateFormat.yMd().format(appointment.startAt),
+              style: context.theme.typography.lg.copyWith(
+                fontWeight: FontWeight.w700,
+                color: timeColor,
+              ),
+            ),
+            Text(
+              timeStr,
+              style: context.theme.typography.lg.copyWith(
+                fontWeight: FontWeight.w700,
+                color: timeColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

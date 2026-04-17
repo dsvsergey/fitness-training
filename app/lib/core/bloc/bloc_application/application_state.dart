@@ -20,16 +20,12 @@ abstract base class ApplicationState extends Equatable {
 final class ApplicationInitial extends ApplicationState {
   @override
   UserFitnessEntity? get user => null;
-
   @override
   bool get isAuth => false;
-
   @override
   TraineeEntity? get currentTrainee => null;
-
   @override
   List<CoachEntity>? get coaches => null;
-
   @override
   WorkoutAppointmentEntity? get currentAppointment => null;
 }
@@ -37,16 +33,25 @@ final class ApplicationInitial extends ApplicationState {
 final class AuthLoading extends ApplicationState {
   @override
   UserFitnessEntity? get user => null;
-
   @override
   bool get isAuth => false;
-
   @override
   TraineeEntity? get currentTrainee => null;
-
   @override
   List<CoachEntity>? get coaches => null;
+  @override
+  WorkoutAppointmentEntity? get currentAppointment => null;
+}
 
+final class RegisterSuccess extends ApplicationState {
+  @override
+  UserFitnessEntity? get user => null;
+  @override
+  bool get isAuth => false;
+  @override
+  TraineeEntity? get currentTrainee => null;
+  @override
+  List<CoachEntity>? get coaches => null;
   @override
   WorkoutAppointmentEntity? get currentAppointment => null;
 }
@@ -58,20 +63,17 @@ final class ApplicationError extends ApplicationState {
         currentTrainee = state.currentTrainee,
         coaches = state.coaches,
         currentAppointment = state.currentAppointment;
+
   final String error;
 
   @override
   final UserFitnessEntity? user;
-
   @override
   final bool isAuth;
-
   @override
   final TraineeEntity? currentTrainee;
-
   @override
   final List<CoachEntity>? coaches;
-
   @override
   final WorkoutAppointmentEntity? currentAppointment;
 }
@@ -81,16 +83,12 @@ final class AuthSucces extends ApplicationState {
 
   @override
   final UserFitnessEntity user;
-
   @override
   final bool isAuth;
-
   @override
   TraineeEntity? get currentTrainee => null;
-
   @override
   final List<CoachEntity> coaches;
-
   @override
   WorkoutAppointmentEntity? get currentAppointment => null;
 }
@@ -98,16 +96,12 @@ final class AuthSucces extends ApplicationState {
 final class AuthLogout extends ApplicationState {
   @override
   bool get isAuth => false;
-
   @override
   UserFitnessEntity? get user => null;
-
   @override
   TraineeEntity? get currentTrainee => null;
-
   @override
   List<CoachEntity>? get coaches => null;
-
   @override
   WorkoutAppointmentEntity? get currentAppointment => null;
 }
@@ -115,22 +109,20 @@ final class AuthLogout extends ApplicationState {
 final class SelectedCurrentTrainee extends ApplicationState {
   @override
   final TraineeEntity? currentTrainee;
-
   @override
   final bool isAuth;
-
   @override
   final UserFitnessEntity? user;
-
   @override
   final List<CoachEntity>? coaches;
-
   @override
   final WorkoutAppointmentEntity? currentAppointment;
 
-  SelectedCurrentTrainee(ApplicationState state,
-      {required this.currentTrainee, this.currentAppointment})
-      : isAuth = state.isAuth,
+  SelectedCurrentTrainee(
+    ApplicationState state, {
+    required this.currentTrainee,
+    this.currentAppointment,
+  })  : isAuth = state.isAuth,
         user = state.user,
         coaches = state.coaches;
 }
@@ -138,16 +130,12 @@ final class SelectedCurrentTrainee extends ApplicationState {
 final class UpdatedCoachInfo extends ApplicationState {
   @override
   final UserFitnessEntity? user;
-
   @override
   final bool isAuth;
-
   @override
   final TraineeEntity? currentTrainee;
-
   @override
   final List<CoachEntity>? coaches;
-
   @override
   final WorkoutAppointmentEntity? currentAppointment;
 
