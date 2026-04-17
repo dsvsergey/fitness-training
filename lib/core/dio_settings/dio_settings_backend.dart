@@ -12,8 +12,7 @@ class DioSettingsBackend {
 
   Dio dio = Dio(
     BaseOptions(
-      baseUrl: 'http://78.138.17.28/api/v1/',
-      // baseUrl: 'http://localhost:8000/api/v1/',
+      baseUrl: 'http://207.126.161.154:8000/api/v1/',
       contentType: 'application/json',
       headers: {'Content-Type': 'application/json'},
       connectTimeout: const Duration(seconds: 40),

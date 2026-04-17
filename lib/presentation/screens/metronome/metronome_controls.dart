@@ -159,14 +159,15 @@ class MetronomeControlState extends State<MetronomeControl> {
     return Scaffold(
       backgroundColor: context.theme.colors.primary,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction.back(
-              onPress: () => AutoRouter.of(context).pop(),
-            ),
-          ],
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.primary,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.primaryForeground),
+            onPressed: () => AutoRouter.of(context).pop(),
+          ),
         ),
       ),
       body: Column(

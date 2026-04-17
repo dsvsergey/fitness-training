@@ -100,7 +100,31 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
                   if (state is CalendarEmptySuccess) {
                     return Center(
-                      child: Image.asset(AppPngs.nothing),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 64,
+                            color: Color(0xFFBDBDBD),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No appointments yet',
+                            style: context.theme.typography.lg.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF1E1E1E),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Your schedule will appear here',
+                            style: context.theme.typography.sm.copyWith(
+                              color: const Color(0xFF9E9E9E),
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   }
 
@@ -145,20 +169,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       .coach
                       ?.firstName;
 
-                  final filterHint = state.selectedDay == null
-                      ? coachName
-                      : '$coachName - '
-                            '${state.selectedDay?.month}/'
-                            '${state.selectedDay?.day}/'
-                            '${state.selectedDay?.year}';
+                  final dateStr = state.selectedDay != null
+                      ? '${state.selectedDay!.day}/${state.selectedDay!.month}/${state.selectedDay!.year}'
+                      : null;
+                  final filterHint = [
+                    if (coachName != null) coachName,
+                    if (dateStr != null) dateStr,
+                  ].join(' - ');
 
                   return FTextField(
                     hint: filterHint,
                     suffixBuilder: (context, style, variants) => IconButton(
-                      icon: Image.asset(
-                        AppPngs.calendar,
-                        height: isTablet ? 50 : 34,
-                        width: isTablet ? 50 : 34,
+                      icon: Icon(
+                        FIcons.calendar,
+                        size: isTablet ? 28 : 22,
+                        color: const Color(0xFF1E1E1E),
                       ),
                       onPressed: () {
                         if (state is CalendarFilteredSuccess ||

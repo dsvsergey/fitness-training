@@ -81,59 +81,59 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
             programFitness: widget.program, machine: widget.machine)),
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: FHeader.nested(
-            title: const SizedBox.shrink(),
-            prefixes: [
-              FHeaderAction.back(
-                onPress: () => AutoRouter.of(context).pop(),
-              ),
-            ],
-            suffixes: [
-              BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
-                buildWhen: (_, current) => current is LoadedMachineSetting,
-                builder: (context, state) {
-                  final isEditAvailable = state.programMachine != null &&
-                      (state.programMachine?.angal != null ||
-                          state.programMachine?.back != null ||
-                          state.programMachine?.chest != null ||
-                          state.programMachine?.handle != null ||
-                          state.programMachine?.knees != null ||
-                          state.programMachine?.legs != null ||
-                          state.programMachine?.pin != null ||
-                          (state.programMachine?.seats != null &&
-                              state.programMachine!.workouts.isNotEmpty));
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
+            buildWhen: (_, current) => current is LoadedMachineSetting,
+            builder: (context, state) {
+              final isEditAvailable = state.programMachine != null &&
+                  (state.programMachine?.angal != null ||
+                      state.programMachine?.back != null ||
+                      state.programMachine?.chest != null ||
+                      state.programMachine?.handle != null ||
+                      state.programMachine?.knees != null ||
+                      state.programMachine?.legs != null ||
+                      state.programMachine?.pin != null ||
+                      (state.programMachine?.seats != null &&
+                          state.programMachine!.workouts.isNotEmpty));
 
-                  if (!isEditAvailable) return const SizedBox.shrink();
-
-                  return FHeaderAction(
-                    icon: Text(
-                      AppLocalizations.of(context)!.edit,
-                      style: context.theme.typography.lg.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: context.theme.colors.primary,
+              return AppBar(
+                backgroundColor: context.theme.colors.background,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                leading: IconButton(
+                  icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+                  onPressed: () => AutoRouter.of(context).pop(),
+                ),
+                actions: [
+                  if (isEditAvailable)
+                    TextButton(
+                      onPressed: () => DialogUtils.showSettingsDialog(
+                        context: context,
+                        machine: widget.machine,
+                        programMachine: state.programMachine,
+                      ).then((value) {
+                        if (value != null) {
+                          GetIt.I<ProgramMachineUsecase>()
+                              .updateProgramMachine(
+                                  state.programMachine!.id!, value)
+                              .whenComplete(() =>
+                                  BlocProvider.of<SettingsProgramBloc>(context)
+                                      .add(GetMachineSettingEvent(
+                                          machine: widget.machine,
+                                          programFitness: widget.program)));
+                        }
+                      }),
+                      child: Text(
+                        AppLocalizations.of(context)!.edit,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: context.theme.colors.primary,
+                        ),
                       ),
                     ),
-                    onPress: () => DialogUtils.showSettingsDialog(
-                      context: context,
-                      machine: widget.machine,
-                      programMachine: state.programMachine,
-                    ).then((value) {
-                      if (value != null) {
-                        GetIt.I<ProgramMachineUsecase>()
-                            .updateProgramMachine(
-                                state.programMachine!.id!, value)
-                            .whenComplete(() =>
-                                BlocProvider.of<SettingsProgramBloc>(context)
-                                    .add(GetMachineSettingEvent(
-                                        machine: widget.machine,
-                                        programFitness: widget.program)));
-                      }
-                    }),
-                  );
-                },
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ),
         body: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(

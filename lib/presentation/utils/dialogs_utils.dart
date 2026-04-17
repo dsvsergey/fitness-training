@@ -10,6 +10,65 @@ import '../widgets/settings_for_widget.dart';
 import '../widgets/settings_for_widget_slider.dart';
 import 'sizedbox_utils.dart';
 
+class _LabeledField extends StatelessWidget {
+  const _LabeledField({
+    required this.label,
+    required this.controller,
+    this.hint = '',
+    this.keyboardType,
+  });
+
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final TextInputType? keyboardType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF9E9E9E),
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          style: const TextStyle(fontSize: 15, color: Color(0xFF1E1E1E)),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide:
+                  const BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+            ),
+            filled: true,
+            fillColor: const Color(0xFFFAFAFA),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class DialogUtils {
   static const double contentPaddingHorizontal = 20.0;
   static const double contentPaddingVertical = 10.0;
@@ -442,41 +501,79 @@ class DialogUtils {
     return showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title,
-            style: const TextStyle(color: Colors.black54)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1E1E1E),
+          ),
+        ),
+        content: Row(
           children: [
-            Row(
-              children: [
-                SettingsForWidget(
-                    text: AppLocalizations.of(context)!.weight,
-                    controller: weightController),
-                const SizedBox(width: 10),
-                SettingsForWidget(
-                    text: AppLocalizations.of(context)!.height,
-                    controller: heightController),
-              ],
+            Expanded(
+              child: _LabeledField(
+                label: AppLocalizations.of(context)!.weight,
+                hint: '70',
+                controller: weightController,
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _LabeledField(
+                label: AppLocalizations.of(context)!.height,
+                hint: '175',
+                controller: heightController,
+                keyboardType: TextInputType.number,
+              ),
             ),
           ],
         ),
         actions: [
-          OverflowBar(
-            alignment: MainAxisAlignment.spaceAround,
-            children: [
-              FButton(
-                onPress: () => Navigator.of(context).pop({
-                  'weight': weightController.text,
-                  'height': heightController.text,
-                }),
-                child: Text(AppLocalizations.of(context)!.save),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.of(context).pop({
+                'weight': weightController.text,
+                'height': heightController.text,
+              }),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1E1E1E),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                elevation: 0,
               ),
-              FButton(
-                onPress: () => Navigator.of(context).pop(),
-                variant: FButtonVariant.ghost,
-                child: Text(AppLocalizations.of(context)!.cancel),
+              child: Text(
+                AppLocalizations.of(context)!.save,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600, fontSize: 15),
               ),
-            ],
+            ),
+          ),
+          const SizedBox(height: 2),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10)),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(
+                  color: Color(0xFF9E9E9E),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -487,41 +584,74 @@ class DialogUtils {
     required BuildContext context,
     String? name,
   }) async {
-    final nameController =
-        TextEditingController(text: name?.toString() ?? '');
+    final nameController = TextEditingController(text: name ?? '');
 
     return showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) {
-        final title = nameController.text.isEmpty
-            ? AppLocalizations.of(context)!.newMachine
-            : AppLocalizations.of(context)!.editMachine;
+        final isEdit = name != null && name.isNotEmpty;
+        final title = isEdit
+            ? AppLocalizations.of(context)!.editMachine
+            : AppLocalizations.of(context)!.newMachine;
+
         return AlertDialog(
-          title: Text(title,
-              style: const TextStyle(color: Colors.black54)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SettingsForWidget(
-                  text: AppLocalizations.of(context)!.machineName,
-                  controller: nameController),
-            ],
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)),
+          titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          contentPadding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1E1E1E),
+            ),
+          ),
+          content: _LabeledField(
+            label: AppLocalizations.of(context)!.machineName,
+            hint: 'e.g. Chest Press',
+            controller: nameController,
           ),
           actions: [
-            OverflowBar(
-              alignment: MainAxisAlignment.spaceAround,
-              children: [
-                FButton(
-                  onPress: () =>
-                      Navigator.of(context).pop({'name': nameController.text}),
-                  child: Text(AppLocalizations.of(context)!.save),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context)
+                    .pop({'name': nameController.text}),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E1E1E),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
                 ),
-                FButton(
-                  onPress: () => Navigator.of(context).pop(),
-                  variant: FButtonVariant.ghost,
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                child: Text(
+                  AppLocalizations.of(context)!.save,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 15),
                 ),
-              ],
+              ),
+            ),
+            const SizedBox(height: 2),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(
+                    color: Color(0xFF9E9E9E),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
             ),
           ],
         );

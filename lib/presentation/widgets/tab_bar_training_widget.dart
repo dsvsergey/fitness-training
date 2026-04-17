@@ -36,20 +36,21 @@ class _TabBarTrainingWidgetState extends State<TabBarTrainingWidget> {
         children: [
           TabBar(
             onTap: (value) => setState(() => currentTabIndex = value),
-            tabAlignment: TabAlignment.center,
+            tabAlignment: TabAlignment.fill,
             labelColor: context.theme.colors.foreground,
             unselectedLabelColor: context.theme.colors.mutedForeground,
-            indicatorColor: Colors.transparent,
+            indicatorColor: const Color(0xFF1E1E1E),
+            indicatorWeight: 3,
             indicatorSize: TabBarIndicatorSize.tab,
-            labelPadding: const EdgeInsets.all(10),
-            dividerColor: Colors.transparent,
+            labelPadding: const EdgeInsets.symmetric(vertical: 10),
+            dividerColor: context.theme.colors.border,
             tabs: [
               Tab(
-                height: 50,
+                height: 44,
                 child: Text(
                   AppLocalizations.of(context)!.currentProgram,
-                  style: context.theme.typography.xl2.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: context.theme.typography.sm.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: currentTabIndex == 0
                         ? context.theme.colors.foreground
                         : context.theme.colors.mutedForeground,
@@ -57,11 +58,11 @@ class _TabBarTrainingWidgetState extends State<TabBarTrainingWidget> {
                 ),
               ),
               Tab(
-                height: 50,
+                height: 44,
                 child: Text(
                   AppLocalizations.of(context)!.archive,
-                  style: context.theme.typography.xl2.copyWith(
-                    fontWeight: FontWeight.w700,
+                  style: context.theme.typography.sm.copyWith(
+                    fontWeight: FontWeight.w600,
                     color: currentTabIndex == 1
                         ? context.theme.colors.foreground
                         : context.theme.colors.mutedForeground,
@@ -69,7 +70,7 @@ class _TabBarTrainingWidgetState extends State<TabBarTrainingWidget> {
                 ),
               ),
             ],
-            isScrollable: true,
+            isScrollable: false,
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height,

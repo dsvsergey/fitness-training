@@ -31,25 +31,26 @@ class SelectTrainingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction.back(
-              onPress: () => AutoRouter.of(context).pop(),
-            ),
-          ],
-          suffixes: [
-            FHeaderAction(
-              icon: Text(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => AutoRouter.of(context).pop(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => AutoRouter.of(context).push(
+                ArchieveProgramRoute(machines: selectedMachines),
+              ),
+              child: Text(
                 AppLocalizations.of(context)!.archive,
-                style: context.theme.typography.lg.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: context.theme.colors.destructive,
                 ),
-              ),
-              onPress: () => AutoRouter.of(context).push(
-                ArchieveProgramRoute(machines: selectedMachines),
               ),
             ),
           ],

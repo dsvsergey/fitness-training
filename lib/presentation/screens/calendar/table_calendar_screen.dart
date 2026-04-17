@@ -54,15 +54,15 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: FHeader.nested(
-          title: const SizedBox.shrink(),
-          prefixes: [
-            FHeaderAction(
-              icon: const Icon(FIcons.arrowLeft),
-              onPress: () => context.router.pop<DateTime?>(_selectedDay),
-            ),
-          ],
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => context.router.pop<DateTime?>(_selectedDay),
+          ),
         ),
       ),
       body: Padding(
