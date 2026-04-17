@@ -3,7 +3,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart' as rive;
-import '../../core/resources/themes/app_colors.dart';
 import '../../core/router/router.dart';
 import '../../data/repositories/preferences_repository.dart';
 
@@ -44,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: AppColors.gradientBGColor,
+            colors: [Color(0xFFECF25F), Color(0xFFC8CE37)],
           ),
         ),
         child: Center(

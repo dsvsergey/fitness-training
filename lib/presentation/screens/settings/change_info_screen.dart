@@ -1,12 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
-import '../../../core/resources/resources.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/coach_entity.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
@@ -27,78 +25,84 @@ class ChangeInfoScreen extends StatefulWidget {
 class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
   CoachEntity? _coach;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _coach = widget.coach;
-  // }
-
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenHeight = mediaQuery.size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final initials = widget.coach.fullName
+        .split(' ')
+        .take(2)
+        .map((w) => w.isNotEmpty ? w[0] : '')
+        .join();
+
+    final avatar = widget.coach.imageUrl != null
+        ? FAvatar(
+            image: NetworkImage(widget.coach.imageUrl!),
+            fallback: Text(initials),
+            size: 180,
+          )
+        : FAvatar.raw(
+            size: 180,
+            child: Text(
+              initials,
+              style: context.theme.typography.xl3
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+          );
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leadingWidth: 70,
-        leading: IconButton(
-          icon: Image.asset(
-            AppPngs.back,
-          ),
-          onPressed: () {
-            AutoRouter.of(context).pop(const ContactsRoute());
-          },
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: FHeader.nested(
+          title: const SizedBox.shrink(),
+          prefixes: [
+            FHeaderAction.back(
+              onPress: () =>
+                  AutoRouter.of(context).pop(const ContactsRoute()),
+            ),
+          ],
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              children: [
-                widget.coach.imageUrl == null
-                    ? TextAvatar(
-                        fontSize: 80,
-                        numberLetters: 2,
-                        size: 180.r,
-                        shape: Shape.Circular,
-                        text:
-                            widget.coach.fullName.split(' ').take(2).join(' '),
-                      )
-                    : ClipOval(
-                        child: Image.network(
-                          widget.coach.imageUrl!,
-                          width: 180.r,
-                          height: 180.r,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                const Positioned(
-                  right: 10,
-                  bottom: 0,
-                  child: ImageUserWidget(),
-                ),
-              ],
+            Center(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  avatar,
+                  const Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: ImageUserWidget(),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 15),
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: screenHeight > 750 ? 80.h : 0.h),
+                horizontal: screenWidth > 750 ? 80 : 0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   UserInfoTextFieldWidget(
-                      text: 'Your Name',
-                      initialValue: widget.coach.firstName,
-                      hintText: '',
-                      onChanged: (value) => setState(() => _coach =
-                          widget.coach.rebuild((p0) => p0..firstName = value))),
+                    text: 'Your Name',
+                    initialValue: widget.coach.firstName,
+                    hintText: '',
+                    onChanged: (value) => setState(() => _coach =
+                        widget.coach
+                            .rebuild((p0) => p0..firstName = value)),
+                  ),
                   const SizedBox(height: 10),
                   UserInfoTextFieldWidget(
                     text: 'Your Surname',
                     initialValue: widget.coach.lastName ?? '',
                     hintText: 'Your Surname',
                     onChanged: (value) => setState(() => _coach =
-                        widget.coach.rebuild((p0) => p0..lastName = value)),
+                        widget.coach
+                            .rebuild((p0) => p0..lastName = value)),
                   ),
                   const SizedBox(height: 10),
                   UserInfoTextFieldWidget(
@@ -106,7 +110,8 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
                     initialValue: widget.coach.mobilePhone ?? '',
                     hintText: 'Phone number',
                     onChanged: (value) => setState(() => _coach =
-                        widget.coach.rebuild((p0) => p0..mobilePhone = value)),
+                        widget.coach
+                            .rebuild((p0) => p0..mobilePhone = value)),
                   ),
                   const SizedBox(height: 10),
                   UserInfoTextFieldWidget(
@@ -114,7 +119,8 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
                     initialValue: widget.coach.email ?? '',
                     hintText: 'Email',
                     onChanged: (value) => setState(() => _coach =
-                        widget.coach.rebuild((p0) => p0..email = value)),
+                        widget.coach
+                            .rebuild((p0) => p0..email = value)),
                   ),
                   const SizedBox(height: 10),
                   UserInfoTextFieldWidget(
@@ -135,13 +141,11 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
                     ? () {
                         GetIt.I<CoachUsecase>()
                             .updateCoach(_coach!.id!, _coach!)
-                            .then((value) {
-                          context
-                              .read<ApplicationBloc>()
-                              .add(UpdateCoachInfoEvent(coach: _coach!));
+                            .then((_) {
+                          context.read<ApplicationBloc>().add(
+                              UpdateCoachInfoEvent(coach: _coach!));
                           AutoRouter.of(context).pop();
                         });
-                        AutoRouter.of(context).pop();
                       }
                     : null,
                 title: 'Change Info',

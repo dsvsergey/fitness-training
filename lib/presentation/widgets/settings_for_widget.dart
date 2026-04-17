@@ -1,7 +1,5 @@
-import "package:flutter/material.dart";
-
-import '../../core/resources/themes/app_colors.dart';
-import '../../core/resources/themes/app_fonts.dart';
+import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 class SettingsForWidget extends StatelessWidget {
   const SettingsForWidget({
@@ -16,17 +14,13 @@ class SettingsForWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-    double containerWidth = screenWidth > 600 ? 146 : 140;
-    double containerHeight = 62;
-    if (screenWidth <= 1334) {
-      containerWidth = screenWidth > 600 ? 140 : 100;
-      containerHeight = 48;
-    } else if (screenWidth > 2732 && mediaQuery.size.height > 2048) {
+    double containerWidth;
+    if (screenWidth > 2732) {
       containerWidth = screenWidth > 600 ? 300 : 180;
-      containerHeight = 80;
+    } else {
+      containerWidth = screenWidth > 600 ? 140 : 100;
     }
 
     return Column(
@@ -34,32 +28,16 @@ class SettingsForWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          textAlign: TextAlign.left,
           text,
-          style: AppFonts.w700s18.copyWith(
-            color: AppColors.black,
-          ),
+          style: context.theme.typography.lg
+              .copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 5),
-        Container(
-          height: containerHeight,
+        SizedBox(
           width: containerWidth,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: AppColors.white,
-            border: Border.all(
-              color: AppColors.grey,
-            ),
-          ),
-          child: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 10,
-              ),
-              hintText: hintText ?? "_",
-            ),
+          child: FTextField(
+            control: FTextFieldControl.managed(controller: controller),
+            hint: hintText ?? '_',
           ),
         ),
       ],
