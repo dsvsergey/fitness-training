@@ -12,7 +12,7 @@ class ImageUserWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       //radius: 19.r,
-      backgroundColor: const Color(0xFFC8CE37),
+      backgroundColor: const Color(0xFF1E1E1E),
       child: Center(
         child: IconButton(
           onPressed: () {

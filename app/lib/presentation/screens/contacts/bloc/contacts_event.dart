@@ -15,3 +15,35 @@ final class FindByNameContactsList extends ContactsEvent {
   @override
   List<Object?> get props => [if (searchQuery != null) searchQuery!];
 }
+
+final class CreateTraineeEvent extends ContactsEvent {
+  final TraineeEntity trainee;
+  final String password;
+
+  CreateTraineeEvent({required this.trainee, required this.password});
+
+  @override
+  List<Object?> get props => [trainee, password];
+}
+
+final class UpdateTraineeContactEvent extends ContactsEvent {
+  final int traineeId;
+  final TraineeEntity trainee;
+
+  UpdateTraineeContactEvent({
+    required this.traineeId,
+    required this.trainee,
+  });
+
+  @override
+  List<Object?> get props => [traineeId, trainee];
+}
+
+final class DeleteTraineeEvent extends ContactsEvent {
+  final int traineeId;
+
+  DeleteTraineeEvent({required this.traineeId});
+
+  @override
+  List<Object?> get props => [traineeId];
+}

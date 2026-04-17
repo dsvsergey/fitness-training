@@ -12,14 +12,14 @@ abstract class AuthUsecase {
     required String password,
   });
 
-  Future<TraineeEntity> register({
+  Future<CoachEntity> register({
     required String email,
     required String firstName,
     required String lastName,
     required String password,
   });
 
-  Future<String> getGoogleAuthUrl({String role = 'trainee'});
+  Future<String> getGoogleAuthUrl();
 
   Future<UserFitnessEntity> loginWithToken(String token);
 }
@@ -38,7 +38,7 @@ class AuthUsecaseImpl implements AuthUsecase {
       _api.login(email: email, password: password).then((v) => v.entity);
 
   @override
-  Future<TraineeEntity> register({
+  Future<CoachEntity> register({
     required String email,
     required String firstName,
     required String lastName,
@@ -54,8 +54,7 @@ class AuthUsecaseImpl implements AuthUsecase {
           .then((v) => v.entity);
 
   @override
-  Future<String> getGoogleAuthUrl({String role = 'trainee'}) =>
-      _api.getGoogleAuthUrl(role: role);
+  Future<String> getGoogleAuthUrl() => _api.getGoogleAuthUrl();
 
   @override
   Future<UserFitnessEntity> loginWithToken(String token) async {
@@ -66,10 +65,9 @@ class AuthUsecaseImpl implements AuthUsecase {
     );
     final sub =
         (jsonDecode(payload) as Map<String, dynamic>)['sub'] as String? ?? '';
+    // App is coach-only; trainee tokens are not expected but handled gracefully
     final role = sub.split(':').first;
-    final model = role == 'coach'
-        ? await _api.getCoachMe(token)
-        : await _api.getTraineeMe(token);
-    return model.entity;
+    if (role != 'coach') throw ArgumentError('Only coach accounts are supported');
+    return (await _api.getCoachMe(token)).entity;
   }
 }

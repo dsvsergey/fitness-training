@@ -1,5 +1,5 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
@@ -15,7 +15,7 @@ abstract class TraineeRepository {
     String? q,
   });
   Future<TraineeModel> getTrainee(int traineeId);
-  Future<TraineeModel> createTrainee(TraineeModel trainee);
+  Future<TraineeModel> createTrainee(TraineeModel trainee, {String? password});
   Future<TraineeModel> updateTrainee(int traineeId, TraineeModel trainee);
   Future<void> deleteTrainee(int traineeId);
 }
@@ -32,26 +32,30 @@ class TraineeRepositoryImpl
     int skip = 0,
     int limit = 100,
     String? q,
-  }) {
-    return fitness.dio
-        .get(
-          "/trainees/",
-          queryParameters: {"skip": skip, "limit": limit, 'q': q},
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization':
-                  GetIt.I<ApplicationBloc>().state.user?.authorization,
-            },
-          ),
-        )
-        .then((value) {
-          debugPrint("TraineeRepository response: ${value.data}");
-          final model = TraineeOutModel.fromJson(value.data);
-          debugPrint("TraineeOutModel after conversion: $model");
-          return model;
-        })
-        .catchError(onException);
+  }) async {
+    try {
+      final params = <String, dynamic>{'skip': skip, 'limit': limit};
+      if (q != null && q.isNotEmpty) params['q'] = q;
+      final value = await fitness.dio.get(
+        "/trainees/",
+        queryParameters: params,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                GetIt.I<ApplicationBloc>().state.user?.authorization,
+          },
+        ),
+      );
+      return TraineeOutModel.fromJson(value.data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return TraineeOutModel((b) => b
+          ..totalCount = 0
+          ..trainees = ListBuilder());
+      }
+      return onException(e);
+    }
   }
 
   @override
@@ -72,10 +76,17 @@ class TraineeRepositoryImpl
       .catchError(onException);
 
   @override
-  Future<TraineeModel> createTrainee(TraineeModel trainee) => fitness.dio
-      .post(
+  Future<TraineeModel> createTrainee(
+    TraineeModel trainee, {
+    String? password,
+  }) async {
+    try {
+      final body = Map<String, dynamic>.from(trainee.toJson())
+        ..removeWhere((_, v) => v == null);
+      if (password != null) body['password'] = password;
+      final value = await fitness.dio.post(
         "/trainees/",
-        data: trainee.toJson(),
+        data: body,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -83,30 +94,37 @@ class TraineeRepositoryImpl
                 GetIt.I<ApplicationBloc>().state.user?.authorization,
           },
         ),
-      )
-      .then((value) {
-        return TraineeModel.fromJson(value.data);
-      })
-      .catchError(onException);
+      );
+      return TraineeModel.fromJson(value.data);
+    } on DioException catch (e) {
+      return onException(e);
+    }
+  }
 
   @override
-  Future<TraineeModel> updateTrainee(int traineeId, TraineeModel trainee) =>
-      fitness.dio
-          .put(
-            "/trainees/$traineeId",
-            data: trainee.toJson(),
-            options: Options(
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization':
-                    GetIt.I<ApplicationBloc>().state.user?.authorization,
-              },
-            ),
-          )
-          .then((value) {
-            return TraineeModel.fromJson(value.data);
-          })
-          .catchError(onException);
+  Future<TraineeModel> updateTrainee(
+    int traineeId,
+    TraineeModel trainee,
+  ) async {
+    try {
+      final body = Map<String, dynamic>.from(trainee.toJson())
+        ..removeWhere((_, v) => v == null);
+      final value = await fitness.dio.put(
+        "/trainees/$traineeId",
+        data: body,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                GetIt.I<ApplicationBloc>().state.user?.authorization,
+          },
+        ),
+      );
+      return TraineeModel.fromJson(value.data);
+    } on DioException catch (e) {
+      return onException(e);
+    }
+  }
 
   @override
   Future<void> deleteTrainee(int traineeId) => fitness.dio
