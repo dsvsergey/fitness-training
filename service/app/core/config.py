@@ -64,8 +64,11 @@ class Settings:
             "http://localhost:8000/api/v1/auth/google/callback",
         )
 
-        # Frontend URL (used in verification/reset email links)
+        # Frontend URL (used in Google OAuth redirect and password reset links)
         self.FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
+        # API base URL (used in email verification links — points directly to the API)
+        self.API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
         self.ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 

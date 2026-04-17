@@ -9,12 +9,20 @@ class DatabaseLogHandler(logging.Handler):
         logging.Handler.__init__(self)
 
     def emit(self, record):
-        log_entry = self.format(record)
-        self.save_log_to_db(record.levelname, log_entry, record.name)
+        # Never let logging errors propagate into request handlers
+        try:
+            log_entry = self.format(record)
+            self._save(record.levelname, log_entry, record.name)
+        except Exception:
+            pass  # silently drop — DB may be unavailable
 
-    def save_log_to_db(self, level, message, logger_name):
+    def _save(self, level: str, message: str, logger_name: str) -> None:
         db: Session = SessionLocal()
-        db_log = Log(level=level, message=message, logger_name=logger_name)
-        db.add(db_log)
-        db.commit()
-        db.close()
+        try:
+            db.add(Log(level=level, message=message, logger_name=logger_name))
+            db.commit()
+        except Exception:
+            db.rollback()
+            raise
+        finally:
+            db.close()

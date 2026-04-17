@@ -2,7 +2,7 @@ import logging
 from fastapi import APIRouter, status, HTTPException, Depends
 from sqlalchemy.orm import Session
 from typing import List
-from app.api.v1.dependencies import get_current_user
+from app.api.v1.dependencies import get_current_user, get_current_coach
 from app.db.session import get_db
 from app.schemas.trainees import Trainee as TraineeSchema
 from app.schemas.trainees import TraineeCreate, TraineeUpdate, TraineeOutSchema
@@ -59,7 +59,7 @@ async def read_trainee(
 async def create_trainee(
     trainee: TraineeCreate,
     trainee_service: TraineeService = Depends(get_trainee_service),
-    current_user: str = Depends(get_current_user),
+    current_user: str = Depends(get_current_coach),
 ):
     """Create new trainee"""
     # Check if email already exists
@@ -78,7 +78,7 @@ async def update_trainee(
     trainee_id: int,
     trainee: TraineeUpdate,
     trainee_service: TraineeService = Depends(get_trainee_service),
-    current_user: str = Depends(get_current_user),
+    current_user: str = Depends(get_current_coach),
 ):
     """Update trainee"""
     updated_trainee = trainee_service.update_trainee(
@@ -95,7 +95,7 @@ async def update_trainee(
 async def delete_trainee(
     trainee_id: int,
     trainee_service: TraineeService = Depends(get_trainee_service),
-    current_user: str = Depends(get_current_user),
+    current_user: str = Depends(get_current_coach),
 ):
     """Delete trainee"""
     if not trainee_service.delete_trainee(trainee_id=trainee_id):

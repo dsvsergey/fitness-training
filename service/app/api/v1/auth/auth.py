@@ -4,7 +4,7 @@ from typing import Any, List
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -156,29 +156,34 @@ async def update_coach_password(
 
 
 # ---------------------------------------------------------------------------
-# Trainee — registration & login
+# Deprecated aliases — redirect to correct coach endpoints
 # ---------------------------------------------------------------------------
 
 
-@router.post("/trainees/register/", response_model=TraineeResponse, status_code=status.HTTP_201_CREATED)
-async def register_trainee(data: TraineeRegister, db: Session = Depends(get_db)) -> Any:
-    """Register a new trainee. Sends a verification email."""
-    trainee_service = TraineeService(db)
-    return await trainee_service.register_trainee(data)
+@router.post("/trainees/register/", response_model=CoachResponse, status_code=status.HTTP_201_CREATED)
+async def register_via_deprecated_endpoint(data: TraineeRegister, db: Session = Depends(get_db)) -> Any:
+    """Deprecated. Use POST /coaches/register/ instead."""
+    coach_data = CoachCreateWithPassword(
+        email=data.email,
+        first_name=data.first_name,
+        last_name=data.last_name,
+        password=data.password,
+    )
+    return CoachService(db).create_coach(coach_data, data.password)
 
 
-@router.get("/trainees/me/", response_model=TraineeResponse)
-async def get_current_trainee(
+@router.get("/trainees/me/", response_model=CoachResponse)
+async def get_me_via_deprecated_endpoint(
     db: Session = Depends(get_db), current_user: str = Depends(get_current_user)
 ) -> Any:
-    """Get authenticated trainee profile."""
-    if not current_user.startswith("trainee:"):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Trainee account required.")
-    trainee_id = int(current_user.split(":")[1])
-    trainee = TraineeService(db).get_trainee(trainee_id)
-    if not trainee:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trainee not found")
-    return trainee
+    """Deprecated. Use GET /coaches/me/ instead."""
+    if not current_user.startswith("coach:"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Coach account required.")
+    coach_id = int(current_user.split(":")[1])
+    coach = CoachService(db).get_coach(coach_id)
+    if not coach:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Coach not found")
+    return coach
 
 
 # ---------------------------------------------------------------------------
@@ -242,10 +247,10 @@ async def password_reset_confirm(body: PasswordResetConfirm, db: Session = Depen
 
 
 @router.get("/google/authorize", response_model=GoogleAuthorizeResponse)
-async def google_authorize(role: str = "trainee") -> Any:
+async def google_authorize(role: str = "coach") -> Any:
     """Return the Google OAuth authorization URL.
 
-    Pass `role=trainee` (default) or `role=coach` to determine what type of
+    Pass `role=coach` (default) or `role=trainee` to determine what type of
     account to create when the user signs in for the first time.
     """
     if role not in ("trainee", "coach"):

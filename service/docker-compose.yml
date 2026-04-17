@@ -2,7 +2,7 @@ services:
   api:
     container_name: fitness_svr
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --reload
+    command: uvicorn main:app --host 0.0.0.0
     env_file:
       - .env
     volumes:

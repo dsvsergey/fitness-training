@@ -34,8 +34,11 @@ async def send_mail(mail_to: str, body: str, subject: str) -> None:
 
 
 async def send_verification_email(mail_to: str, name: str, token: str) -> None:
-    """Send email address verification link."""
-    verify_url = f"{settings.FRONTEND_URL}/verify-email?token={token}"
+    """Send email address verification link.
+
+    Uses API_BASE_URL so the link calls the backend directly — no frontend required.
+    """
+    verify_url = f"{settings.API_BASE_URL}/api/v1/verify-email?token={token}"
     body = _render("email_verification.html", {"name": name, "verify_url": verify_url})
     await send_mail(mail_to, body, "Verify your email address")
 
