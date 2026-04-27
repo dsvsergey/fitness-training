@@ -40,6 +40,19 @@ def is_admin(user: User = Depends(current_user)):
     return user
 
 
+async def get_current_coach(
+    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+) -> str:
+    """Require the token to belong to a coach. Raises 403 otherwise."""
+    subject = await get_current_user(db=db, token=token)
+    if not subject.startswith("coach:"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only coaches can perform this action",
+        )
+    return subject
+
+
 async def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
 ) -> str:

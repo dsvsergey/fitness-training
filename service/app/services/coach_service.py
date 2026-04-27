@@ -1,12 +1,20 @@
+import logging
+from datetime import datetime
 from typing import List, Optional
-from sqlalchemy.orm import Session
+
 from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.core.auth import create_pwd_reset_token, jwt_decode
+from app.core.email import send_password_reset_email
 from app.core.security import get_password_hash, verify_password
+from app.crud.users import create_user
 from app.models.coachs import Coach
 from app.models.users import User
 from app.schemas.coachs import CoachCreate, CoachUpdate
 from app.schemas.users import UserDBCreate
-from app.crud.users import create_user
+
+logger = logging.getLogger(__name__)
 
 
 class CoachService:
@@ -142,3 +150,111 @@ class CoachService:
         # Add deactivation logic here if needed
         # Could set a flag or remove user
         return True
+
+    # ------------------------------------------------------------------
+    # Password reset
+    # ------------------------------------------------------------------
+
+    async def request_password_reset(self, email: str) -> None:
+        """Send password reset email. Silent on unknown email (prevents enumeration)."""
+        coach = self.get_coach_by_email(email)
+        if not coach:
+            return
+
+        token = create_pwd_reset_token(sub=f"coach:{coach.id}")
+        try:
+            await send_password_reset_email(
+                mail_to=coach.email,
+                name=coach.first_name,
+                token=token,
+            )
+        except Exception:
+            logger.exception("Failed to send reset email to %s", coach.email)
+
+    def reset_password(self, token: str, new_password: str) -> Coach:
+        """Reset coach password using the token from the reset email."""
+        try:
+            payload = jwt_decode(token)
+        except Exception:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or expired reset token.",
+            )
+
+        if payload.get("type") != "pwd_reset_token":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token type.",
+            )
+
+        sub: str = payload.get("sub", "")
+        if not sub.startswith("coach:"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token is not for a coach account.",
+            )
+
+        coach_id = int(sub.split(":")[1])
+        coach = self.get_coach(coach_id)
+        if not coach or not coach.user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Coach not found.")
+
+        coach.user.hashed_password = get_password_hash(new_password)
+        self.db.commit()
+        return coach
+
+    # ------------------------------------------------------------------
+    # Google OAuth
+    # ------------------------------------------------------------------
+
+    def get_or_create_from_google(self, google_user: dict) -> Coach:
+        """Find an existing coach by Google ID or email, or create a new one."""
+        google_id: str = google_user["sub"]
+        email: str = google_user["email"]
+
+        # 1. Match by existing google oauth_id on the User record
+        user = (
+            self.db.query(User)
+            .filter(User.oauth_provider == "google", User.oauth_id == google_id)
+            .first()
+        )
+        if user and user.coach:
+            return user.coach
+
+        # 2. Match by email
+        coach = self.get_coach_by_email(email)
+        if coach:
+            if coach.user:
+                coach.user.oauth_provider = "google"
+                coach.user.oauth_id = google_id
+                if not coach.user.email_verified:
+                    coach.user.email_verified = True
+                    coach.user.email_verified_at = datetime.utcnow()
+            self.db.commit()
+            self.db.refresh(coach)
+            return coach
+
+        # 3. Create new coach + user
+        db_coach = Coach(
+            email=email,
+            first_name=google_user.get("given_name", ""),
+            last_name=google_user.get("family_name", ""),
+            image_url=google_user.get("picture"),
+        )
+        self.db.add(db_coach)
+        self.db.commit()
+        self.db.refresh(db_coach)
+
+        user_data = UserDBCreate(
+            coach_id=db_coach.id,
+            username=email,
+            hashed_password=None,
+        )
+        user = create_user(self.db, user_data)
+        user.oauth_provider = "google"
+        user.oauth_id = google_id
+        user.email_verified = True
+        user.email_verified_at = datetime.utcnow()
+        self.db.commit()
+
+        return db_coach

@@ -23,3 +23,16 @@ class LoginRequest(BaseModel):
 class MobileLoginRequest(BaseModel):
     Username: EmailStr
     Password: str
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetConfirm(BaseModel):
+    token: str
+    new_password: str
+
+
+class GoogleAuthorizeResponse(BaseModel):
+    url: str

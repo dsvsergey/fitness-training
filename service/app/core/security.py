@@ -1,3 +1,9 @@
+import bcrypt as _bcrypt
+
+# passlib 1.7.4 reads bcrypt.__about__.__version__ which was removed in bcrypt 4.x
+if not hasattr(_bcrypt, "__about__"):
+    _bcrypt.__about__ = type("about", (), {"__version__": _bcrypt.__version__})()
+
 from passlib.context import CryptContext
 
 PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")

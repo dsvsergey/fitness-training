@@ -56,6 +56,15 @@ def create_access_token(*, sub: str, remember=False, user_obj=None) -> str:
     )
 
 
+def create_email_verification_token(sub: str) -> str:
+    """Create email verification token. Valid for 48 hours."""
+    return _create_token(
+        token_type="email_verification",
+        lifetime=timedelta(hours=48),
+        sub=sub,
+    )
+
+
 def create_pwd_reset_token(sub: str, extra: dict = None) -> str:
     """Create password reset token. Uses 'extra' dict with last login date."""
     return _create_token(

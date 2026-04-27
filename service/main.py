@@ -87,7 +87,7 @@ def start_application():
     logger.info(f"Starting {settings.PROJECT_TITLE} v{settings.PROJECT_VERSION}")
     logger.info(f"Database URL configured: {bool(settings.DATABASE_URL)}")
     logger.info(
-        f"MindBody configured: {bool(settings.MINDBODY_API_KEY and settings.MINDBODY_BASE_URL)}"
+        f"Google OAuth configured: {bool(settings.GOOGLE_CLIENT_ID)}"
     )
 
     return app
@@ -98,10 +98,6 @@ app = start_application()
 
 @app.middleware("http")
 async def https_redirect_middleware(request: Request, call_next):
-    admin_path = "/admin"
-    if request.url.path.startswith(admin_path) and request.url.scheme == "http":
-        url = request.url.replace(scheme="https")
-        return RedirectResponse(url)
     response = await call_next(request)
     return response
 

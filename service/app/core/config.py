@@ -52,6 +52,23 @@ class Settings:
         self.ACCESS_TOKEN_EXPIRE_MINUTES = int(
             os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "11520")
         )
+        self.ACCESS_TOKEN_EXPIRE_MINUTES_LONG = int(
+            os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES_LONG", "43200")  # 30 days
+        )
+
+        # Google OAuth
+        self.GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
+        self.GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
+        self.GOOGLE_REDIRECT_URI = os.getenv(
+            "GOOGLE_REDIRECT_URI",
+            "http://localhost:8000/api/v1/auth/google/callback",
+        )
+
+        # Frontend URL (used in Google OAuth redirect and password reset links)
+        self.FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
+        # API base URL (used in email verification links — points directly to the API)
+        self.API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
         self.ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
