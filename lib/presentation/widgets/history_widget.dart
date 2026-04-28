@@ -41,9 +41,10 @@ class HistoryWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Table(
         columnWidths: const {
-          0: FractionColumnWidth(.33),
-          1: FractionColumnWidth(.33),
-          2: FractionColumnWidth(.33),
+          // Date label needs more room than weight/time (e.g. "4/28/2026").
+          0: FractionColumnWidth(.42),
+          1: FractionColumnWidth(.28),
+          2: FractionColumnWidth(.30),
         },
         children: List.generate(
           history?.length ?? 0,
@@ -53,7 +54,9 @@ class HistoryWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: history?[index].dateSession == null
                     ? Text(
-                        'next workout',
+                        'Upcoming',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: cellStyle.copyWith(
                           color: context.theme.colors.primary,
                         ),
@@ -61,6 +64,8 @@ class HistoryWidget extends StatelessWidget {
                     : Text(
                         DateFormat.yMd()
                             .format(history![index].dateSession!),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: cellStyle,
                       ),
               ),
@@ -68,6 +73,8 @@ class HistoryWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
                   '${history?[index].weight ?? ''} lb',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: cellStyle,
                 ),
               ),
@@ -78,6 +85,8 @@ class HistoryWidget extends StatelessWidget {
                     : Text(
                         formatDuration(Duration(
                             seconds: history?[index].sessionTime ?? 0)),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: mutedStyle,
                       ),
               ),

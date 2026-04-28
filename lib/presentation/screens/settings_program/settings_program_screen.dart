@@ -229,10 +229,10 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                               isScrollable: true,
                               tabs: [
                                 Tab(
-                                  height: 35,
+                                  height: 44,
                                   child: Text(
                                     AppLocalizations.of(context)!.history,
-                                    style: context.theme.typography.xl2
+                                    style: context.theme.typography.lg
                                         .copyWith(
                                       fontWeight: FontWeight.w700,
                                       color: _currentTabIndex == 0
@@ -243,10 +243,10 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                   ),
                                 ),
                                 Tab(
-                                  height: 35,
+                                  height: 44,
                                   child: Text(
                                     AppLocalizations.of(context)!.note,
-                                    style: context.theme.typography.xl2
+                                    style: context.theme.typography.lg
                                         .copyWith(
                                       fontWeight: FontWeight.w700,
                                       color: _currentTabIndex == 1
@@ -270,9 +270,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                             horizontal: 10),
                                         child: Table(
                                           columnWidths: const {
-                                            0: FractionColumnWidth(.33),
-                                            1: FractionColumnWidth(.33),
-                                            2: FractionColumnWidth(.33),
+                                            0: FractionColumnWidth(.42),
+                                            1: FractionColumnWidth(.28),
+                                            2: FractionColumnWidth(.30),
                                           },
                                           children: [
                                             TableRow(
