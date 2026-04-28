@@ -42,6 +42,8 @@ class WorkoutAppointment(Base):
     trainee = relationship("Trainee", back_populates="workout_appointments")
     coach_id = Column(ForeignKey(Coach.id), nullable=False)
     coach = relationship("Coach", back_populates="workout_appointments")
+    program_id = Column(ForeignKey("program.id"), nullable=True, index=True)
+    program = relationship("Program")
     duration = Column(Integer, nullable=False)
     status = Column(Enum(AppointmentStatus), default=AppointmentStatus.NoneStatus)
     start_at = Column(DateTime, nullable=False)

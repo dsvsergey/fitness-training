@@ -59,14 +59,28 @@ def find_overlapping_appointment(
     return query.first()
 
 
+def _coerce_status(value) -> AppointmentStatus:
+    """Accept a Python enum, a DB-style string ("Booked"), or None and return a
+    valid AppointmentStatus value to store in the column."""
+    if value is None:
+        return AppointmentStatus.NoneStatus
+    if isinstance(value, AppointmentStatus):
+        return value
+    try:
+        return AppointmentStatus(value)
+    except ValueError:
+        return AppointmentStatus.NoneStatus
+
+
 def create_workout_appointment(
     db: Session, appointment: WorkoutAppointmentSchema
 ) -> WorkoutAppointment:
     db_appointment = WorkoutAppointment(
         trainee_id=appointment.trainee_id,
         coach_id=appointment.coach_id,
+        program_id=appointment.program_id,
         duration=appointment.duration,
-        status=appointment.status,
+        status=_coerce_status(appointment.status),
         start_at=appointment.start_at,
         end_at=appointment.end_at,
         notes=appointment.notes,
@@ -173,10 +187,15 @@ def update_workout_appointment(
         .first()
     )
     if db_appointment:
-        for var, value in vars(appointment).items():
-            if var in ["trainee", "coach"]:
+        # Use Pydantic's model_dump(exclude_unset=True) so PUT only touches
+        # fields the caller explicitly set, not every column.
+        payload = appointment.model_dump(exclude_unset=True)
+        for var, value in payload.items():
+            if var in ("id", "trainee", "coach", "program"):
                 continue
-            setattr(db_appointment, var, value) if value else None
+            if var == "status":
+                value = _coerce_status(value)
+            setattr(db_appointment, var, value)
         db.commit()
         db.refresh(db_appointment)
     return db_appointment
