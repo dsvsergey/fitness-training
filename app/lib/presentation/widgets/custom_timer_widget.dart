@@ -38,6 +38,10 @@ class CustomTimerWidget extends StatelessWidget {
                   image,
                   height: svgHeight,
                   width: svgWidth,
+                  colorFilter: ColorFilter.mode(
+                    context.theme.colors.primary,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Flexible(
