@@ -1,5 +1,5 @@
-import 'package:fitness_training/core/resources/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 import 'custom_text_field_widget.dart';
 
@@ -31,9 +31,14 @@ class _UserInfoTextFieldWidgetState extends State<UserInfoTextFieldWidget> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
+    final isTablet = MediaQuery.of(context).size.width > 600;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,7 +46,11 @@ class _UserInfoTextFieldWidgetState extends State<UserInfoTextFieldWidget> {
           padding: const EdgeInsets.only(left: 20),
           child: Text(
             widget.text,
-            style: screenWidth > 600 ? AppFonts.w700s19 : AppFonts.w700s13,
+            style: isTablet
+                ? context.theme.typography.lg
+                    .copyWith(fontWeight: FontWeight.w700)
+                : context.theme.typography.xs
+                    .copyWith(fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(height: 10),

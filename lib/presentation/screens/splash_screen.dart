@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart' as rive;
-import '../../core/resources/themes/app_colors.dart';
 import '../../core/router/router.dart';
 import '../../data/repositories/preferences_repository.dart';
 
@@ -20,10 +17,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    routing();
+    _routing();
   }
 
-  void routing() async {
+  Future<void> _routing() async {
     final prefsRepo = PreferencesRepository();
     final token = await prefsRepo.getToken();
 
@@ -39,52 +36,41 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: AppColors.gradientBGColor,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 250,
-                width: 250,
-                child: rive.RiveAnimation.asset(
-                  'assets/rive/coin_fitness.riv',
-                  fit: BoxFit.cover,
-                ),
+    return const Scaffold(
+      backgroundColor: Color(0xFF1E1E1E),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'NEW ELEMENT',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 3,
               ),
-              const SizedBox(height: 50),
-              AnimatedTextKit(
-                animatedTexts: [
-                  ColorizeAnimatedText(
-                    'NEW ELEMENT\nTRAINING',
-                    textAlign: TextAlign.center,
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 40,
-                      fontFamily: 'Lobster',
-                    ),
-                    colors: [
-                      const Color(0xFF0abab5),
-                      Colors.black,
-                      Colors.green,
-                      Colors.white,
-                      Colors.amber,
-                      Colors.black
-                    ],
-                  )
-                ],
-                repeatForever: true,
+            ),
+            Text(
+              'TRAINING',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFFC8CE37),
+                letterSpacing: 3,
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'TRAINER APP',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF9E9E9E),
+                letterSpacing: 4,
+              ),
+            ),
+          ],
         ),
       ),
     );

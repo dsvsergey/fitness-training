@@ -16,7 +16,8 @@ mixin FitnessRepository {
     } else if (onError is DioException) {
       final statusCode = onError.response?.statusCode ?? 0;
       final responseData = onError.response?.data;
-      final message = responseData is Map ? responseData['detail'] ?? '' : '';
+      final rawMessage = responseData is Map ? (responseData['detail'] ?? '').toString() : '';
+      final message = rawMessage.length > 120 ? '${rawMessage.substring(0, 120)}…' : rawMessage;
 
       debugPrint('DioException: Status Code: $statusCode');
       debugPrint('Response Data: $responseData');
@@ -26,7 +27,7 @@ mixin FitnessRepository {
       } else if (statusCode >= 400 && statusCode < 500) {
         throw ApplicationException(massage: message);
       } else if (statusCode >= 500) {
-        throw ApplicationException(massage: 'Server error: $message');
+        throw ApplicationException(massage: 'Server error. Please try again later.');
       }
     }
 

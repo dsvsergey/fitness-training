@@ -11,7 +11,7 @@ abstract class TraineeUsecase {
     String? q,
   });
   Future<TraineeEntity> getTrainee(int traineeId);
-  Future<TraineeEntity> createTrainee(TraineeEntity trainee);
+  Future<TraineeEntity> createTrainee(TraineeEntity trainee, {String? password});
   Future<TraineeEntity> updateTrainee(int traineeId, TraineeEntity trainee);
   Future<void> deleteTrainee(int traineeId);
 }
@@ -23,8 +23,8 @@ class TraineeUsecaseImpl implements TraineeUsecase {
   TraineeUsecaseImpl({required TraineeRepository api}) : _api = api;
 
   @override
-  Future<TraineeEntity> createTrainee(TraineeEntity trainee) =>
-      _api.createTrainee(trainee.model).then((value) => value.entity);
+  Future<TraineeEntity> createTrainee(TraineeEntity trainee, {String? password}) =>
+      _api.createTrainee(trainee.model, password: password).then((value) => value.entity);
 
   @override
   Future<void> deleteTrainee(int traineeId) => _api.deleteTrainee(traineeId);

@@ -10,3 +10,8 @@ class FilterListAppointments extends CalendarEvent {
   @override
   List<Object?> get props => [selectedDay];
 }
+
+class RefreshAppointments extends CalendarEvent {
+  @override
+  List<Object?> get props => [];
+}

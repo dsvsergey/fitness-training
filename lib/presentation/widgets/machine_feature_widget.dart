@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 class MachineFeatureWidget extends StatelessWidget {
   final String label;
@@ -17,117 +18,89 @@ class MachineFeatureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return additionalText == null
-        ? _withOutAdditionalText()
-        : _withAdditionalText();
+        ? _withoutAdditional(context)
+        : _withAdditional(context);
   }
 
-  Column _withOutAdditionalText() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        icon,
-        Row(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w400,
-                fontSize: 21.0,
-                color: Colors.grey,
-              ),
-            ),
-            const Spacer(),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              child: Text(
-                value ?? '',
-                key: ValueKey<String>(value ?? ''),
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 21.0,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            if (additionalText != null)
+  Widget _withoutAdditional(BuildContext context) => Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          icon,
+          Row(
+            children: [
               Text(
-                additionalText!,
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 17.0,
-                  color: Colors.grey,
+                label,
+                style: context.theme.typography.md.copyWith(
+                  color: context.theme.colors.mutedForeground,
                 ),
               ),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _withAdditionalText() {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      SizedBox(
-        width: 70,
-        child: Stack(
-          children: [
-            icon,
-            Positioned(
-              right: 0,
-              top: 0,
-              child: AnimatedSwitcher(
+              const Spacer(),
+              AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return ScaleTransition(scale: animation, child: child);
-                },
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
                 child: Text(
-                  additionalText ?? '',
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
+                  value ?? '',
+                  key: ValueKey<String>(value ?? ''),
+                  style: context.theme.typography.md.copyWith(
                     fontWeight: FontWeight.w700,
-                    fontSize: 17.0,
-                    color: Colors.grey,
                   ),
                 ),
               ),
-            )
-          ],
-        ),
-      ),
-      Row(
+            ],
+          ),
+        ],
+      );
+
+  Widget _withAdditional(BuildContext context) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              fontSize: 24.0,
-              color: Colors.grey,
+          SizedBox(
+            width: 70,
+            child: Stack(
+              children: [
+                icon,
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) =>
+                        ScaleTransition(scale: animation, child: child),
+                    child: Text(
+                      additionalText ?? '',
+                      style: context.theme.typography.sm.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: context.theme.colors.mutedForeground,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          const Spacer(),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            child: Text(
-              value ?? '',
-              style: const TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-                fontSize: 24.0,
-                color: Colors.black,
+          Row(
+            children: [
+              Text(
+                label,
+                style: context.theme.typography.md.copyWith(
+                  color: context.theme.colors.mutedForeground,
+                ),
               ),
-            ),
-          )
+              const Spacer(),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
+                child: Text(
+                  value ?? '',
+                  style: context.theme.typography.md.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
-      ),
-    ]);
-  }
+      );
 }

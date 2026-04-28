@@ -103,7 +103,7 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
   @override
   Future<CoachModel> updateCoach(int coachId, CoachModel coach) => fitness.dio
       .put(
-        "/coaches/$coachId",
+        "/coaches/me/",
         data: coach.toJson(),
         options: Options(
           headers: {
