@@ -141,6 +141,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        heroTag: 'contacts_fab',
         onPressed: () => _showTraineeForm(context),
         backgroundColor: const Color(0xFF1E1E1E),
         child: const Icon(Icons.add, color: Colors.white),
