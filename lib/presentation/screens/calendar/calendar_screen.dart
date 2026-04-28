@@ -50,8 +50,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         builder: (context, state) {
           final List<WorkoutAppointmentEntity> existing =
               state is CalendarFilteredSuccess
-                  ? state.appointmentsFilteredList
-                  : const [];
+              ? state.appointmentsFilteredList
+              : const [];
           return FloatingActionButton(
             onPressed: () => showCreateAppointmentSheet(
               context,
@@ -66,122 +66,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Stack(
+          child: Column(
             children: [
-              // ── List / Grid of appointments ──────────────────────────────
-              BlocBuilder<CalendarBloc, CalendarState>(
-                builder: (context, state) {
-                  if (state is CalendarFilteredSuccess) {
-                    return isTablet
-                        ? GridView.builder(
-                            padding: const EdgeInsets.only(top: 80),
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            shrinkWrap: true,
-                            itemCount: state.appointmentsFilteredList.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: isPortrait ? 3 : 4,
-                                  mainAxisSpacing: 0,
-                                  crossAxisSpacing: 0,
-                                ),
-                            itemBuilder: (context, index) => GridCalendarWidget(
-                              onTap: () => _openAppointment(
-                                context,
-                                state.appointmentsFilteredList[index],
-                                isGrid: true,
-                              ),
-                              appointment: state.appointmentsFilteredList[index],
-                            ),
-                          )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(top: 80),
-                            keyboardDismissBehavior:
-                                ScrollViewKeyboardDismissBehavior.onDrag,
-                            itemCount: state.appointmentsFilteredList.length,
-                            itemBuilder: (context, index) => ListCalendarWidget(
-                              onTap: () => _openAppointment(
-                                context,
-                                state.appointmentsFilteredList[index],
-                                isGrid: false,
-                              ),
-                              appointment: state.appointmentsFilteredList[index],
-                            ),
-                          );
-                  }
-
-                  if (state is CalendarEmptySuccess) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.calendar_today_outlined,
-                            size: 64,
-                            color: Color(0xFFBDBDBD),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No appointments yet',
-                            style: context.theme.typography.lg.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1E1E1E),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Your schedule will appear here',
-                            style: context.theme.typography.sm.copyWith(
-                              color: const Color(0xFF9E9E9E),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (state is CalendarError) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Something went wrong',
-                            style: context.theme.typography.md.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Please try again later',
-                            style: context.theme.typography.sm,
-                          ),
-                          const SizedBox(height: 24),
-                          FButton(
-                            onPress: () {},
-                            variant: FButtonVariant.outline,
-                            child: const Text('Try again'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return const Center(child: FCircularProgress());
-                },
-              ),
-
               // ── Day header with date picker shortcut ─────────────────────
               BlocBuilder<CalendarBloc, CalendarState>(
                 builder: (context, state) {
                   final selected = state.selectedDay ?? DateTime.now();
                   final today = DateTime.now();
-                  final isToday = selected.year == today.year &&
+                  final isToday =
+                      selected.year == today.year &&
                       selected.month == today.month &&
                       selected.day == today.day;
-                  final headline =
-                      isToday ? 'Today' : DateFormat.EEEE().format(selected);
+                  final headline = isToday
+                      ? 'Today'
+                      : DateFormat.EEEE().format(selected);
                   final subtitle = DateFormat.yMMMMd().format(selected);
 
                   return Padding(
@@ -191,6 +89,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
                                 headline,
@@ -222,21 +121,127 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     workDays: state.workDays ?? [],
                                   ),
                                 )
-                                .then(
-                                  (value) {
-                                    if (value is DateTime) {
-                                      BlocProvider.of<CalendarBloc>(context)
-                                          .add(FilterListAppointments(
-                                              selectedDay: value));
-                                    }
-                                  },
-                                );
+                                .then((value) {
+                                  if (value is DateTime) {
+                                    BlocProvider.of<CalendarBloc>(context).add(
+                                      FilterListAppointments(
+                                        selectedDay: value,
+                                      ),
+                                    );
+                                  }
+                                });
                           },
                         ),
                       ],
                     ),
                   );
                 },
+              ),
+
+              // ── List / Grid of appointments ──────────────────────────────
+              Expanded(
+                child: BlocBuilder<CalendarBloc, CalendarState>(
+                  builder: (context, state) {
+                    if (state is CalendarFilteredSuccess) {
+                      return isTablet
+                          ? GridView.builder(
+                              keyboardDismissBehavior:
+                                  ScrollViewKeyboardDismissBehavior.onDrag,
+                              itemCount: state.appointmentsFilteredList.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: isPortrait ? 3 : 4,
+                                    mainAxisSpacing: 0,
+                                    crossAxisSpacing: 0,
+                                  ),
+                              itemBuilder: (context, index) =>
+                                  GridCalendarWidget(
+                                    onTap: () => _openAppointment(
+                                      context,
+                                      state.appointmentsFilteredList[index],
+                                      isGrid: true,
+                                    ),
+                                    appointment:
+                                        state.appointmentsFilteredList[index],
+                                  ),
+                            )
+                          : ListView.builder(
+                              keyboardDismissBehavior:
+                                  ScrollViewKeyboardDismissBehavior.onDrag,
+                              itemCount: state.appointmentsFilteredList.length,
+                              itemBuilder: (context, index) =>
+                                  ListCalendarWidget(
+                                    onTap: () => _openAppointment(
+                                      context,
+                                      state.appointmentsFilteredList[index],
+                                      isGrid: false,
+                                    ),
+                                    appointment:
+                                        state.appointmentsFilteredList[index],
+                                  ),
+                            );
+                    }
+
+                    if (state is CalendarEmptySuccess) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.calendar_today_outlined,
+                              size: 64,
+                              color: Color(0xFFBDBDBD),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No appointments yet',
+                              style: context.theme.typography.lg.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF1E1E1E),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Your schedule will appear here',
+                              style: context.theme.typography.sm.copyWith(
+                                color: const Color(0xFF9E9E9E),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (state is CalendarError) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Something went wrong',
+                              style: context.theme.typography.md.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Please try again later',
+                              style: context.theme.typography.sm,
+                            ),
+                            const SizedBox(height: 24),
+                            FButton(
+                              onPress: () {},
+                              variant: FButtonVariant.outline,
+                              child: const Text('Try again'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return const Center(child: FCircularProgress());
+                  },
+                ),
               ),
             ],
           ),
@@ -258,13 +263,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
     );
     if (isGrid) {
-      BlocProvider.of<ProgramScreenBloc>(context).add(
-        UpdateTraineeEvent(trainee: trainee),
-      );
+      BlocProvider.of<ProgramScreenBloc>(
+        context,
+      ).add(UpdateTraineeEvent(trainee: trainee));
     } else {
-      BlocProvider.of<ProgramScreenBloc>(context).add(
-        SetTraineeEvent(trainee: trainee),
-      );
+      BlocProvider.of<ProgramScreenBloc>(
+        context,
+      ).add(SetTraineeEvent(trainee: trainee));
     }
     AutoRouter.of(context).push(const ProgramRoute());
   }
