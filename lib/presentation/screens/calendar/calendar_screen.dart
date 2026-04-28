@@ -2,13 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:forui/forui.dart';
-import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
-import '../../../core/resources/resources.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
-import '../../../domain/usecases/fitness/fitness.dart';
+import '../../widgets/create_appointment_sheet.dart';
 import '../../widgets/grid_calendar_widget.dart';
 import '../../widgets/list_calendar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
@@ -23,23 +22,20 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  final _workDays = List<DateTime>.empty(growable: true);
-  final _filteredAppointments = List<WorkoutAppointmentEntity>.empty(
-    growable: true,
-  );
-
   @override
   void initState() {
     super.initState();
-    GetIt.I<WorkoutAppointmentUsecase>().getAllWorkoutAppointments().then((
-      value,
-    ) {
-      _workDays
-        ..clear()
-        ..addAll(value.workDays?.toList() ?? []);
-      _filteredAppointments
-        ..clear()
-        ..addAll(value.appointments?.toList() ?? []);
+    // Make sure today's appointments are loaded each time the screen mounts.
+    // The bloc is provided at the app root and may have errored before login
+    // completed, so we re-dispatch on mount.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final today = DateTime.now();
+      BlocProvider.of<CalendarBloc>(context).add(
+        FilterListAppointments(
+          selectedDay: DateTime(today.year, today.month, today.day),
+        ),
+      );
     });
   }
 
@@ -50,6 +46,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
+      floatingActionButton: BlocBuilder<CalendarBloc, CalendarState>(
+        builder: (context, state) {
+          final List<WorkoutAppointmentEntity> existing =
+              state is CalendarFilteredSuccess
+                  ? state.appointmentsFilteredList
+                  : const [];
+          return FloatingActionButton(
+            onPressed: () => showCreateAppointmentSheet(
+              context,
+              prefilledDate: state.selectedDay ?? DateTime.now(),
+              existingAppointments: existing,
+            ),
+            backgroundColor: const Color(0xFF1E1E1E),
+            child: const Icon(Icons.add, color: Colors.white),
+          );
+        },
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -159,52 +172,68 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 },
               ),
 
-              // ── Search / filter bar ──────────────────────────────────────
+              // ── Day header with date picker shortcut ─────────────────────
               BlocBuilder<CalendarBloc, CalendarState>(
                 builder: (context, state) {
-                  final coachName = context
-                      .read<ApplicationBloc>()
-                      .state
-                      .user!
-                      .coach
-                      ?.firstName;
+                  final selected = state.selectedDay ?? DateTime.now();
+                  final today = DateTime.now();
+                  final isToday = selected.year == today.year &&
+                      selected.month == today.month &&
+                      selected.day == today.day;
+                  final headline =
+                      isToday ? 'Today' : DateFormat.EEEE().format(selected);
+                  final subtitle = DateFormat.yMMMMd().format(selected);
 
-                  final dateStr = state.selectedDay != null
-                      ? '${state.selectedDay!.day}/${state.selectedDay!.month}/${state.selectedDay!.year}'
-                      : null;
-                  final filterHint = [
-                    if (coachName != null) coachName,
-                    if (dateStr != null) dateStr,
-                  ].join(' - ');
-
-                  return FTextField(
-                    hint: filterHint,
-                    suffixBuilder: (context, style, variants) => IconButton(
-                      icon: Icon(
-                        FIcons.calendar,
-                        size: isTablet ? 28 : 22,
-                        color: const Color(0xFF1E1E1E),
-                      ),
-                      onPressed: () {
-                        if (state is CalendarFilteredSuccess ||
-                            state is CalendarEmptySuccess) {
-                          AutoRouter.of(context)
-                              .push(
-                                TableCalendarRoute(
-                                  currentDate: state.selectedDay!,
-                                  workDays: state.workDays ?? [],
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                headline,
+                                style: context.theme.typography.xl.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF1E1E1E),
                                 ),
-                              )
-                              .then(
-                                (value) =>
-                                    BlocProvider.of<CalendarBloc>(context).add(
-                                      FilterListAppointments(
-                                        selectedDay: value as DateTime?,
-                                      ),
-                                    ),
-                              );
-                        }
-                      },
+                              ),
+                              Text(
+                                subtitle,
+                                style: context.theme.typography.sm.copyWith(
+                                  color: const Color(0xFF6E6E6E),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            FIcons.calendar,
+                            size: isTablet ? 28 : 22,
+                            color: const Color(0xFF1E1E1E),
+                          ),
+                          onPressed: () {
+                            AutoRouter.of(context)
+                                .push(
+                                  TableCalendarRoute(
+                                    currentDate: selected,
+                                    workDays: state.workDays ?? [],
+                                  ),
+                                )
+                                .then(
+                                  (value) {
+                                    if (value is DateTime) {
+                                      BlocProvider.of<CalendarBloc>(context)
+                                          .add(FilterListAppointments(
+                                              selectedDay: value));
+                                    }
+                                  },
+                                );
+                          },
+                        ),
+                      ],
                     ),
                   );
                 },

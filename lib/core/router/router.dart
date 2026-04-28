@@ -6,6 +6,7 @@ import '../../domain/entities/fitness/fitness.dart';
 import '../../presentation/screens/calendar/calendar_info_screens.dart';
 import '../../presentation/screens/calendar/calendar_screen.dart';
 import '../../presentation/screens/calendar/table_calendar_screen.dart';
+import '../../presentation/screens/contacts/contact_detail_screen.dart';
 import '../../presentation/screens/contacts/contacts_screen.dart';
 import '../../presentation/screens/google_oauth_screen.dart';
 import '../../presentation/screens/home_screen.dart';
@@ -43,6 +44,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: SettingsRoute.page, path: 'settings'),
           ],
         ),
+        AutoRoute(page: ContactDetailRoute.page, path: '/contactDetail'),
         AutoRoute(page: ProgramRoute.page, path: '/program'),
         AutoRoute(page: TableCalendarRoute.page, path: '/tableCalendar'),
         AutoRoute(page: CreateProgramRoute.page, path: '/createProgram'),
