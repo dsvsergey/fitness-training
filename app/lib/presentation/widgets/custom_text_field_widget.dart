@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
-class CustomTextFieldWidget extends StatelessWidget {
+class CustomTextFieldWidget extends StatefulWidget {
   const CustomTextFieldWidget({
     super.key,
     this.controller,
@@ -11,8 +12,9 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.keyboardType,
     this.errorText,
   });
+
   final TextEditingController? controller;
-  final Function(String)? onChanged;
+  final ValueChanged<String>? onChanged;
   final Widget? prefix;
   final Widget? suffix;
   final String? hintText;
@@ -20,28 +22,52 @@ class CustomTextFieldWidget extends StatelessWidget {
   final String? errorText;
 
   @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth > 600 ? 20 : 20,
-      ),
-      child: TextField(
-        keyboardType: keyboardType,
-        onChanged: onChanged,
-        controller: controller,
-        decoration: InputDecoration(
-          errorText: errorText,
-          contentPadding: const EdgeInsets.all(20.0),
-          suffixIcon: suffix,
-          prefix: prefix,
-          hintText: hintText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-    );
+  State<CustomTextFieldWidget> createState() => _CustomTextFieldWidgetState();
+}
+
+class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
+  late final TextEditingController _controller;
+  bool _ownsController = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller != null) {
+      _controller = widget.controller!;
+    } else {
+      _controller = TextEditingController();
+      _ownsController = true;
+    }
+    if (widget.onChanged != null) {
+      _controller.addListener(_onChanged);
+    }
   }
+
+  void _onChanged() => widget.onChanged?.call(_controller.text);
+
+  @override
+  void dispose() {
+    if (widget.onChanged != null) {
+      _controller.removeListener(_onChanged);
+    }
+    if (_ownsController) _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: FTextField(
+          control: FTextFieldControl.managed(controller: _controller),
+          hint: widget.hintText,
+          error: widget.errorText != null ? Text(widget.errorText!) : null,
+          keyboardType: widget.keyboardType,
+          prefixBuilder: widget.prefix != null
+              ? (_, __, ___) => widget.prefix!
+              : null,
+          suffixBuilder: widget.suffix != null
+              ? (_, __, ___) => widget.suffix!
+              : null,
+        ),
+      );
 }

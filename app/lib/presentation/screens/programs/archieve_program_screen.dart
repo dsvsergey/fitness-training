@@ -1,9 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
-import '../../../core/resources/resources.dart';
-import '../../../core/resources/themes/app_colors.dart';
-import '../../../core/resources/themes/app_fonts.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 
 @RoutePage()
@@ -19,40 +17,40 @@ class ArchieveProgramScreen extends StatefulWidget {
 }
 
 class _ArchieveProgramScreenState extends State<ArchieveProgramScreen> {
+  final List<MachineEntity> _selectedMachines = [];
+
   void _removeSelectedApparatus() {
     setState(() {
       widget.machines
-          .removeWhere((machine) => _selectedMachines.contains(machine));
+          .removeWhere((m) => _selectedMachines.contains(m));
       _selectedMachines.clear();
     });
   }
 
-  final List<MachineEntity> _selectedMachines = [];
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
+    final isTablet = MediaQuery.of(context).size.width > 600;
+
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: screenWidth > 600 ? 100 : 80,
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Image.asset(
-            AppPngs.back,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => AutoRouter.of(context).pop(),
           ),
-          onPressed: () {
-            AutoRouter.of(context).pop();
-            // AutoRouter.of(context).pop(const CreateProgramRoute());
-          },
         ),
       ),
       body: Column(
         children: [
-          const Text(
-            "Program A",
+          Text(
+            'Program A',
             textAlign: TextAlign.center,
-            style: AppFonts.w800s24,
+            style: context.theme.typography.xl2
+                .copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 20),
           Wrap(
@@ -61,35 +59,34 @@ class _ArchieveProgramScreenState extends State<ArchieveProgramScreen> {
             alignment: WrapAlignment.center,
             spacing: 10,
             runSpacing: 5,
-            children: widget.machines.map((apparat) {
-              return InkWell(
-                onTap: () {
-                  setState(() {
-                    if (_selectedMachines.contains(apparat)) {
-                      _selectedMachines.remove(apparat);
-                    } else {
-                      _selectedMachines.add(apparat);
-                    }
-                  });
-                },
+            children: widget.machines.map((machine) {
+              final isSelected = _selectedMachines.contains(machine);
+              return GestureDetector(
+                onTap: () => setState(() {
+                  if (isSelected) {
+                    _selectedMachines.remove(machine);
+                  } else {
+                    _selectedMachines.add(machine);
+                  }
+                }),
                 child: Container(
-                  width: screenWidth > 600 ? 130 : 65,
-                  height: screenWidth > 600 ? 110 : 55,
+                  width: isTablet ? 130 : 65,
+                  height: isTablet ? 110 : 55,
                   decoration: BoxDecoration(
-                    color: _selectedMachines.contains(apparat)
-                        ? AppColors.colorMain
+                    color: isSelected
+                        ? context.theme.colors.primary
                         : null,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
                     child: Text(
-                      apparat.name,
+                      machine.name,
                       style: TextStyle(
-                        color: _selectedMachines.contains(apparat)
-                            ? AppColors.white
-                            : AppColors.black,
-                        fontSize: screenWidth > 600 ? 80 : 40,
-                        fontFamily: "Inter",
+                        color: isSelected
+                            ? context.theme.colors.primaryForeground
+                            : context.theme.colors.foreground,
+                        fontSize: isTablet ? 80 : 40,
+                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -103,53 +100,20 @@ class _ArchieveProgramScreenState extends State<ArchieveProgramScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //mainAxisSize: MainAxisSize.max,
-              //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: screenWidth > 600 ? 350 : 160,
-                  height: screenWidth > 600 ? 81 : 55,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFFD7D4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                    onPressed: () {
-                      _removeSelectedApparatus();
-                    },
-                    child: Text(
-                      'Restore',
-                      textAlign: TextAlign.center,
-                      style: screenWidth > 600
-                          ? AppFonts.w700s25.copyWith(
-                              color: const Color(0xFFFF5447),
-                            )
-                          : AppFonts.w700s18.copyWith(
-                              color: const Color(0xFFFF5447),
-                            ),
-                    ),
+                  width: isTablet ? 350 : 160,
+                  child: FButton(
+                    onPress: _removeSelectedApparatus,
+                    variant: FButtonVariant.destructive,
+                    child: const Text('Restore'),
                   ),
                 ),
                 SizedBox(
-                  width: screenWidth > 600 ? 350 : 160,
-                  height: screenWidth > 600 ? 81 : 55,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.colorMain,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      'Restore',
-                      textAlign: TextAlign.center,
-                      style: screenWidth > 600
-                          ? AppFonts.w700s25
-                          : AppFonts.w700s18,
-                    ),
+                  width: isTablet ? 350 : 160,
+                  child: FButton(
+                    onPress: () {},
+                    child: const Text('Restore'),
                   ),
                 ),
               ],

@@ -1,5 +1,5 @@
-import 'package:hive/hive.dart';
-//part 'program_model.g.dart';
+import 'package:hive_ce/hive.dart';
+part 'program_model.g.dart';
 
 @HiveType(typeId: 0)
 class ProgramModel extends HiveObject {

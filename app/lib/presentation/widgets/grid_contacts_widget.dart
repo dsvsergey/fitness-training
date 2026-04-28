@@ -1,53 +1,61 @@
-import 'package:colorize_text_avatar/colorize_text_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:forui/forui.dart';
 
-import '../../core/resources/themes/app_fonts.dart';
 import '../../domain/entities/fitness/fitness.dart';
 
 class GridContactsWidget extends StatelessWidget {
   const GridContactsWidget({
-    required this.onTap,
-    required this.model,
     super.key,
+    required this.model,
+    required this.onTap,
   });
+
   final TraineeEntity model;
-  final Function() onTap;
+  final VoidCallback onTap;
+
   @override
   Widget build(BuildContext context) {
-    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    var avatarSize = isPortrait ? 80.r : 120.r;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    final avatarSize = isPortrait ? 72.0 : 96.0;
 
-    return Center(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          children: [
-            model.photoUrl == null
-                ? TextAvatar(
-                    size: avatarSize,
-                    shape: Shape.Circular,
-                    text: model.fullName,
-                    fontSize: 40,
-                    numberLetters: 2,
-                  )
-                : ClipOval(
-                    child: Image.network(
-                      model.photoUrl!,
-                      width: avatarSize,
-                      height: avatarSize,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-            const SizedBox(height: 15),
-            Text(
-              maxLines: 1,
-              textAlign: TextAlign.center,
-              model.fullName,
-              style: AppFonts.w500s24,
-            )
-          ],
-        ),
+    final initials = model.fullName
+        .split(' ')
+        .map((w) => w.isNotEmpty ? w[0] : '')
+        .take(2)
+        .join();
+
+    final avatar = model.photoUrl != null
+        ? FAvatar(
+            image: NetworkImage(model.photoUrl!),
+            fallback: Text(initials),
+            size: avatarSize,
+          )
+        : FAvatar.raw(
+            size: avatarSize,
+            child: Text(
+              initials,
+              style: context.theme.typography.lg
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+          );
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          avatar,
+          const SizedBox(height: 8),
+          Text(
+            model.fullName,
+            maxLines: 1,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: context.theme.typography.sm
+                .copyWith(fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }

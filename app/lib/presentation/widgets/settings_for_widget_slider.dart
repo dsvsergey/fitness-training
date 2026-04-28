@@ -1,8 +1,7 @@
 import 'package:fitness_training/core/resources/localization/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
-import "package:flutter/material.dart";
-import '../../core/resources/themes/app_colors.dart';
-import '../../core/resources/themes/app_fonts.dart';
+import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 class SettingsForWidgetSlider extends StatelessWidget {
   const SettingsForWidgetSlider({
@@ -19,17 +18,16 @@ class SettingsForWidgetSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-    double containerWidth = screenWidth > 600 ? 300 : 240;
-    double containerHeight = 62;
-    if (screenWidth <= 1334) {
-      containerWidth = screenWidth > 600 ? 300 : 240;
-      containerHeight = 48;
-    } else if (screenWidth > 2732 && mediaQuery.size.height > 2048) {
+    double containerWidth;
+    double containerHeight;
+    if (screenWidth > 2732) {
       containerWidth = screenWidth > 600 ? 600 : 360;
       containerHeight = 80;
+    } else {
+      containerWidth = screenWidth > 600 ? 300 : 240;
+      containerHeight = 48;
     }
 
     return Column(
@@ -37,69 +35,63 @@ class SettingsForWidgetSlider extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          textAlign: TextAlign.left,
           text,
-          style: AppFonts.w700s18.copyWith(
-            color: AppColors.black,
-          ),
+          style: context.theme.typography.lg
+              .copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 5),
-        Row(
-          children: [
-            Container(
-              height: containerHeight,
-              width: containerWidth,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: AppColors.white,
-                border: Border.all(
-                  color: AppColors.grey,
+        Container(
+          height: containerHeight,
+          width: containerWidth,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: context.theme.colors.background,
+            border: Border.all(color: context.theme.colors.border),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: containerWidth / 2 - 1,
+                child: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 10),
+                    hintText: hintText ?? '_',
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: containerWidth / 2 - 1,
-                    child: TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        hintText: hintText ?? "_",
-                      ),
-                    ),
-                  ),
-                  const SizedBox(),
-                  SizedBox(
-                    width: containerWidth / 2 - 1,
-                    child: CupertinoSlidingSegmentedControl<int>(
-                      children: {
-                        0: SizedBox(
-                            height: containerHeight - 7,
-                            child: Center(
-                              child: Text(AppLocalizations.of(context)!.uni,
-                                  style: AppFonts.w700s18.copyWith(
-                                    color: AppColors.black,
-                                  )),
-                            )),
-                        1: Text(
-                          AppLocalizations.of(context)!.bi,
-                          style: AppFonts.w700s18.copyWith(
-                            color: AppColors.black,
+              SizedBox(
+                width: containerWidth / 2 - 1,
+                child: ValueListenableBuilder<int?>(
+                  valueListenable: sliderValueNotifier,
+                  builder: (context, value, _) =>
+                      CupertinoSlidingSegmentedControl<int>(
+                    children: {
+                      0: SizedBox(
+                        height: containerHeight - 7,
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.uni,
+                            style: context.theme.typography.lg
+                                .copyWith(fontWeight: FontWeight.w700),
                           ),
                         ),
-                      },
-                      onValueChanged: (int? newValue) =>
-                          sliderValueNotifier.value = newValue,
-                      groupValue: sliderValueNotifier.value,
-                    ),
+                      ),
+                      1: Text(
+                        AppLocalizations.of(context)!.bi,
+                        style: context.theme.typography.lg
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
+                    },
+                    onValueChanged: (v) => sliderValueNotifier.value = v,
+                    groupValue: value,
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

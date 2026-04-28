@@ -1,11 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-// import 'package:rive/rive.dart';
+import 'package:forui/forui.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../../core/resources/resources.dart';
-import '../../../core/resources/themes/app_colors.dart';
-import '../../../core/utils/device_info.dart';
 import '../../widgets/button_widget.dart';
 
 @RoutePage()
@@ -25,91 +22,92 @@ class TableCalendarScreen extends StatefulWidget {
 class _TableCalendarScreenState extends State<TableCalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime today = DateTime.now();
+  late DateTime _focusedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  // DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-
-  void _onDaySelectedA(DateTime day, DateTime focusedDay) {
-    today = day;
-    _selectedDay = day;
-    setState(() {});
-  }
 
   @override
   void initState() {
     super.initState();
     _selectedDay = widget.currentDate;
     today = widget.currentDate;
+    _focusedDay = widget.currentDate;
   }
 
-  // void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-  //   if (!isSameDay(_selectedDay, selectedDay)) {
-  //     setState(() {
-  //       _selectedDay = selectedDay;
-  //       // _focusedDay = focusedDay;
-  //     });
-  //   }
-  // }
+  void _onDaySelectedA(DateTime day, DateTime focusedDay) {
+    setState(() {
+      today = day;
+      _selectedDay = day;
+      _focusedDay = focusedDay;
+    });
+  }
 
   void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
-    setState(() {});
-    _selectedDay = null;
-    // _focusedDay = focusedDay;
-    _rangeStart = start;
-    _rangeEnd = end;
+    setState(() {
+      _selectedDay = null;
+      _rangeStart = start;
+      _rangeEnd = end;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width > 600;
+
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 70,
-        elevation: 0,
-        leading: IconButton(
-          icon: Image.asset(
-            AppPngs.back,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          backgroundColor: context.theme.colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+            onPressed: () => context.router.pop<DateTime?>(_selectedDay),
           ),
-          onPressed: () {
-            context.router.pop<DateTime?>(_selectedDay);
-          },
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (DeviceInfo.isTablet(context)) const SizedBox(height: 70),
+            if (isTablet) const SizedBox(height: 70),
             Padding(
-              padding: DeviceInfo.isTablet(context)
-                  ? const EdgeInsets.all(20.0)
-                  : const EdgeInsets.all(10.0),
+              padding: isTablet
+                  ? const EdgeInsets.all(20)
+                  : const EdgeInsets.all(10),
               child: TableCalendar(
                 calendarFormat: CalendarFormat.month,
                 startingDayOfWeek: StartingDayOfWeek.monday,
-                daysOfWeekHeight: 50,
-                locale: "en_US",
-                rowHeight: DeviceInfo.isTablet(context) ? 76 : 46,
+                daysOfWeekHeight: 40,
+                locale: 'en_US',
+                rowHeight: isTablet ? 72 : 48,
                 headerStyle: HeaderStyle(
                   titleTextStyle: TextStyle(
-                    color: Colors.black,
+                    color: const Color(0xFF1E1E1E),
                     fontWeight: FontWeight.bold,
-                    fontSize: DeviceInfo.isTablet(context) ? 40.0 : 25.0,
+                    fontSize: isTablet ? 36.0 : 20.0,
                   ),
                   formatButtonVisible: false,
                   titleCentered: true,
+                  leftChevronIcon: const Icon(
+                    Icons.chevron_left,
+                    color: Color(0xFF1E1E1E),
+                  ),
+                  rightChevronIcon: const Icon(
+                    Icons.chevron_right,
+                    color: Color(0xFF1E1E1E),
+                  ),
                 ),
                 availableGestures: AvailableGestures.all,
                 selectedDayPredicate: (day) => isSameDay(day, today),
-                focusedDay: widget.currentDate,
+                focusedDay: _focusedDay,
                 firstDay: DateTime.utc(2010, 10, 16),
                 lastDay: DateTime.utc(2030, 3, 14),
                 onDaySelected: _onDaySelectedA,
                 eventLoader: (day) => widget.workDays
-                        .where((element) => isSameDay(element, day))
-                        .toList()
+                        .where((d) => isSameDay(d, day))
                         .isNotEmpty
                     ? ['Event']
                     : [],
@@ -117,70 +115,93 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                 rangeSelectionMode: RangeSelectionMode.toggledOff,
                 onRangeSelected: _onRangeSelected,
                 rangeEndDay: _rangeEnd,
-                daysOfWeekStyle: const DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(color: Colors.black),
+                daysOfWeekStyle: DaysOfWeekStyle(
+                  weekdayStyle: TextStyle(
+                    color: const Color(0xFF1E1E1E),
+                    fontSize: isTablet ? 18.0 : 13.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  weekendStyle: TextStyle(
+                    color: const Color(0xFF9E9E9E),
+                    fontSize: isTablet ? 18.0 : 13.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 calendarStyle: CalendarStyle(
                   defaultTextStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: DeviceInfo.isTablet(context) ? 30.0 : 22.0),
-                  weekNumberTextStyle: const TextStyle(color: Colors.black),
+                    color: const Color(0xFF1E1E1E),
+                    fontSize: isTablet ? 26.0 : 16.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  weekNumberTextStyle:
+                      const TextStyle(color: Color(0xFF1E1E1E)),
                   weekendTextStyle: TextStyle(
-                      color: Colors.red,
-                      fontSize: DeviceInfo.isTablet(context) ? 30.0 : 22.0),
-
-                  rangeHighlightColor: const Color.fromARGB(255, 229, 233, 112),
-                  isTodayHighlighted: false,
+                    color: const Color(0xFF9E9E9E),
+                    fontSize: isTablet ? 26.0 : 16.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  rangeHighlightColor: const Color(0xFFE0E0E0),
+                  isTodayHighlighted: true,
                   canMarkersOverflow: false,
                   outsideDaysVisible: false,
                   markersAutoAligned: false,
                   selectedTextStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: DeviceInfo.isTablet(context) ? 32.0 : 23.0),
+                    color: Colors.white,
+                    fontSize: isTablet ? 26.0 : 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
                   selectedDecoration: const BoxDecoration(
-                    color: AppColors.colorMain,
+                    color: Color(0xFF1E1E1E),
                     shape: BoxShape.circle,
                   ),
-                  rangeStartTextStyle: const TextStyle(
-                    color: AppColors.black,
-                    fontSize: 16.0,
+                  todayTextStyle: TextStyle(
+                    color: const Color(0xFF1E1E1E),
+                    fontSize: isTablet ? 26.0 : 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  todayDecoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF1E1E1E),
+                      width: 1.5,
+                    ),
+                  ),
+                  markerDecoration: const BoxDecoration(
+                    color: Color(0xFF1E1E1E),
+                    shape: BoxShape.circle,
+                  ),
+                  rangeStartTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: isTablet ? 26.0 : 16.0,
+                  ),
+                  rangeEndTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: isTablet ? 26.0 : 16.0,
                   ),
                   rangeEndDecoration: const BoxDecoration(
-                    color: AppColors.colorMain,
+                    color: Color(0xFF1E1E1E),
                     shape: BoxShape.circle,
                   ),
                   rangeStartDecoration: const BoxDecoration(
-                    color: AppColors.colorMain,
+                    color: Color(0xFF1E1E1E),
                     shape: BoxShape.circle,
                   ),
-                  rangeEndTextStyle: const TextStyle(
-                    color: AppColors.black,
-                    fontSize: 16.0,
-                  ),
-
-                  todayTextStyle: const TextStyle(
-                    color: AppColors.black,
-                    backgroundColor: AppColors.black,
-                    decorationColor: AppColors.green,
-                    decorationStyle: TextDecorationStyle.dashed,
-                  ),
-                  //  outsideDaysVisible: false,
                 ),
                 onFormatChanged: (format) {
                   if (_calendarFormat != format) {
-                    _calendarFormat = format;
-                    setState(() {});
+                    setState(() => _calendarFormat = format);
                   }
+                },
+                onPageChanged: (focusedDay) {
+                  setState(() => _focusedDay = focusedDay);
                 },
               ),
             ),
             const Spacer(),
-            // const SizedBox(height: 100),
             ButtonWidget(
-              onPressed: () {
-                context.router.pop<DateTime?>(_selectedDay);
-              },
-              title: "Show Results",
+              onPressed: () => context.router.pop<DateTime?>(_selectedDay),
+              title: 'Show Results',
             ),
             const SizedBox(height: 30),
           ],

@@ -16,9 +16,6 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     on<FilterListAppointments>((event, emit) async {
       try {
         emit(CalendarLoading(state));
-        // if (state is! CalendarSuccess) {
-        //   emit(CalendarLoading(state));
-        // }
         var selectedDay = DateTime(
           event.selectedDay!.year,
           event.selectedDay!.month,
@@ -26,10 +23,14 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
         );
         final coach = GetIt.I<ApplicationBloc>().state.user?.coach;
         final coaches = GetIt.I<ApplicationBloc>().state.coaches;
-        final coachIds = coaches!
-            .where((element) => element.firstName == coach?.firstName)
-            .map((e) => e.id)
-            .toList();
+        // coaches may be null pre-login; fall back to current coach id only.
+        final coachIds = coaches != null
+            ? coaches
+                .where((element) => element.firstName == coach?.firstName)
+                .map((e) => e.id)
+                .whereType<int>()
+                .toList()
+            : (coach?.id != null ? [coach!.id!] : <int>[]);
 
         final appointmentResult = await GetIt.I<WorkoutAppointmentUsecase>()
             .getAllWorkoutAppointments(
@@ -68,6 +69,11 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
       } catch (e) {
         emit(CalendarError(state, exception: e));
       }
+    });
+
+    on<RefreshAppointments>((event, emit) {
+      final day = state.selectedDay ?? DateTime.now();
+      add(FilterListAppointments(selectedDay: day));
     });
   }
 }
