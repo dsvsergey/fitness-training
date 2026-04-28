@@ -6,6 +6,7 @@ from app.api.v1.dependencies import get_current_user
 from app.crud.workout_appointment import (
     create_workout_appointment,
     delete_workout_appointment,
+    find_overlapping_appointment,
     get_all_workout_appointments,
     get_filter_workout_appointments,
     get_workout_appointment,
@@ -32,6 +33,20 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+def _conflict_payload(conflict: WorkoutAppointment) -> dict:
+    return {
+        "code": "appointment_overlap",
+        "message": "Appointment overlaps an existing one",
+        "conflict": {
+            "id": conflict.id,
+            "coach_id": conflict.coach_id,
+            "trainee_id": conflict.trainee_id,
+            "start_at": conflict.start_at.isoformat() if conflict.start_at else None,
+            "end_at": conflict.end_at.isoformat() if conflict.end_at else None,
+        },
+    }
+
+
 @router.post(
     "/workout-appointments/",
     response_model=WorkoutAppointmentSchema,
@@ -42,6 +57,33 @@ def create_workout_appointment_endpoint(
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user),
 ):
+    if (
+        appointment.coach_id is None
+        or appointment.trainee_id is None
+        or appointment.start_at is None
+        or appointment.end_at is None
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="coach_id, trainee_id, start_at and end_at are required",
+        )
+    if appointment.end_at <= appointment.start_at:
+        raise HTTPException(status_code=400, detail="end_at must be after start_at")
+
+    conflict = find_overlapping_appointment(
+        db=db,
+        coach_id=appointment.coach_id,
+        trainee_id=appointment.trainee_id,
+        start_at=appointment.start_at,
+        end_at=appointment.end_at,
+    )
+    if conflict is not None:
+        logger.info(
+            f"Rejected appointment for coach={appointment.coach_id}, trainee={appointment.trainee_id}: "
+            f"overlaps appointment {conflict.id}"
+        )
+        raise HTTPException(status_code=409, detail=_conflict_payload(conflict))
+
     workout_appointment = create_workout_appointment(db=db, appointment=appointment)
     if workout_appointment is None:
         logger.error(f"Error creating workout appointment, user: {current_user}")
@@ -167,14 +209,34 @@ def update_workout_appointment_endpoint(
     db: Session = Depends(get_db),
     current_user: str = Depends(get_current_user),
 ):
-    updated_appointment = update_workout_appointment(
-        db=db, appointment_id=appointment_id, appointment=appointment
-    )
-    if updated_appointment is None:
+    existing = get_workout_appointment(db, appointment_id=appointment_id)
+    if existing is None:
         logger.error(
             f"Workout appointment with id {appointment_id} not found, user: {current_user}"
         )
         raise HTTPException(status_code=404, detail="Workout appointment not found")
+
+    new_start = appointment.start_at or existing.start_at
+    new_end = appointment.end_at or existing.end_at
+    new_coach_id = appointment.coach_id or existing.coach_id
+    new_trainee_id = appointment.trainee_id or existing.trainee_id
+    if new_end <= new_start:
+        raise HTTPException(status_code=400, detail="end_at must be after start_at")
+
+    conflict = find_overlapping_appointment(
+        db=db,
+        coach_id=new_coach_id,
+        trainee_id=new_trainee_id,
+        start_at=new_start,
+        end_at=new_end,
+        exclude_id=appointment_id,
+    )
+    if conflict is not None:
+        raise HTTPException(status_code=409, detail=_conflict_payload(conflict))
+
+    updated_appointment = update_workout_appointment(
+        db=db, appointment_id=appointment_id, appointment=appointment
+    )
     logger.info(
         f"Workout appointment with id {appointment_id} updated successfully, user: {current_user}"
     )

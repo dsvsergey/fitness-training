@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import logging
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.workout_appointment import (
@@ -17,11 +17,46 @@ from app.schemas.workout_appointment import (
 from app.models.coachs import Coach
 
 
+# Statuses that occupy a time slot. Cancelled / NoShow / NoneStatus do not block scheduling.
+ACTIVE_STATUSES = (
+    AppointmentStatus.Requested,
+    AppointmentStatus.Booked,
+    AppointmentStatus.Confirmed,
+    AppointmentStatus.Arrived,
+    AppointmentStatus.Completed,
+)
+
+
 def parse_datetime(date_str: str) -> datetime:
     try:
         return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S.%f")
     except ValueError:
         return datetime.strptime(date_str + " 00:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
+
+
+def find_overlapping_appointment(
+    db: Session,
+    coach_id: int,
+    trainee_id: int,
+    start_at: datetime,
+    end_at: datetime,
+    exclude_id: int | None = None,
+) -> WorkoutAppointment | None:
+    """Return the first appointment that overlaps the given time range for this coach
+    or trainee, excluding the appointment being updated. Two ranges overlap when
+    `existing.start < new.end AND existing.end > new.start`."""
+    query = db.query(WorkoutAppointment).filter(
+        WorkoutAppointment.status.in_(ACTIVE_STATUSES),
+        WorkoutAppointment.start_at < end_at,
+        WorkoutAppointment.end_at > start_at,
+        or_(
+            WorkoutAppointment.coach_id == coach_id,
+            WorkoutAppointment.trainee_id == trainee_id,
+        ),
+    )
+    if exclude_id is not None:
+        query = query.filter(WorkoutAppointment.id != exclude_id)
+    return query.first()
 
 
 def create_workout_appointment(
