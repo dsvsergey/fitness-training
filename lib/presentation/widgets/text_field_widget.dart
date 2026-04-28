@@ -72,12 +72,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
       hint: widget.hintText,
       error: widget.errorText != null ? Text(widget.errorText!) : null,
       keyboardType: widget.keyboardType,
-      prefixBuilder: widget.prefix != null
-          ? (_, __, ___) => widget.prefix!
-          : null,
-      suffixBuilder: widget.suffix != null
-          ? (_, __, ___) => widget.suffix!
-          : null,
+      prefixBuilder: widget.prefix != null ? (_, _, _) => widget.prefix! : null,
+      suffixBuilder: widget.suffix != null ? (_, _, _) => widget.suffix! : null,
     );
   }
 }
