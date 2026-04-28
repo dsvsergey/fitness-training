@@ -19,6 +19,9 @@ abstract class WorkoutAppointmentModel
 
   CoachModel get coach;
 
+  @BuiltValueField(wireName: 'program_id')
+  int? get programId;
+
   @BuiltValueField(wireName: 'duration')
   int get duration;
 
@@ -57,6 +60,7 @@ extension WorkoutAppointmentModelExtension on WorkoutAppointmentModel {
           ..id = id
           ..trainee = trainee.entity.toBuilder()
           ..coach = coach.entity.toBuilder()
+          ..programId = programId
           ..duration = duration
           ..status = status.entity
           ..startAt = startAt
@@ -71,6 +75,7 @@ extension WorkoutAppointmentEntityExtension on WorkoutAppointmentEntity {
           ..id = id
           ..trainee = trainee.model.toBuilder()
           ..coach = coach.model.toBuilder()
+          ..programId = programId
           ..duration = duration
           ..status = status.model
           ..startAt = startAt

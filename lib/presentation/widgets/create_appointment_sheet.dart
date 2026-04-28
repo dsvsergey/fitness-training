@@ -65,6 +65,7 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
   static const _durationOptions = <int>[15, 30, 45, 60, 90];
 
   TraineeEntity? _trainee;
+  ProgramFitnessEntity? _program;
   late DateTime _date;
   TimeOfDay _time = const TimeOfDay(hour: 10, minute: 0);
   int _durationMinutes = 30;
@@ -78,12 +79,21 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
   List<TraineeEntity>? _availableTrainees;
   bool _loadingTrainees = false;
 
+  // Programs for the currently selected trainee. Reloaded whenever the trainee
+  // changes; cleared if no trainee is selected.
+  List<ProgramFitnessEntity> _programs = const [];
+  bool _loadingPrograms = false;
+
   @override
   void initState() {
     super.initState();
     _trainee = widget.prefilledTrainee;
     final now = DateTime.now();
     _date = widget.prefilledDate ?? DateTime(now.year, now.month, now.day);
+    if (_trainee?.id != null) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _loadProgramsFor(_trainee!));
+    }
   }
 
   @override
@@ -193,7 +203,67 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
         );
       },
     );
-    if (picked != null) setState(() => _trainee = picked);
+    if (picked != null) {
+      setState(() {
+        _trainee = picked;
+        _program = null;
+        _programs = const [];
+      });
+      await _loadProgramsFor(picked);
+    }
+  }
+
+  Future<void> _loadProgramsFor(TraineeEntity trainee) async {
+    if (trainee.id == null) return;
+    setState(() => _loadingPrograms = true);
+    try {
+      final all =
+          await GetIt.I<ProgramFitnessUsecase>().getPrograms(trainee.id!);
+      // Skip archived/deleted programs — coach shouldn't schedule against them.
+      final active = all
+          .where((p) => p.isArchive != true && p.isDelete != true)
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _programs = active;
+        // Auto-select if exactly one program — saves a tap in the common case.
+        if (active.length == 1) _program = active.first;
+        _loadingPrograms = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _programs = const [];
+        _loadingPrograms = false;
+      });
+    }
+  }
+
+  Future<void> _pickProgram() async {
+    if (_programs.isEmpty) return;
+    final picked = await showModalBottomSheet<ProgramFitnessEntity>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          itemCount: _programs.length,
+          itemBuilder: (_, i) {
+            final p = _programs[i];
+            return FTile(
+              prefix: const Icon(FIcons.dumbbell),
+              title: Text(p.name ?? 'Program #${p.number ?? p.id}'),
+              subtitle: p.number != null ? Text('#${p.number}') : null,
+              onPress: () => Navigator.of(ctx).pop(p),
+            );
+          },
+        ),
+      ),
+    );
+    if (picked != null) setState(() => _program = picked);
   }
 
   void _setDuration(int minutes) {
@@ -217,6 +287,10 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
       setState(() => _error = 'Please select a contact.');
       return;
     }
+    if (_program == null && _programs.isNotEmpty) {
+      setState(() => _error = 'Please pick a program.');
+      return;
+    }
     if (_durationMinutes <= 0) {
       setState(() => _error = 'Duration must be greater than 0.');
       return;
@@ -238,6 +312,7 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
     final entity = WorkoutAppointmentEntity((b) => b
       ..trainee = _trainee!.toBuilder()
       ..coach = coach.toBuilder()
+      ..programId = _program?.id
       ..duration = _durationMinutes
       ..status = AppointmentStatusEnumEntity.booked
       ..startAt = _startAt
@@ -321,6 +396,10 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
             ),
             const SizedBox(height: 12),
             _buildTraineeRow(),
+            if (_trainee != null) ...[
+              const SizedBox(height: 10),
+              _buildProgramRow(),
+            ],
             const SizedBox(height: 14),
             _buildDateTimeRow(),
             const SizedBox(height: 16),
@@ -409,6 +488,59 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
                 child: FCircularProgress(),
               )
             else if (!isLocked)
+              const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgramRow() {
+    final String label;
+    final bool isPlaceholder;
+    if (_loadingPrograms) {
+      label = 'Loading programs…';
+      isPlaceholder = true;
+    } else if (_programs.isEmpty) {
+      label = 'No active programs for this contact';
+      isPlaceholder = true;
+    } else if (_program != null) {
+      label =
+          _program!.name ?? 'Program #${_program!.number ?? _program!.id}';
+      isPlaceholder = false;
+    } else {
+      label = 'Select program';
+      isPlaceholder = true;
+    }
+    final tappable = !_loadingPrograms && _programs.isNotEmpty;
+    return InkWell(
+      onTap: tappable ? _pickProgram : null,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            const Icon(FIcons.dumbbell, size: 18, color: Color(0xFF6E6E6E)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isPlaceholder
+                      ? const Color(0xFF9E9E9E)
+                      : const Color(0xFF1E1E1E),
+                ),
+              ),
+            ),
+            if (_loadingPrograms)
+              const SizedBox(
+                  width: 16, height: 16, child: FCircularProgress())
+            else if (tappable)
               const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
           ],
         ),
