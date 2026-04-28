@@ -19,6 +19,9 @@ abstract class WorkoutAppointmentEntity
 
   CoachEntity get coach;
 
+  @BuiltValueField(wireName: 'program_id')
+  int? get programId;
+
   @BuiltValueField(wireName: 'duration')
   int get duration;
 
