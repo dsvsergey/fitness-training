@@ -30,7 +30,7 @@ class CustomTimerWidget extends StatelessWidget {
           width: containerWidth,
           height: containerHeight,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -40,13 +40,17 @@ class CustomTimerWidget extends StatelessWidget {
                   width: svgWidth,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: context.theme.typography.md.copyWith(
-                    fontWeight: FontWeight.w400,
-                    fontSize: fontSize,
-                    color: context.theme.colors.primary,
+                Flexible(
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.theme.typography.md.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: fontSize,
+                      color: context.theme.colors.primary,
+                    ),
                   ),
                 ),
               ],

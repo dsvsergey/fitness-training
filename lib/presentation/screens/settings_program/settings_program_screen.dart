@@ -297,8 +297,7 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                           ],
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: 300,
+                                      Expanded(
                                         child: SingleChildScrollView(
                                           child: HistoryWidget(
                                               programMachine:
@@ -310,19 +309,27 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                   // ── Notes tab ────────────────────
                                   Padding(
                                     padding: const EdgeInsets.all(10),
-                                    child: Stack(
-                                      alignment: Alignment.topRight,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
                                       children: [
-                                        TextField(
-                                          controller: _noteController,
-                                          maxLines: null,
-                                          onChanged: (_) =>
-                                              _hasChanges.value = true,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            hintText: AppLocalizations.of(
-                                                    context)!
-                                                .noteHint,
+                                        Expanded(
+                                          child: TextField(
+                                            controller: _noteController,
+                                            maxLines: null,
+                                            expands: true,
+                                            textAlignVertical:
+                                                TextAlignVertical.top,
+                                            onChanged: (_) =>
+                                                _hasChanges.value = true,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: AppLocalizations.of(
+                                                      context)!
+                                                  .noteHint,
+                                              hintStyle: const TextStyle(
+                                                  color: Color(0xFFBDBDBD)),
+                                            ),
                                           ),
                                         ),
                                         ValueListenableBuilder<bool>(
@@ -332,64 +339,59 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                               return const SizedBox.shrink();
                                             }
                                             return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                              padding: const EdgeInsets.only(
+                                                  top: 8),
+                                              child: Row(
                                                 children: [
-                                                  FloatingActionButton(
-                                                    backgroundColor: context
-                                                        .theme.colors.background,
-                                                    foregroundColor: context
-                                                        .theme.colors.primary,
-                                                    mini: true,
-                                                    onPressed: () {
-                                                      _noteController.text =
-                                                          state.programMachine
-                                                                  ?.note ??
-                                                              '';
-                                                      _hasChanges.value =
-                                                          false;
-                                                    },
-                                                    child: const Icon(
-                                                        Icons.cancel),
-                                                  ),
-                                                  const SizedBox(height: 8),
-                                                  FloatingActionButton(
-                                                    backgroundColor: context
-                                                        .theme.colors.background,
-                                                    foregroundColor: context
-                                                        .theme.colors.primary,
-                                                    mini: true,
-                                                    onPressed: () {
-                                                      GetIt.I<
-                                                              ProgramMachineUsecase>()
-                                                          .updateProgramMachine(
-                                                            state.programMachine!
-                                                                .id!,
-                                                            state.programMachine!
-                                                                .rebuild((p0) =>
-                                                                    p0..note =
-                                                                        _noteController
-                                                                            .text),
-                                                          )
-                                                          .then((_) {
-                                                        context
-                                                            .read<
-                                                                SettingsProgramBloc>()
-                                                            .add(GetMachineSettingEvent(
-                                                                programFitness:
-                                                                    widget
-                                                                        .program,
-                                                                machine: widget
-                                                                    .machine));
+                                                  Expanded(
+                                                    child: FButton(
+                                                      onPress: () {
+                                                        _noteController.text =
+                                                            state.programMachine
+                                                                    ?.note ??
+                                                                '';
                                                         _hasChanges.value =
                                                             false;
-                                                      });
-                                                    },
-                                                    child:
-                                                        const Icon(Icons.save),
+                                                      },
+                                                      variant: FButtonVariant
+                                                          .outline,
+                                                      child: const Text(
+                                                          'Cancel'),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Expanded(
+                                                    child: FButton(
+                                                      onPress: () {
+                                                        GetIt.I<
+                                                                ProgramMachineUsecase>()
+                                                            .updateProgramMachine(
+                                                              state
+                                                                  .programMachine!
+                                                                  .id!,
+                                                              state
+                                                                  .programMachine!
+                                                                  .rebuild((p0) =>
+                                                                      p0..note =
+                                                                          _noteController
+                                                                              .text),
+                                                            )
+                                                            .then((_) {
+                                                          context
+                                                              .read<
+                                                                  SettingsProgramBloc>()
+                                                              .add(GetMachineSettingEvent(
+                                                                  programFitness:
+                                                                      widget
+                                                                          .program,
+                                                                  machine: widget
+                                                                      .machine));
+                                                          _hasChanges.value =
+                                                              false;
+                                                        });
+                                                      },
+                                                      child: const Text('Save'),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -525,24 +527,28 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
             ),
           const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
-                  builder: (context, state) => CustomTimerWidget(
-                    title: AppLocalizations.of(context)!.timer,
-                    image: AppSvgs.timer,
-                    onPressed: () =>
-                        onTimerButtonPressed(context, state),
+                Flexible(
+                  child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
+                    builder: (context, state) => CustomTimerWidget(
+                      title: AppLocalizations.of(context)!.timer,
+                      image: AppSvgs.timer,
+                      onPressed: () =>
+                          onTimerButtonPressed(context, state),
+                    ),
                   ),
                 ),
-                CustomTimerWidget(
-                  title: AppLocalizations.of(context)!.metronome,
-                  image: AppSvgs.metronom,
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const MetronomeControl(),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: CustomTimerWidget(
+                    title: AppLocalizations.of(context)!.metronome,
+                    image: AppSvgs.metronom,
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const MetronomeControl(),
+                      ),
                     ),
                   ),
                 ),
