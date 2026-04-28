@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import '../../core/bloc/bloc_application/application_bloc.dart';
 import '../../domain/entities/fitness/fitness.dart';
 import '../../domain/usecases/fitness/fitness.dart';
 import '../screens/calendar/bloc/calendar_bloc.dart';
+import 'time_slot_picker.dart';
 
 /// Bottom sheet that lets a coach schedule a new workout appointment.
 ///
@@ -84,15 +86,64 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
   List<ProgramFitnessEntity> _programs = const [];
   bool _loadingPrograms = false;
 
+  // Appointments already booked for the *selected date* by the current coach.
+  // Drives both the local overlap check and the time-slot picker.
+  late List<WorkoutAppointmentEntity> _busy;
+  bool _loadingBusy = false;
+
   @override
   void initState() {
     super.initState();
     _trainee = widget.prefilledTrainee;
     final now = DateTime.now();
     _date = widget.prefilledDate ?? DateTime(now.year, now.month, now.day);
-    if (_trainee?.id != null) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => _loadProgramsFor(_trainee!));
+    // Seed from whatever the caller already loaded so the first paint isn't
+    // empty; refreshed below for the chosen date.
+    _busy = _filterBusyForDate(widget.existingAppointments, _date);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadBusyForDate();
+      if (_trainee?.id != null) _loadProgramsFor(_trainee!);
+    });
+  }
+
+  static List<WorkoutAppointmentEntity> _filterBusyForDate(
+    List<WorkoutAppointmentEntity> all,
+    DateTime date,
+  ) {
+    return all.where((a) {
+      if (a.status == AppointmentStatusEnumEntity.cancelled ||
+          a.status == AppointmentStatusEnumEntity.lateCancelled ||
+          a.status == AppointmentStatusEnumEntity.noShow ||
+          a.status == AppointmentStatusEnumEntity.noneStatus) {
+        return false;
+      }
+      return a.startAt.year == date.year &&
+          a.startAt.month == date.month &&
+          a.startAt.day == date.day;
+    }).toList();
+  }
+
+  Future<void> _loadBusyForDate() async {
+    final coachId =
+        context.read<ApplicationBloc>().state.user?.coach?.id;
+    if (coachId == null) return;
+    setState(() => _loadingBusy = true);
+    try {
+      final result = await GetIt.I<WorkoutAppointmentUsecase>()
+          .getAllWorkoutAppointments(
+        filter: WorkoutAppointmentFilterEntity((p) => p
+          ..startDate = _date.toString()
+          ..coachIds = ListBuilder<int>([coachId])),
+      );
+      if (!mounted) return;
+      setState(() {
+        _busy = _filterBusyForDate(
+            result.appointments?.toList() ?? const [], _date);
+        _loadingBusy = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _loadingBusy = false);
     }
   }
 
@@ -117,22 +168,9 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
   /// the same rule authoritatively, but a client-side check gives instant
   /// feedback and lets us highlight which existing appointment conflicts.
   WorkoutAppointmentEntity? _findLocalOverlap() {
-    final coachId =
-        context.read<ApplicationBloc>().state.user?.coach?.id;
     final start = _startAt;
     final end = _endAt;
-
-    for (final a in widget.existingAppointments) {
-      if (a.status == AppointmentStatusEnumEntity.cancelled ||
-          a.status == AppointmentStatusEnumEntity.lateCancelled ||
-          a.status == AppointmentStatusEnumEntity.noShow ||
-          a.status == AppointmentStatusEnumEntity.noneStatus) {
-        continue;
-      }
-      final sameCoach = coachId != null && a.coach.id == coachId;
-      final sameTrainee =
-          _trainee?.id != null && a.trainee.id == _trainee!.id;
-      if (!sameCoach && !sameTrainee) continue;
+    for (final a in _busy) {
       if (a.startAt.isBefore(end) && a.endAt.isAfter(start)) {
         return a;
       }
@@ -147,14 +185,27 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
       firstDate: DateTime.now().subtract(const Duration(days: 30)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
-    if (picked != null) setState(() => _date = picked);
+    if (picked == null) return;
+    setState(() => _date = picked);
+    await _loadBusyForDate();
   }
 
   Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _time,
-      initialEntryMode: TimePickerEntryMode.input,
+    final ranges = _busy
+        .map((a) => BusyRange(
+              start: a.startAt,
+              end: a.endAt,
+              label: a.trainee.fullName.trim().isEmpty
+                  ? null
+                  : a.trainee.fullName,
+            ))
+        .toList();
+    final picked = await showTimeSlotPicker(
+      context,
+      date: _date,
+      durationMinutes: _durationMinutes,
+      busy: ranges,
+      initial: _time,
     );
     if (picked != null) setState(() => _time = picked);
   }
