@@ -59,15 +59,30 @@ def find_overlapping_appointment(
     return query.first()
 
 
+_API_TO_DB_STATUS = {
+    "BOOKED": "Booked",
+    "COMPLETED": "Completed",
+    "CONFIRMED": "Confirmed",
+    "ARRIVED": "Arrived",
+    "NO_SHOW": "NoShow",
+    "CANCELLED": "Cancelled",
+    "REQUESTED": "Requested",
+    "NONE": "None",
+}
+
+
 def _coerce_status(value) -> AppointmentStatus:
-    """Accept a Python enum, a DB-style string ("Booked"), or None and return a
-    valid AppointmentStatus value to store in the column."""
+    """Accept the Python enum, a DB-style string ("Booked"), or the API form
+    ("BOOKED") that arrives via WorkoutAppointmentSchema, and return the
+    matching AppointmentStatus value for the column."""
     if value is None:
         return AppointmentStatus.NoneStatus
     if isinstance(value, AppointmentStatus):
         return value
+    s = str(value)
+    s = _API_TO_DB_STATUS.get(s.upper(), s)
     try:
-        return AppointmentStatus(value)
+        return AppointmentStatus(s)
     except ValueError:
         return AppointmentStatus.NoneStatus
 

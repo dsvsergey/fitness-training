@@ -29,6 +29,20 @@ _API_TO_DB_STATUS = {
     "NONE": "None",
 }
 
+# Reverse map: DB enum value → API string returned to clients.
+_DB_TO_API_STATUS = {
+    "Booked": "BOOKED",
+    "Completed": "COMPLETED",
+    "Confirmed": "CONFIRMED",
+    "Arrived": "ARRIVED",
+    "NoShow": "NO_SHOW",
+    "Cancelled": "CANCELLED",
+    "LateCancelled": "CANCELLED",
+    "Requested": "BOOKED",
+    "None": "NONE",
+    "NoneStatus": "NONE",
+}
+
 
 class WorkoutAppointmentBase(BaseModel):
     start_datetime: datetime
@@ -83,7 +97,7 @@ class WorkoutAppointmentSchema(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _flatten_nested_and_normalize_status(cls, data):
+    def _flatten_nested(cls, data):
         # Mobile clients post payloads with nested {trainee: {id}, coach: {id},
         # program: {id}} objects. Pull the id out of each so the route handler
         # can rely on the flat *_id fields.
@@ -98,11 +112,20 @@ class WorkoutAppointmentSchema(BaseModel):
                 nested = data.get(src)
                 if isinstance(nested, dict) and nested.get("id") is not None:
                     data[dst] = nested["id"]
-        # Normalize uppercase API status (BOOKED) into the SQL enum value (Booked).
-        s = data.get("status")
-        if isinstance(s, str):
-            data["status"] = _API_TO_DB_STATUS.get(s.upper(), s)
         return data
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def _normalize_status(cls, v):
+        # Whatever the source — a SQLAlchemy enum value (Booked), an API enum
+        # value (BOOKED), or a request string in either case — funnel through
+        # to the API-facing form so clients always see uppercase values.
+        if v is None:
+            return v
+        s = v.value if hasattr(v, "value") else str(v)
+        if s in _DB_TO_API_STATUS:
+            return _DB_TO_API_STATUS[s]
+        return s.upper()
 
 
 class WorkoutAppointmentStatsSchema(BaseModel):
