@@ -53,6 +53,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ? state.appointmentsFilteredList
               : const [];
           return FloatingActionButton(
+            heroTag: 'calendar_fab',
             onPressed: () => showCreateAppointmentSheet(
               context,
               prefilledDate: state.selectedDay ?? DateTime.now(),
