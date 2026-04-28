@@ -10,7 +10,6 @@ import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
 import '../../widgets/grid_contacts_widget.dart';
 import '../../widgets/list_contacts_widget.dart';
-import '../programs/program_screen/bloc/program_screen_bloc.dart';
 import 'bloc/contacts_bloc.dart';
 
 @RoutePage()
@@ -74,9 +73,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     context
         .read<ApplicationBloc>()
         .add(SelectTraineeEvent(selectedTrainee: trainee));
-    BlocProvider.of<ProgramScreenBloc>(context)
-        .add(UpdateTraineeEvent(trainee: trainee));
-    AutoRouter.of(context).push(const ProgramRoute());
+    AutoRouter.of(context).push(ContactDetailRoute(trainee: trainee));
   }
 
   void _showTraineeForm(BuildContext context, {TraineeEntity? trainee}) {
