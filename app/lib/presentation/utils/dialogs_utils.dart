@@ -1,14 +1,12 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:fitness_training/core/resources/localization/l10n/app_localizations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../core/bloc/bloc_application/application_bloc.dart';
 import '../../domain/entities/fitness/fitness.dart';
-import '../widgets/settings_for_widget.dart';
-import '../widgets/settings_for_widget_slider.dart';
-import 'sizedbox_utils.dart';
 
 class _LabeledField extends StatelessWidget {
   const _LabeledField({
@@ -63,6 +61,122 @@ class _LabeledField extends StatelessWidget {
             filled: true,
             fillColor: const Color(0xFFFAFAFA),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Pair extends StatelessWidget {
+  const _Pair({required this.left, required this.right});
+  final Widget left;
+  final Widget right;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: left),
+        const SizedBox(width: 12),
+        Expanded(child: right),
+      ],
+    );
+  }
+}
+
+class _FeetRow extends StatelessWidget {
+  const _FeetRow({
+    required this.label,
+    required this.controller,
+    required this.modeNotifier,
+    required this.uniLabel,
+    required this.biLabel,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final ValueNotifier<int?> modeNotifier;
+  final String uniLabel;
+  final String biLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final inputDecoration = InputDecoration(
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+      ),
+      filled: true,
+      fillColor: const Color(0xFFFAFAFA),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF9E9E9E),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(
+                    fontSize: 15, color: Color(0xFF1E1E1E)),
+                decoration: inputDecoration,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ValueListenableBuilder<int?>(
+                valueListenable: modeNotifier,
+                builder: (context, value, _) =>
+                    CupertinoSlidingSegmentedControl<int>(
+                  groupValue: value,
+                  onValueChanged: (v) => modeNotifier.value = v,
+                  children: {
+                    0: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Text(
+                        uniLabel,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    1: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Text(
+                        biLabel,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -137,216 +251,214 @@ class DialogUtils {
 
     return showDialog<ProgramMachineEntity>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogCtx) => AlertDialog(
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: contentPaddingHorizontal,
-          vertical: contentPaddingVertical,
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 80 : 16,
+          vertical: 24,
         ),
-        title: Text(
-          '${AppLocalizations.of(context)!.settingsFor} ${machine.name}',
-          textAlign: TextAlign.center,
-          style: isTablet
-              ? context.theme.typography.xl3
-                  .copyWith(fontWeight: FontWeight.w800)
-              : context.theme.typography.xl2
-                  .copyWith(fontWeight: FontWeight.w800),
+        titlePadding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
+        contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
+        title: Column(
+          children: [
+            Text(
+              AppLocalizations.of(context)!.settingsFor,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: context.theme.colors.mutedForeground,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              machine.name,
+              style: context.theme.typography.xl
+                  .copyWith(fontWeight: FontWeight.w700),
+            ),
+          ],
         ),
         content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SettingsForWidget(
-                      controller: controllerSeats,
-                      text: AppLocalizations.of(context)!.seats),
-                  const SizedBox(width: 20),
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.back,
-                      controller: controllerBack),
-                ],
-              ),
-              10.hsb,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.pin,
-                      controller: controllerPin),
-                  const SizedBox(width: 20),
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.handle,
-                      controller: controllerHandle),
-                ],
-              ),
-              10.hsb,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.knees,
-                      controller: controllerKnees),
-                  const SizedBox(width: 20),
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.chest,
-                      controller: controllerChest),
-                ],
-              ),
-              10.hsb,
-              SettingsForWidgetSlider(
-                text: AppLocalizations.of(context)!.feet,
-                controller: controllerLegs,
-                sliderValueNotifier: sliderValueNotifier,
-              ),
-              10.hsb,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.thighs,
-                      controller: controllerThighs),
-                  20.wsb,
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.grip,
-                      controller: controllerGrip),
-                ],
-              ),
-              10.hsb,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.angle,
-                      controller: controllerAndel),
-                  20.wsb,
-                  SettingsForWidget(
-                      text: AppLocalizations.of(context)!.weightLb,
-                      controller: controllerWeight),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Spacer(),
-                  Column(
-                    children: [
-                      5.hsb,
-                      Text(
-                        AppLocalizations.of(context)!
-                            .weightCurrentDescription,
-                        softWrap: true,
-                        textAlign: TextAlign.center,
-                        style: context.theme.typography.sm.copyWith(
-                          color: context.theme.colors.mutedForeground,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: contentPaddingHorizontal),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isTablet ? 540 : double.infinity,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                FButton(
-                  onPress: () => Navigator.of(context).pop(),
-                  variant: FButtonVariant.ghost,
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                _Pair(
+                  left: _LabeledField(
+                    label: AppLocalizations.of(context)!.seats,
+                    controller: controllerSeats,
+                    keyboardType: TextInputType.number,
+                  ),
+                  right: _LabeledField(
+                    label: AppLocalizations.of(context)!.back,
+                    controller: controllerBack,
+                    keyboardType: TextInputType.number,
+                  ),
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: buttonEnabledNotifier,
-                  builder: (context, isEnabled, _) => SizedBox(
-                    height: buttonHeight,
-                    width: buttonWidth,
-                    child: FButton(
-                      onPress: isEnabled
-                          ? () {
-                              final currentTrainee = GetIt.I<ApplicationBloc>()
-                                  .state
-                                  .currentTrainee;
-                              final coach = GetIt.I<ApplicationBloc>()
-                                  .state
-                                  .user
-                                  ?.coach;
-                              final settings = programMachine?.rebuild(
-                                (e0) => e0
-                                  ..machineId = machine.id
-                                  ..seats =
-                                      int.tryParse(controllerSeats.text)
-                                  ..back = int.tryParse(controllerBack.text)
-                                  ..handle =
-                                      controllerHandle.text.isEmpty
-                                          ? null
-                                          : controllerHandle.text
-                                  ..pin = int.tryParse(controllerPin.text)
-                                  ..forTwoLegs =
-                                      sliderValueNotifier.value == 1
-                                  ..knees = controllerKnees.text.isEmpty
-                                      ? null
-                                      : controllerKnees.text
-                                  ..legs = controllerLegs.text.isEmpty
-                                      ? null
-                                      : controllerLegs.text
-                                  ..angal = controllerAndel.text.isEmpty
-                                      ? null
-                                      : controllerAndel.text
-                                  ..chest = controllerChest.text.isEmpty
-                                      ? null
-                                      : controllerChest.text
-                                  ..thighs = controllerThighs.text.isEmpty
-                                      ? null
-                                      : controllerThighs.text
-                                  ..grip = controllerGrip.text.isEmpty
-                                      ? null
-                                      : controllerGrip.text
-                                  ..workouts =
-                                      programMachine.workouts.isNotEmpty
-                                          ? programMachine.workouts
-                                              .rebuild((wb) => wb.map((w) =>
-                                                  w.dateSession == null
-                                                      ? w.rebuild((p) =>
-                                                          p.weight =
-                                                              int.tryParse(
-                                                                  controllerWeight
-                                                                      .text))
-                                                      : w))
-                                              .toBuiltList()
-                                              .toBuilder()
-                                          : ListBuilder([
-                                              WorkoutSessionEntity((p) => p
-                                                ..coachId = coach?.id
-                                                ..traineeId =
-                                                    currentTrainee?.id
-                                                ..programMachineId =
-                                                    programMachine.id
-                                                ..sessionStatus =
-                                                    SessionStatusEnumEntity
-                                                        .planned
-                                                ..weight = int.tryParse(
-                                                    controllerWeight.text))
-                                            ]),
-                              );
-                              Navigator.of(context).pop(settings);
-                            }
-                          : null,
-                      child: Text(AppLocalizations.of(context)!.ok),
+                const SizedBox(height: 12),
+                _Pair(
+                  left: _LabeledField(
+                    label: AppLocalizations.of(context)!.pin,
+                    controller: controllerPin,
+                    keyboardType: TextInputType.number,
+                  ),
+                  right: _LabeledField(
+                    label: AppLocalizations.of(context)!.handle,
+                    controller: controllerHandle,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _Pair(
+                  left: _LabeledField(
+                    label: AppLocalizations.of(context)!.knees,
+                    controller: controllerKnees,
+                  ),
+                  right: _LabeledField(
+                    label: AppLocalizations.of(context)!.chest,
+                    controller: controllerChest,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _FeetRow(
+                  label: AppLocalizations.of(context)!.feet,
+                  controller: controllerLegs,
+                  modeNotifier: sliderValueNotifier,
+                  uniLabel: AppLocalizations.of(context)!.uni,
+                  biLabel: AppLocalizations.of(context)!.bi,
+                ),
+                const SizedBox(height: 12),
+                _Pair(
+                  left: _LabeledField(
+                    label: AppLocalizations.of(context)!.thighs,
+                    controller: controllerThighs,
+                  ),
+                  right: _LabeledField(
+                    label: AppLocalizations.of(context)!.grip,
+                    controller: controllerGrip,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _Pair(
+                  left: _LabeledField(
+                    label: AppLocalizations.of(context)!.angle,
+                    controller: controllerAndel,
+                  ),
+                  right: _LabeledField(
+                    label: AppLocalizations.of(context)!.weightLb,
+                    controller: controllerWeight,
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    AppLocalizations.of(context)!.weightCurrentDescription,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.theme.colors.mutedForeground,
                     ),
                   ),
                 ),
               ],
             ),
+          ),
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: FButton(
+                  onPress: () => Navigator.of(dialogCtx).pop(),
+                  variant: FButtonVariant.outline,
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: buttonEnabledNotifier,
+                  builder: (context, isEnabled, _) => FButton(
+                    onPress: isEnabled
+                        ? () {
+                            final currentTrainee =
+                                GetIt.I<ApplicationBloc>()
+                                    .state
+                                    .currentTrainee;
+                            final coach = GetIt.I<ApplicationBloc>()
+                                .state
+                                .user
+                                ?.coach;
+                            final settings = programMachine?.rebuild(
+                              (e0) => e0
+                                ..machineId = machine.id
+                                ..seats =
+                                    int.tryParse(controllerSeats.text)
+                                ..back = int.tryParse(controllerBack.text)
+                                ..handle = controllerHandle.text.isEmpty
+                                    ? null
+                                    : controllerHandle.text
+                                ..pin = int.tryParse(controllerPin.text)
+                                ..forTwoLegs =
+                                    sliderValueNotifier.value == 1
+                                ..knees = controllerKnees.text.isEmpty
+                                    ? null
+                                    : controllerKnees.text
+                                ..legs = controllerLegs.text.isEmpty
+                                    ? null
+                                    : controllerLegs.text
+                                ..angal = controllerAndel.text.isEmpty
+                                    ? null
+                                    : controllerAndel.text
+                                ..chest = controllerChest.text.isEmpty
+                                    ? null
+                                    : controllerChest.text
+                                ..thighs = controllerThighs.text.isEmpty
+                                    ? null
+                                    : controllerThighs.text
+                                ..grip = controllerGrip.text.isEmpty
+                                    ? null
+                                    : controllerGrip.text
+                                ..workouts = programMachine
+                                        .workouts.isNotEmpty
+                                    ? programMachine.workouts
+                                        .rebuild((wb) => wb.map((w) =>
+                                            w.dateSession == null
+                                                ? w.rebuild((p) =>
+                                                    p.weight = int.tryParse(
+                                                        controllerWeight
+                                                            .text))
+                                                : w))
+                                        .toBuiltList()
+                                        .toBuilder()
+                                    : ListBuilder([
+                                        WorkoutSessionEntity((p) => p
+                                          ..coachId = coach?.id
+                                          ..traineeId = currentTrainee?.id
+                                          ..programMachineId =
+                                              programMachine.id
+                                          ..sessionStatus =
+                                              SessionStatusEnumEntity
+                                                  .planned
+                                          ..weight = int.tryParse(
+                                              controllerWeight.text))
+                                      ]),
+                            );
+                            Navigator.of(dialogCtx).pop(settings);
+                          }
+                        : null,
+                    child: Text(AppLocalizations.of(context)!.ok),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -368,74 +480,81 @@ class DialogUtils {
 
     return showDialog<int?>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogCtx) => AlertDialog(
         backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: contentPaddingHorizontal,
-          vertical: contentPaddingVertical,
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 80 : 16,
+          vertical: 24,
         ),
-        title: Text(
-          '${AppLocalizations.of(context)!.settingsFor} ${machine.name}',
-          textAlign: TextAlign.center,
-          style: isTablet
-              ? context.theme.typography.xl3
-                  .copyWith(fontWeight: FontWeight.w800)
-              : context.theme.typography.xl2
-                  .copyWith(fontWeight: FontWeight.w800),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+        titlePadding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
+        contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
+        title: Column(
           children: [
-            const SizedBox(height: 20),
-            SettingsForWidget(
-              text: AppLocalizations.of(context)!.weightLb,
-              controller: controllerWeight,
-            ),
-            const SizedBox(height: 10),
             Text(
-              AppLocalizations.of(context)!.weightNextDescription,
-              softWrap: true,
-              textAlign: TextAlign.center,
-              style: context.theme.typography.xs.copyWith(
+              AppLocalizations.of(context)!.settingsFor,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
                 color: context.theme.colors.mutedForeground,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 2),
+            Text(
+              machine.name,
+              style: context.theme.typography.xl
+                  .copyWith(fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _LabeledField(
+              label: AppLocalizations.of(context)!.weightLb,
+              controller: controllerWeight,
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.weightNextDescription,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: context.theme.colors.mutedForeground,
+              ),
+            ),
           ],
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: contentPaddingHorizontal),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FButton(
-                  onPress: () => Navigator.of(context).pop(),
-                  variant: FButtonVariant.ghost,
+          Row(
+            children: [
+              Expanded(
+                child: FButton(
+                  onPress: () => Navigator.of(dialogCtx).pop(),
+                  variant: FButtonVariant.outline,
                   child: Text(AppLocalizations.of(context)!.cancel),
                 ),
-                ValueListenableBuilder<bool>(
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ValueListenableBuilder<bool>(
                   valueListenable: buttonEnabledNotifier,
-                  builder: (context, isEnabled, _) => SizedBox(
-                    height: buttonHeight,
-                    width: buttonWidth,
-                    child: FButton(
-                      onPress: isEnabled
-                          ? () => Navigator.of(context)
-                              .pop(int.tryParse(controllerWeight.text))
-                          : null,
-                      child: Text(AppLocalizations.of(context)!.ok),
-                    ),
+                  builder: (context, isEnabled, _) => FButton(
+                    onPress: isEnabled
+                        ? () => Navigator.of(dialogCtx)
+                            .pop(int.tryParse(controllerWeight.text))
+                        : null,
+                    child: Text(AppLocalizations.of(context)!.ok),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );
