@@ -153,96 +153,135 @@ class MetronomeControlState extends State<MetronomeControl> {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = MediaQuery.of(context).size.width > 600;
     _rotationAngle = _getRotationAngle();
+    final isPlaying = _metronomeState == MetronomeState.playing;
+    final isStopping = _metronomeState == MetronomeState.stopping;
 
     return Scaffold(
-      backgroundColor: context.theme.colors.primary,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          backgroundColor: context.theme.colors.primary,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: IconButton(
-            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.primaryForeground),
-            onPressed: () => AutoRouter.of(context).pop(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: const Color(0xFF1E1E1E),
+        title: const Text(
+          'Metronome',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E1E1E),
           ),
         ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(FIcons.arrowLeft, color: Color(0xFF1E1E1E)),
+          onPressed: () => AutoRouter.of(context).pop(),
+        ),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          const SizedBox(height: 20),
-          Expanded(
-            child: LayoutBuilder(builder: (context, constraints) {
-              const aspectRatio = 1.5;
-              final width =
-                  constraints.maxHeight >= constraints.maxWidth * aspectRatio
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              // ── Tempo readout ──────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 4),
+                child: Column(
+                  children: [
+                    Text(
+                      '$_tempo',
+                      style: const TextStyle(
+                        fontFamily: 'SpaceMono',
+                        fontSize: 56,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1E1E1E),
+                        height: 1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      'BPM',
+                      style: TextStyle(
+                        fontSize: 11,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF9E9E9E),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // ── Wand ───────────────────────────────────────────────────
+              Expanded(
+                child: LayoutBuilder(builder: (context, constraints) {
+                  const aspectRatio = 1.5;
+                  final width = constraints.maxHeight >=
+                          constraints.maxWidth * aspectRatio
                       ? constraints.maxWidth
                       : constraints.maxHeight / aspectRatio;
-              final height =
-                  constraints.maxHeight >= constraints.maxWidth * aspectRatio
+                  final height = constraints.maxHeight >=
+                          constraints.maxWidth * aspectRatio
                       ? width * aspectRatio
                       : constraints.maxHeight;
-              return _wand(width, height);
-            }),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: isTablet ? 32 : 20,
-                      vertical: isTablet ? 16 : 12),
-                ),
-                onPressed: _metronomeState == MetronomeState.stopping
-                    ? null
-                    : () => setState(() {
-                          _metronomeState == MetronomeState.stopped
-                              ? _start()
-                              : _stop();
-                        }),
-                child: Text(
-                  _metronomeState == MetronomeState.stopped
-                      ? 'Start'
-                      : _metronomeState == MetronomeState.stopping
-                          ? 'Stopping'
-                          : 'Stop',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                  return _wand(width, height);
+                }),
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: isTablet ? 32 : 20,
-                      vertical: isTablet ? 16 : 12),
-                ),
-                onPressed: _metronomeState == MetronomeState.stopped
-                    ? () => setState(() => _tap())
-                    : null,
-                child: const Text(
-                  'Tap',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              const SizedBox(height: 12),
+              // ── Hint ───────────────────────────────────────────────────
+              const Text(
+                'Drag the bob to change tempo, or tap the button below',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
               ),
+              const SizedBox(height: 12),
+              // ── Controls ──────────────────────────────────────────────
+              Row(
+                children: [
+                  Expanded(
+                    child: FButton(
+                      onPress: _metronomeState == MetronomeState.stopped
+                          ? () => setState(() => _tap())
+                          : null,
+                      variant: FButtonVariant.outline,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          'Tap',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FButton(
+                      onPress: isStopping
+                          ? null
+                          : () => setState(() {
+                                isPlaying ? _stop() : _start();
+                              }),
+                      variant: FButtonVariant.primary,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Text(
+                          isStopping
+                              ? 'Stopping…'
+                              : isPlaying
+                                  ? 'Stop'
+                                  : 'Start',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
             ],
           ),
-          const SizedBox(height: 20),
-        ],
+        ),
       ),
     );
   }
@@ -356,20 +395,21 @@ class MetronomeWandPainter extends CustomPainter {
   }
 
   void _initPaints() {
+    const ink = Color(0xFF1E1E1E);
     paints = {
       'strokeBase': Paint()
-        ..color = Colors.black
+        ..color = ink
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke
-        ..strokeWidth = width * 0.015,
+        ..strokeWidth = width * 0.012,
       'fillCounterWeight': Paint()
-        ..color = Colors.deepPurple
+        ..color = ink
         ..style = PaintingStyle.fill,
       'fillRotationCenter': Paint()
-        ..color = Colors.black
+        ..color = ink
         ..style = PaintingStyle.fill,
       'fillBob': Paint()
-        ..color = Colors.teal
+        ..color = ink
         ..style = PaintingStyle.fill,
     };
   }

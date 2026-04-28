@@ -120,133 +120,195 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width > 600;
-    final appBloc = GetIt.I<ApplicationBloc>();
-    final traineeNameStr = appBloc.state.currentTrainee?.fullName ?? '';
+    final traineeNameStr =
+        GetIt.I<ApplicationBloc>().state.currentTrainee?.fullName ?? '';
 
     return Scaffold(
-      backgroundColor: context.theme.colors.primary,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          backgroundColor: context.theme.colors.primary,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: IconButton(
-            icon: Icon(FIcons.arrowLeft, color: context.theme.colors.primaryForeground),
-            onPressed: () => AutoRouter.of(context).pop(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: const Color(0xFF1E1E1E),
+        title: const Text(
+          'Stopwatch',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF1E1E1E),
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(FIcons.arrowLeft, color: Color(0xFF1E1E1E)),
+          onPressed: () => AutoRouter.of(context).pop(),
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 8),
+              _SessionHeaderCard(
+                traineeName: traineeNameStr,
+                trainerName: widget.trainerName,
+                weight: widget.weight,
+              ),
+              const Spacer(flex: 2),
+              // ── Timer display ───────────────────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ValueListenableBuilder<String>(
+                    valueListenable: timeNotifier,
+                    builder: (_, value, __) => Text(
+                      value,
+                      style: TextStyle(
+                        fontFamily: 'SpaceMono',
+                        color: const Color(0xFF1E1E1E),
+                        fontSize: isTablet ? 96 : 64,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: isTablet ? 14 : 10),
+                    child: ValueListenableBuilder<String>(
+                      valueListenable: millisecondsNotifier,
+                      builder: (_, value, __) => FixedWidthText(
+                        data: '.$value',
+                        style: TextStyle(
+                          fontFamily: 'SpaceMono',
+                          color: const Color(0xFF6E6E6E),
+                          fontSize: isTablet ? 32 : 22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(flex: 3),
+              // ── Primary control: Start / Pause ──────────────────────────
+              SizedBox(
+                width: double.infinity,
+                child: FButton(
+                  onPress: () => started ? stop() : start(),
+                  variant: started
+                      ? FButtonVariant.outline
+                      : FButtonVariant.primary,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Text(
+                      started ? 'Pause' : 'Start',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // ── Secondary controls ──────────────────────────────────────
+              Row(
+                children: [
+                  Expanded(
+                    child: FButton(
+                      onPress: started || seconds == 0
+                          ? null
+                          : () => DialogUtils.showConfirmationDialog(
+                                context,
+                                'Reset stopwatch',
+                                'Do you want to reset the timer?',
+                              ).then((v) {
+                                if (v == true) reset();
+                              }),
+                      variant: FButtonVariant.outline,
+                      child: const Text('Reset'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FButton(
+                      onPress: started || seconds == 0
+                          ? null
+                          : () => DialogUtils.showConfirmationDialog(
+                                context,
+                                'Save session',
+                                'End the exercise with the customer?',
+                              ).then((v) {
+                                if (v == true) onSaveButtonPressed();
+                              }),
+                      variant: FButtonVariant.destructive,
+                      child: const Text('Save & end'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+    );
+  }
+}
+
+class _SessionHeaderCard extends StatelessWidget {
+  const _SessionHeaderCard({
+    required this.traineeName,
+    required this.trainerName,
+    required this.weight,
+  });
+
+  final String traineeName;
+  final String trainerName;
+  final int weight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAFAFA),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFEDEDED)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$traineeNameStr,\nTrainer: ${widget.trainerName}, Weight: ${widget.weight} lb',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: isTablet ? 28 : 18,
-              fontWeight: FontWeight.w700,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: isTablet ? 40 : 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ValueListenableBuilder<String>(
-                  valueListenable: timeNotifier,
-                  builder: (_, value, __) => Text(
-                    value,
-                    style: TextStyle(
-                      fontFamily: 'SpaceMono',
-                      color: Colors.black,
-                      fontSize: isTablet ? 80 : 50,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                ValueListenableBuilder<String>(
-                  valueListenable: millisecondsNotifier,
-                  builder: (_, value, __) => FixedWidthText(
-                    data: '.$value',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: isTablet ? 80 : 50,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: started || seconds == 0
-                    ? null
-                    : () => DialogUtils.showConfirmationDialog(
-                          context,
-                          'Confirm',
-                          'Do you want to reset the timer?',
-                        ).then((v) {
-                          if (v == true) reset();
-                        }),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2F2E2E),
-                  shape: const CircleBorder(),
-                  padding: EdgeInsets.all(isTablet ? 54 : 30),
-                ),
-                child: Text(
-                  'Reset',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isTablet ? 20 : 15,
-                  ),
-                ),
+          if (traineeName.isNotEmpty)
+            Text(
+              traineeName,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF1E1E1E),
               ),
-              ElevatedButton(
-                onPressed: started || seconds == 0
-                    ? null
-                    : () => DialogUtils.showConfirmationDialog(
-                          context,
-                          'Confirm',
-                          'End the exercise with the customer?',
-                        ).then((v) {
-                          if (v == true) onSaveButtonPressed();
-                        }),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: const CircleBorder(),
-                  padding: EdgeInsets.all(isTablet ? 54 : 30),
-                ),
-                child: Text(
-                  'Save',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: isTablet ? 20 : 15,
-                  ),
-                ),
+            ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              const Icon(FIcons.user, size: 14, color: Color(0xFF6E6E6E)),
+              const SizedBox(width: 6),
+              Text(
+                trainerName,
+                style: const TextStyle(
+                    fontSize: 13, color: Color(0xFF6E6E6E)),
+              ),
+              const SizedBox(width: 14),
+              const Icon(FIcons.dumbbell,
+                  size: 14, color: Color(0xFF6E6E6E)),
+              const SizedBox(width: 6),
+              Text(
+                '$weight lb',
+                style: const TextStyle(
+                    fontSize: 13, color: Color(0xFF6E6E6E)),
               ),
             ],
-          ),
-          ElevatedButton(
-            onPressed: () => started ? stop() : start(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: started
-                  ? const Color(0xFF772E29)
-                  : const Color(0xFF2F7031),
-              shape: const CircleBorder(),
-              padding: EdgeInsets.all(isTablet ? 54 : 30),
-            ),
-            child: Text(
-              started ? 'Pause' : 'Start',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isTablet ? 20 : 15,
-              ),
-            ),
           ),
         ],
       ),
