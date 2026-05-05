@@ -9,10 +9,12 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../../core/router/router.dart';
+import '../../../../domain/entities/fitness/fitness.dart';
 import '../../../../domain/usecases/fitness/fitness.dart';
 import '../../../utils/dialogs_utils.dart';
 import '../../../widgets/button_widget.dart';
 import '../../../widgets/tab_bar_training_widget.dart';
+import '../../../widgets/user_avatar_widget.dart';
 import '../../../widgets/user_cart_widget.dart';
 import 'bloc/program_screen_bloc.dart';
 
@@ -83,22 +85,19 @@ class ProgramScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 16),
-                    trainee.photoUrl != null
-                        ? FAvatar(
-                            image: NetworkImage(trainee.photoUrl!),
-                            fallback: Text(initials),
-                            size: 96,
-                          )
-                        : FAvatar.raw(
-                            size: 96,
-                            child: Text(
-                              initials,
-                              style: context.theme.typography.xl2
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                    UserAvatarWidget(
+                      photoUrl: trainee.photoUrl,
+                      initials: initials,
+                      size: 96,
+                      textStyle: context.theme.typography.xl2
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 16),
-                    UserCardWidget(model: trainee),
+                    UserCardWidget(
+                      model: trainee,
+                      onNotesEdited: (newNotes) =>
+                          _onNotesEdited(context, trainee, newNotes),
+                    ),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -112,7 +111,14 @@ class ProgramScreen extends StatelessWidget {
                             AppLocalizations.of(context)!.titleButton,
                       ),
                     ),
-                    TabBarTrainingWidget(model: trainee),
+                    TabBarTrainingWidget(
+                      model: trainee,
+                      highlightedProgramId: context
+                          .read<ApplicationBloc>()
+                          .state
+                          .currentAppointment
+                          ?.programId,
+                    ),
                   ],
                 ),
               ),
@@ -123,29 +129,37 @@ class ProgramScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _onNotesEdited(
+    BuildContext context,
+    TraineeEntity trainee,
+    String newNotes,
+  ) async {
+    final updated = trainee.rebuild(
+      (b) => b..notes = newNotes.isEmpty ? null : newNotes,
+    );
+    final saved =
+        await GetIt.I<TraineeUsecase>().updateTrainee(trainee.id!, updated);
+    if (context.mounted) {
+      BlocProvider.of<ProgramScreenBloc>(context)
+          .add(UpdateTraineeEvent(trainee: saved));
+    }
+  }
+
   Future<void> _onEditPressed(
     BuildContext context,
     ProgramScreenState state,
   ) async {
     if (state is! LoadedTrainee) return;
-    final value = await DialogUtils.showEditDialog(
+    final updated = await DialogUtils.showEditTraineeDialog(
       context: context,
-      title: AppLocalizations.of(context)!.editProfile,
-      weight: state.trainee.weight?.toInt(),
-      height: state.trainee.height?.toInt(),
+      trainee: state.trainee,
     );
-    if (value != null && context.mounted) {
-      await GetIt.I<TraineeUsecase>().updateTrainee(
-        state.trainee.id!,
-        state.trainee.rebuild(
-          (p) => p
-            ..weight = double.tryParse(value['weight'])
-            ..height = double.tryParse(value['height']),
-        ),
-      );
+    if (updated != null && context.mounted) {
+      final saved = await GetIt.I<TraineeUsecase>()
+          .updateTrainee(state.trainee.id!, updated);
       if (context.mounted) {
         BlocProvider.of<ProgramScreenBloc>(context)
-            .add(UpdateTraineeEvent(trainee: state.trainee));
+            .add(UpdateTraineeEvent(trainee: saved));
       }
     }
   }

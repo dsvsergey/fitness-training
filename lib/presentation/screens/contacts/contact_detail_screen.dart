@@ -11,6 +11,7 @@ import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
 import '../../widgets/create_appointment_sheet.dart';
+import '../../widgets/user_avatar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
 
 /// Detail screen for a single trainee (contact). Shows profile info and the
@@ -168,20 +169,12 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final avatar = trainee.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(trainee.photoUrl!),
-            fallback: Text(initials.isEmpty ? 'NA' : initials),
-            size: 72,
-          )
-        : FAvatar.raw(
-            size: 72,
-            child: Text(
-              initials.isEmpty ? 'NA' : initials,
-              style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w600),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: trainee.photoUrl,
+      initials: initials.isEmpty ? 'NA' : initials,
+      size: 72,
+      textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+    );
 
     return Row(
       children: [

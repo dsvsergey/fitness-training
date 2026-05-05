@@ -8,6 +8,7 @@ import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../domain/entities/fitness/coach_entity.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
 import '../../widgets/image_user_widget.dart';
+import '../../widgets/user_avatar_widget.dart';
 
 @RoutePage()
 class ChangeInfoScreen extends StatefulWidget {
@@ -85,20 +86,13 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  widget.coach.imageUrl != null
-                      ? FAvatar(
-                          image: NetworkImage(widget.coach.imageUrl!),
-                          fallback: Text(initials),
-                          size: 120,
-                        )
-                      : FAvatar.raw(
-                          size: 120,
-                          child: Text(
-                            initials.isEmpty ? '?' : initials,
-                            style: context.theme.typography.xl2
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                  UserAvatarWidget(
+                    photoUrl: widget.coach.imageUrl,
+                    initials: initials.isEmpty ? '?' : initials,
+                    size: 120,
+                    textStyle: context.theme.typography.xl2
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
                   const Positioned(
                     right: -4,
                     bottom: -4,
