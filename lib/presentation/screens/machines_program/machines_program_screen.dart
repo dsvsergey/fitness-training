@@ -146,54 +146,43 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                child: ButtonWidget(
-                  onPressed: currentAppointment == null
-                      ? null
-                      : () => DialogUtils.showConfirmationDialog(
-                                context,
-                                AppLocalizations.of(context)!.finishWorkout,
-                                AppLocalizations.of(context)!
-                                    .finishWorkoutMessage,
-                              ).then((value) {
-                            if (value ?? false) {
-                              final programId = state.program!.id!;
-                              final now = DateTime.now();
-                              final dateOnly =
-                                  DateTime(now.year, now.month, now.day);
-                              final program = state.program?.rebuild(
-                                (p0) => p0..workoutDate = dateOnly,
+              if (currentAppointment != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                  child: ButtonWidget(
+                    onPressed: () => DialogUtils.showConfirmationDialog(
+                      context,
+                      AppLocalizations.of(context)!.finishWorkout,
+                      AppLocalizations.of(context)!.finishWorkoutMessage,
+                    ).then((value) {
+                      if (value ?? false) {
+                        final programId = state.program!.id!;
+                        final now = DateTime.now();
+                        final dateOnly =
+                            DateTime(now.year, now.month, now.day);
+                        final program = state.program!.rebuild(
+                          (p0) => p0..workoutDate = dateOnly,
+                        );
+                        return GetIt.I<ProgramFitnessUsecase>()
+                            .updateProgram(programId, program)
+                            .then((_) {
+                          GetIt.I<WorkoutAppointmentUsecase>()
+                              .setWorkoutCompleted(currentAppointment.id!)
+                              .then(
+                                (_) => BlocProvider.of<CalendarBloc>(context)
+                                    .add(
+                                  FilterListAppointments(
+                                    selectedDay: dateOnly,
+                                  ),
+                                ),
                               );
-                              final appointmentId =
-                                  GetIt.I<ApplicationBloc>()
-                                      .state
-                                      .currentAppointment
-                                      ?.id;
-                              if (appointmentId != null) {
-                                return GetIt.I<ProgramFitnessUsecase>()
-                                    .updateProgram(programId, program!)
-                                    .then((_) {
-                                  GetIt.I<WorkoutAppointmentUsecase>()
-                                      .setWorkoutCompleted(appointmentId)
-                                      .then(
-                                        (_) =>
-                                            BlocProvider.of<CalendarBloc>(
-                                              context,
-                                            ).add(
-                                              FilterListAppointments(
-                                                selectedDay: dateOnly,
-                                              ),
-                                            ),
-                                      );
-                                  AutoRouter.of(context).popUntilRoot();
-                                });
-                              }
-                            }
-                          }),
-                  title: AppLocalizations.of(context)!.finishWorkout,
+                          AutoRouter.of(context).popUntilRoot();
+                        });
+                      }
+                    }),
+                    title: AppLocalizations.of(context)!.finishWorkout,
+                  ),
                 ),
-              ),
             ],
           );
         },

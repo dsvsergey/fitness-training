@@ -9,7 +9,7 @@ class CustomTimerWidget extends StatelessWidget {
     required this.image,
     super.key,
   });
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String title;
   final String image;
 
@@ -22,6 +22,11 @@ class CustomTimerWidget extends StatelessWidget {
     final double svgHeight = isTablet ? 90 : 70;
     final double svgWidth = isTablet ? 80 : 60;
     final double fontSize = isTablet ? 30 : 19;
+
+    final isEnabled = onPressed != null;
+    final foreground = isEnabled
+        ? context.theme.colors.primary
+        : context.theme.colors.mutedForeground;
 
     return GestureDetector(
       onTap: onPressed,
@@ -39,7 +44,7 @@ class CustomTimerWidget extends StatelessWidget {
                   height: svgHeight,
                   width: svgWidth,
                   colorFilter: ColorFilter.mode(
-                    context.theme.colors.primary,
+                    foreground,
                     BlendMode.srcIn,
                   ),
                 ),
@@ -53,7 +58,7 @@ class CustomTimerWidget extends StatelessWidget {
                     style: context.theme.typography.md.copyWith(
                       fontWeight: FontWeight.w400,
                       fontSize: fontSize,
-                      color: context.theme.colors.primary,
+                      color: foreground,
                     ),
                   ),
                 ),
