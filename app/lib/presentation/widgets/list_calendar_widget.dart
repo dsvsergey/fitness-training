@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import 'user_avatar_widget.dart';
 
 class ListCalendarWidget extends StatelessWidget {
   const ListCalendarWidget({
@@ -25,20 +26,13 @@ class ListCalendarWidget extends StatelessWidget {
         .take(2)
         .join();
 
-    final avatar = appointment.trainee.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(appointment.trainee.photoUrl!),
-            fallback: Text(initials),
-            size: 48,
-          )
-        : FAvatar.raw(
-            size: 48,
-            child: Text(
-              initials.isEmpty ? 'NA' : initials,
-              style: context.theme.typography.sm
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: appointment.trainee.photoUrl,
+      initials: initials.isEmpty ? 'NA' : initials,
+      size: 48,
+      textStyle: context.theme.typography.sm
+          .copyWith(fontWeight: FontWeight.bold),
+    );
 
     final coachName = appointment.coach.lastName
             ?.trimLeft()

@@ -10,12 +10,14 @@ class TrainingProgramWidget extends StatelessWidget {
     required this.onTap,
     required this.onDismissed,
     required this.onArchived,
+    this.highlightedProgramId,
   });
 
   final List<ProgramFitnessEntity> programs;
   final Function(ProgramFitnessEntity) onTap;
   final Function(ProgramFitnessEntity) onDismissed;
   final Function(ProgramFitnessEntity) onArchived;
+  final int? highlightedProgramId;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,8 @@ class TrainingProgramWidget extends StatelessWidget {
                 '${item.workoutDate!.day.toString().padLeft(2, '0')}/'
                 '${item.workoutDate!.year}'
             : null;
+        final isHighlighted =
+            highlightedProgramId != null && item.id == highlightedProgramId;
 
         return Dismissible(
           key: Key(item.id.toString()),
@@ -68,10 +72,20 @@ class TrainingProgramWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             child: FTile(
+              prefix: isHighlighted
+                  ? Icon(
+                      FIcons.calendar,
+                      color: context.theme.colors.primary,
+                    )
+                  : null,
               title: Text(
                 item.name ?? '',
-                style: context.theme.typography.sm
-                    .copyWith(fontWeight: FontWeight.w800),
+                style: context.theme.typography.sm.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: isHighlighted
+                      ? context.theme.colors.primary
+                      : null,
+                ),
               ),
               details: dateLabel != null ? Text(dateLabel) : null,
               suffix: const Icon(FIcons.chevronRight),

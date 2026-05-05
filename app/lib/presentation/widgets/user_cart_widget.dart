@@ -1,12 +1,14 @@
+import 'package:fitness_training/core/resources/localization/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
 
 class UserCardWidget extends StatelessWidget {
-  const UserCardWidget({super.key, required this.model});
+  const UserCardWidget({super.key, required this.model, this.onNotesEdited});
 
   final TraineeEntity model;
+  final ValueChanged<String>? onNotesEdited;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +41,93 @@ class UserCardWidget extends StatelessWidget {
           ],
           if (model.notes?.trim().isNotEmpty == true) ...[
             const SizedBox(height: 8),
-            _InfoRow(icon: FIcons.notebookPen, text: model.notes!.trim()),
+            _InfoRow(
+              icon: FIcons.notebookPen,
+              text: model.notes!.trim(),
+              onTap: onNotesEdited == null
+                  ? null
+                  : () => _editNotes(context, model.notes!.trim()),
+            ),
           ],
         ],
       ),
     );
+  }
+
+  Future<void> _editNotes(BuildContext context, String currentNotes) async {
+    final controller = TextEditingController(text: currentNotes);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+        title: const Text(
+          'Notes',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1E1E1E),
+          ),
+        ),
+        content: SizedBox(
+          width: 480,
+          child: FTextField.multiline(
+            control: FTextFieldControl.managed(controller: controller),
+            hint: 'Notes',
+            minLines: 4,
+            maxLines: 8,
+            autofocus: true,
+          ),
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () =>
+                  Navigator.of(dialogCtx).pop(controller.text.trim()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1E1E1E),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                elevation: 0,
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.save,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600, fontSize: 15),
+              ),
+            ),
+          ),
+          const SizedBox(height: 2),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () => Navigator.of(dialogCtx).pop(),
+              style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10)),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(
+                  color: Color(0xFF9E9E9E),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (result != null) onNotesEdited!(result);
   }
 }
 
@@ -96,14 +180,15 @@ class _StatCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.text});
+  const _InfoRow({required this.icon, required this.text, this.onTap});
 
   final IconData icon;
   final String text;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0xFFF5F5F5),
@@ -123,6 +208,16 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+
+    if (onTap == null) return content;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: content,
       ),
     );
   }
