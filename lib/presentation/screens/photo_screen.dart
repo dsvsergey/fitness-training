@@ -3,6 +3,7 @@ import 'package:fitness_training/core/resources/resources.dart';
 import 'package:fitness_training/core/router/router.dart';
 import 'package:fitness_training/data/repositories/preferences_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 @RoutePage()
 class PhotoScreen extends StatefulWidget {
@@ -35,8 +36,9 @@ class _PhotoScreenState extends State<PhotoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.theme.colors.background,
       body: Container(
-          color: Colors.black,
+          color: context.theme.colors.background,
           child: Center(
             child: Image.asset(
               AppPngs.photo,

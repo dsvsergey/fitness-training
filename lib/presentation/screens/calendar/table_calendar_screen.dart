@@ -85,19 +85,19 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                 rowHeight: isTablet ? 72 : 48,
                 headerStyle: HeaderStyle(
                   titleTextStyle: TextStyle(
-                    color: const Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                     fontWeight: FontWeight.bold,
                     fontSize: isTablet ? 36.0 : 20.0,
                   ),
                   formatButtonVisible: false,
                   titleCentered: true,
-                  leftChevronIcon: const Icon(
+                  leftChevronIcon: Icon(
                     Icons.chevron_left,
-                    color: Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                   ),
-                  rightChevronIcon: const Icon(
+                  rightChevronIcon: Icon(
                     Icons.chevron_right,
-                    color: Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                   ),
                 ),
                 availableGestures: AvailableGestures.all,
@@ -117,74 +117,74 @@ class _TableCalendarScreenState extends State<TableCalendarScreen> {
                 rangeEndDay: _rangeEnd,
                 daysOfWeekStyle: DaysOfWeekStyle(
                   weekdayStyle: TextStyle(
-                    color: const Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                     fontSize: isTablet ? 18.0 : 13.0,
                     fontWeight: FontWeight.w500,
                   ),
                   weekendStyle: TextStyle(
-                    color: const Color(0xFF9E9E9E),
+                    color: context.theme.colors.mutedForeground,
                     fontSize: isTablet ? 18.0 : 13.0,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 calendarStyle: CalendarStyle(
                   defaultTextStyle: TextStyle(
-                    color: const Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                     fontSize: isTablet ? 26.0 : 16.0,
                     fontWeight: FontWeight.w500,
                   ),
                   weekNumberTextStyle:
-                      const TextStyle(color: Color(0xFF1E1E1E)),
+                      TextStyle(color: context.theme.colors.foreground),
                   weekendTextStyle: TextStyle(
-                    color: const Color(0xFF9E9E9E),
+                    color: context.theme.colors.mutedForeground,
                     fontSize: isTablet ? 26.0 : 16.0,
                     fontWeight: FontWeight.w500,
                   ),
-                  rangeHighlightColor: const Color(0xFFE0E0E0),
+                  rangeHighlightColor: context.theme.colors.secondary,
                   isTodayHighlighted: true,
                   canMarkersOverflow: false,
                   outsideDaysVisible: false,
                   markersAutoAligned: false,
                   selectedTextStyle: TextStyle(
-                    color: Colors.white,
+                    color: context.theme.colors.primaryForeground,
                     fontSize: isTablet ? 26.0 : 16.0,
                     fontWeight: FontWeight.w600,
                   ),
-                  selectedDecoration: const BoxDecoration(
-                    color: Color(0xFF1E1E1E),
+                  selectedDecoration: BoxDecoration(
+                    color: context.theme.colors.primary,
                     shape: BoxShape.circle,
                   ),
                   todayTextStyle: TextStyle(
-                    color: const Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                     fontSize: isTablet ? 26.0 : 16.0,
                     fontWeight: FontWeight.w600,
                   ),
                   todayDecoration: BoxDecoration(
-                    color: const Color(0xFFF5F5F5),
+                    color: context.theme.colors.secondary,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color(0xFF1E1E1E),
+                      color: context.theme.colors.foreground,
                       width: 1.5,
                     ),
                   ),
-                  markerDecoration: const BoxDecoration(
-                    color: Color(0xFF1E1E1E),
+                  markerDecoration: BoxDecoration(
+                    color: context.theme.colors.primary,
                     shape: BoxShape.circle,
                   ),
                   rangeStartTextStyle: TextStyle(
-                    color: Colors.white,
+                    color: context.theme.colors.primaryForeground,
                     fontSize: isTablet ? 26.0 : 16.0,
                   ),
                   rangeEndTextStyle: TextStyle(
-                    color: Colors.white,
+                    color: context.theme.colors.primaryForeground,
                     fontSize: isTablet ? 26.0 : 16.0,
                   ),
-                  rangeEndDecoration: const BoxDecoration(
-                    color: Color(0xFF1E1E1E),
+                  rangeEndDecoration: BoxDecoration(
+                    color: context.theme.colors.primary,
                     shape: BoxShape.circle,
                   ),
-                  rangeStartDecoration: const BoxDecoration(
-                    color: Color(0xFF1E1E1E),
+                  rangeStartDecoration: BoxDecoration(
+                    color: context.theme.colors.primary,
                     shape: BoxShape.circle,
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 class ProgramInformationWidget extends StatelessWidget {
   const ProgramInformationWidget({
@@ -21,7 +22,7 @@ class ProgramInformationWidget extends StatelessWidget {
           image,
           height: (screenWidth > 600) ? 100 : 50,
           width: (screenWidth > 600) ? 100 : 50,
-          color: Colors.black,
+          color: context.theme.colors.foreground,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -29,7 +30,7 @@ class ProgramInformationWidget extends StatelessWidget {
             Text(
               text,
               style: TextStyle(
-                color: const Color(0xFFA3A3A3),
+                color: context.theme.colors.mutedForeground,
                 fontSize: (screenWidth > 600) ? 44 : 24,
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w400,
@@ -40,7 +41,7 @@ class ProgramInformationWidget extends StatelessWidget {
             Text(
               textInt,
               style: TextStyle(
-                color: const Color(0xFF1E1E1E),
+                color: context.theme.colors.foreground,
                 fontSize: (screenWidth > 600) ? 64 : 34,
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w700,

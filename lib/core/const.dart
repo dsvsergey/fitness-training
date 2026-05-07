@@ -11,4 +11,5 @@ class AppConsts {
   static const String handle = 'handle';
   static const int apiVersion = 6;
   static const String siteId = '43043';
+  static const String themeMode = 'themeMode';
 }

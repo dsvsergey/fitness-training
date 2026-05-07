@@ -158,23 +158,23 @@ class MetronomeControlState extends State<MetronomeControl> {
     final isStopping = _metronomeState == MetronomeState.stopping;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.theme.colors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.theme.colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        foregroundColor: const Color(0xFF1E1E1E),
-        title: const Text(
+        foregroundColor: context.theme.colors.foreground,
+        title: Text(
           'Metronome',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E1E1E),
+            color: context.theme.colors.foreground,
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(FIcons.arrowLeft, color: Color(0xFF1E1E1E)),
+          icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
           onPressed: () => AutoRouter.of(context).pop(),
         ),
       ),
@@ -190,22 +190,22 @@ class MetronomeControlState extends State<MetronomeControl> {
                   children: [
                     Text(
                       '$_tempo',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'SpaceMono',
                         fontSize: 56,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E1E1E),
+                        color: context.theme.colors.foreground,
                         height: 1.0,
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                    Text(
                       'BPM',
                       style: TextStyle(
                         fontSize: 11,
                         letterSpacing: 1.5,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF9E9E9E),
+                        color: context.theme.colors.mutedForeground,
                       ),
                     ),
                   ],
@@ -228,10 +228,11 @@ class MetronomeControlState extends State<MetronomeControl> {
               ),
               const SizedBox(height: 12),
               // ── Hint ───────────────────────────────────────────────────
-              const Text(
+              Text(
                 'Drag the bob to change tempo, or tap the button below',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
+                style: TextStyle(
+                    fontSize: 12, color: context.theme.colors.mutedForeground),
               ),
               const SizedBox(height: 12),
               // ── Controls ──────────────────────────────────────────────
@@ -317,6 +318,8 @@ class MetronomeControlState extends State<MetronomeControl> {
             minTempo: _minTempo,
             maxTempo: _maxTempo,
             rotationAngle: _rotationAngle,
+            inkColor: context.theme.colors.foreground,
+            bobTextColor: context.theme.colors.background,
           ),
           child: const InkWell(),
         ),
@@ -380,7 +383,8 @@ class MetronomeWandPainter extends CustomPainter {
   final double rotationAngle;
 
   static ui.Picture? wandPicture;
-  final Color _bobTextColor = Colors.white;
+  final Color inkColor;
+  final Color bobTextColor;
   late Map<String, Paint> paints;
 
   MetronomeWandPainter({
@@ -390,12 +394,14 @@ class MetronomeWandPainter extends CustomPainter {
     required this.minTempo,
     required this.maxTempo,
     required this.rotationAngle,
+    required this.inkColor,
+    required this.bobTextColor,
   }) {
     paints = {};
   }
 
   void _initPaints() {
-    const ink = Color(0xFF1E1E1E);
+    final ink = inkColor;
     paints = {
       'strokeBase': Paint()
         ..color = ink
@@ -442,7 +448,7 @@ class MetronomeWandPainter extends CustomPainter {
       fontSize: width / 15,
       textAlign: TextAlign.left,
     ))
-      ..pushStyle(ui.TextStyle(color: _bobTextColor))
+      ..pushStyle(ui.TextStyle(color: bobTextColor))
       ..addText('$tempo');
     final paragraph = pb.build()
       ..layout(ui.ParagraphConstraints(width: width / 4));

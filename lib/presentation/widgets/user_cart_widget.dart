@@ -59,7 +59,7 @@ class UserCardWidget extends StatelessWidget {
     final result = await showDialog<String>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: context.theme.colors.background,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -68,12 +68,12 @@ class UserCardWidget extends StatelessWidget {
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         contentPadding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
         actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-        title: const Text(
+        title: Text(
           'Notes',
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1E1E1E),
+            color: context.theme.colors.foreground,
           ),
         ),
         content: SizedBox(
@@ -93,8 +93,8 @@ class UserCardWidget extends StatelessWidget {
               onPressed: () =>
                   Navigator.of(dialogCtx).pop(controller.text.trim()),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E1E1E),
-                foregroundColor: Colors.white,
+                backgroundColor: context.theme.colors.primary,
+                foregroundColor: context.theme.colors.primaryForeground,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -116,8 +116,8 @@ class UserCardWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10)),
               child: Text(
                 AppLocalizations.of(context)!.cancel,
-                style: const TextStyle(
-                  color: Color(0xFF9E9E9E),
+                style: TextStyle(
+                  color: context.theme.colors.mutedForeground,
                   fontWeight: FontWeight.w500,
                   fontSize: 15,
                 ),
@@ -149,9 +149,9 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
+          color: context.theme.colors.secondary,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFE0E0E0)),
+          border: Border.all(color: context.theme.colors.border),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -161,15 +161,15 @@ class _StatCard extends StatelessWidget {
               style: context.theme.typography.xl.copyWith(
                 fontWeight: FontWeight.w700,
                 color: isEmpty
-                    ? const Color(0xFFBDBDBD)
-                    : const Color(0xFF1E1E1E),
+                    ? context.theme.colors.mutedForeground
+                    : context.theme.colors.foreground,
               ),
             ),
             const SizedBox(height: 3),
             Text(
               isEmpty ? label : '$label, $unit',
               style: context.theme.typography.xs.copyWith(
-                color: const Color(0xFF9E9E9E),
+                color: context.theme.colors.mutedForeground,
               ),
             ),
           ],
@@ -191,19 +191,19 @@ class _InfoRow extends StatelessWidget {
     final content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: context.theme.colors.secondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
+        border: Border.all(color: context.theme.colors.border),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF9E9E9E)),
+          Icon(icon, size: 16, color: context.theme.colors.mutedForeground),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
               style: context.theme.typography.sm.copyWith(
-                color: const Color(0xFF1E1E1E),
+                color: context.theme.colors.foreground,
               ),
             ),
           ),
