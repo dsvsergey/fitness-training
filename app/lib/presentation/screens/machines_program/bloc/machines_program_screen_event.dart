@@ -15,3 +15,16 @@ final class ProgramFitnessUpdateEvent extends MachinesProgramScreenEvent {
   @override
   List<Object> get props => [programId];
 }
+
+final class ReorderMachinesEvent extends MachinesProgramScreenEvent {
+  final int programId;
+  final List<int> orderedIds;
+
+  const ReorderMachinesEvent({
+    required this.programId,
+    required this.orderedIds,
+  });
+
+  @override
+  List<Object> get props => [programId, orderedIds];
+}

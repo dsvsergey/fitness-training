@@ -98,14 +98,32 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: SingleChildScrollView(
+                child: ReorderableListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: FTileGroup(
-                    children: state.program!.programMachines!.map((pm) {
-                      final isCompleted = pm.workouts
-                          .where((w) => w.dateSession == today)
-                          .isNotEmpty;
-                      return FTile(
+                  itemCount: state.program!.programMachines!.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) newIndex -= 1;
+                    final orderedIds = state.program!.programMachines!
+                        .map((pm) => pm.id!)
+                        .toList();
+                    final movedId = orderedIds.removeAt(oldIndex);
+                    orderedIds.insert(newIndex, movedId);
+                    context.read<MachinesProgramScreenBloc>().add(
+                          ReorderMachinesEvent(
+                            programId: widget.program.id!,
+                            orderedIds: orderedIds,
+                          ),
+                        );
+                  },
+                  itemBuilder: (context, index) {
+                    final pm = state.program!.programMachines![index];
+                    final isCompleted = pm.workouts
+                        .where((w) => w.dateSession == today)
+                        .isNotEmpty;
+                    return Padding(
+                      key: ValueKey(pm.id),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: FTile(
                         prefix: Icon(
                           isCompleted
                               ? FIcons.circleCheck
@@ -123,7 +141,10 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                                 : null,
                           ),
                         ),
-                        suffix: const Icon(FIcons.chevronRight),
+                        suffix: ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(FIcons.gripVertical),
+                        ),
                         onPress: () => AutoRouter.of(context)
                             .push(
                               SettingsProgramRoute(
@@ -141,9 +162,9 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                                     ),
                                   ),
                             ),
-                      );
-                    }).toList(),
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
               if (currentAppointment != null)
