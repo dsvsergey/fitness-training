@@ -10,6 +10,7 @@ from app.crud.programs import (
     get_archive_programs,
     get_program,
     get_programs,
+    reorder_program_machines,
     set_program_archive_status,
     set_workout_date,
     update_program,
@@ -18,6 +19,7 @@ from app.crud.programs import (
 from app.db.session import get_db
 from app.schemas.programs import (
     ProgramCreateSchema,
+    ProgramMachinesReorderSchema,
     ProgramSchema,
     ProgramUpdateMachinesSchema,
     UpdateArchiveStatusSchema,
@@ -85,6 +87,27 @@ def update_program_machines(
     except Exception as e:
         logger.error(f"Error updating program machines, user: {current_user}")
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put(
+    "/programs/{program_id}/machines/reorder/", response_model=ProgramSchema
+)
+def reorder_program_machines_endpoint(
+    program_id: int,
+    data: ProgramMachinesReorderSchema = Body(...),
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+):
+    program = reorder_program_machines(db=db, program_id=program_id, data=data)
+    if program is None:
+        logger.error(
+            f"Program not found for program_id: {program_id}, user: {current_user}"
+        )
+        raise HTTPException(status_code=404, detail="Program not found")
+    logger.info(
+        f"Program machines reordered for program_id: {program_id}, user: {current_user}"
+    )
+    return program
 
 
 @router.get("/programs/trainee/{trainee_id}/", response_model=list[ProgramSchema])

@@ -19,7 +19,9 @@ class Program(Base):
     trainee = relationship("Trainee", back_populates="programs")
     coach = relationship("Coach")
     program_machines = relationship(
-        "ProgramMachine", backref=backref("program", uselist=False)
+        "ProgramMachine",
+        backref=backref("program", uselist=False),
+        order_by="ProgramMachine.index, ProgramMachine.id",
     )
     is_archive = Column(Boolean, default=False)
     is_delete = Column(Boolean, nullable=False, default=False)

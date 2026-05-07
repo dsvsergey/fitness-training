@@ -35,6 +35,10 @@ class ProgramUpdateMachinesSchema(BaseModel):
     machine_ids: list[int]
 
 
+class ProgramMachinesReorderSchema(BaseModel):
+    ordered_ids: list[int]
+
+
 class UpdateArchiveStatusSchema(BaseModel):
     is_archive: bool
 

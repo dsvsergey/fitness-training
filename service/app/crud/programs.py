@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.models.programs import Program
 from app.schemas.programs import (
     ProgramCreateSchema,
+    ProgramMachinesReorderSchema,
     ProgramSchema,
     ProgramUpdateMachinesSchema,
 )
@@ -113,6 +114,39 @@ def update_program_machines_list(db: Session, data: ProgramUpdateMachinesSchema)
 
     db.commit()
 
+    return program
+
+
+def reorder_program_machines(
+    db: Session, program_id: int, data: ProgramMachinesReorderSchema
+) -> Program:
+    program = db.query(Program).get(program_id)
+    if not program:
+        return None
+
+    program_machines = (
+        db.query(ProgramMachine).filter_by(program_id=program_id).all()
+    )
+    pm_by_id = {pm.id: pm for pm in program_machines}
+
+    for pm_id in data.ordered_ids:
+        if pm_id not in pm_by_id:
+            raise HTTPException(
+                status_code=400,
+                detail=f"ProgramMachine with id {pm_id} does not belong to program {program_id}",
+            )
+
+    if len(data.ordered_ids) != len(pm_by_id):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Expected {len(pm_by_id)} ids, got {len(data.ordered_ids)}",
+        )
+
+    for position, pm_id in enumerate(data.ordered_ids):
+        pm_by_id[pm_id].index = position
+
+    db.commit()
+    db.refresh(program)
     return program
 
 
