@@ -124,23 +124,23 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
         GetIt.I<ApplicationBloc>().state.currentTrainee?.fullName ?? '';
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.theme.colors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: context.theme.colors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        foregroundColor: const Color(0xFF1E1E1E),
-        title: const Text(
+        foregroundColor: context.theme.colors.foreground,
+        title: Text(
           'Stopwatch',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E1E1E),
+            color: context.theme.colors.foreground,
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(FIcons.arrowLeft, color: Color(0xFF1E1E1E)),
+          icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
           onPressed: () => AutoRouter.of(context).pop(),
         ),
       ),
@@ -167,7 +167,7 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
                       value,
                       style: TextStyle(
                         fontFamily: 'SpaceMono',
-                        color: const Color(0xFF1E1E1E),
+                        color: context.theme.colors.foreground,
                         fontSize: isTablet ? 96 : 64,
                         fontWeight: FontWeight.w600,
                         height: 1.0,
@@ -182,7 +182,7 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
                         data: '.$value',
                         style: TextStyle(
                           fontFamily: 'SpaceMono',
-                          color: const Color(0xFF6E6E6E),
+                          color: context.theme.colors.mutedForeground,
                           fontSize: isTablet ? 32 : 22,
                           fontWeight: FontWeight.w500,
                         ),
@@ -273,9 +273,9 @@ class _SessionHeaderCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
+        color: context.theme.colors.secondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEDEDED)),
+        border: Border.all(color: context.theme.colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,30 +283,31 @@ class _SessionHeaderCard extends StatelessWidget {
           if (traineeName.isNotEmpty)
             Text(
               traineeName,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1E1E1E),
+                color: context.theme.colors.foreground,
               ),
             ),
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(FIcons.user, size: 14, color: Color(0xFF6E6E6E)),
+              Icon(FIcons.user,
+                  size: 14, color: context.theme.colors.mutedForeground),
               const SizedBox(width: 6),
               Text(
                 trainerName,
-                style: const TextStyle(
-                    fontSize: 13, color: Color(0xFF6E6E6E)),
+                style: TextStyle(
+                    fontSize: 13, color: context.theme.colors.mutedForeground),
               ),
               const SizedBox(width: 14),
-              const Icon(FIcons.dumbbell,
-                  size: 14, color: Color(0xFF6E6E6E)),
+              Icon(FIcons.dumbbell,
+                  size: 14, color: context.theme.colors.mutedForeground),
               const SizedBox(width: 6),
               Text(
                 '$weight lb',
-                style: const TextStyle(
-                    fontSize: 13, color: Color(0xFF6E6E6E)),
+                style: TextStyle(
+                    fontSize: 13, color: context.theme.colors.mutedForeground),
               ),
             ],
           ),

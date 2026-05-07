@@ -9,6 +9,7 @@ import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
 import 'core/bloc/bloc_application/application_bloc.dart';
+import 'core/bloc/bloc_theme/theme_cubit.dart';
 import 'core/dio_settings/dio_settings.dart';
 import 'core/router/router.dart';
 import 'domain/usecases/appointment_usecase.dart';
@@ -30,13 +31,28 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _appRouter = AppRouter();
 
-  // ForUI theme with app's color palette
-  static final _forUiTheme = FThemes.zinc.light.touch.copyWith(
+  // ForUI light theme with app's color palette
+  static final _forUiLightTheme = FThemes.zinc.light.touch.copyWith(
     colors: FThemes.zinc.light.touch.colors.copyWith(
       primary: const Color(0xFF1E1E1E),
       primaryForeground: Colors.white,
       secondary: const Color(0xFFF5F5F5),
       secondaryForeground: const Color(0xFF1E1E1E),
+    ),
+  );
+
+  // ForUI dark theme — softer near-black surfaces (iOS-style) instead of
+  // zinc's default pure black, so the UI feels less harsh.
+  static final _forUiDarkTheme = FThemes.zinc.dark.touch.copyWith(
+    colors: FThemes.zinc.dark.touch.colors.copyWith(
+      background: const Color(0xFF1C1C1E),
+      foreground: Colors.white,
+      primary: Colors.white,
+      primaryForeground: const Color(0xFF1C1C1E),
+      secondary: const Color(0xFF2C2C2E),
+      secondaryForeground: Colors.white,
+      muted: const Color(0xFF2C2C2E),
+      border: const Color(0xFF38383A),
     ),
   );
   @override
@@ -67,6 +83,9 @@ class _MyAppState extends State<MyApp> {
             create: (context) => GetIt.I<ApplicationBloc>(),
           ),
           BlocProvider(
+            create: (context) => GetIt.I<ThemeCubit>(),
+          ),
+          BlocProvider(
               create: (context) => ContactsBloc()..add(GetContactsList())),
           BlocProvider(
               create: (context) => CalendarBloc()
@@ -91,29 +110,42 @@ class _MyAppState extends State<MyApp> {
               minTextAdapt: true,
               splitScreenMode: true,
               builder: (context, child) {
-                return MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  localizationsDelegates: [
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                    ...FLocalizations.localizationsDelegates,
-                  ],
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  title: 'Fitness Training',
-                  theme: _forUiTheme.toApproximateMaterialTheme(),
-                  routerDelegate: _appRouter.delegate(),
-                  routeInformationParser: _appRouter.defaultRouteParser(),
-                  builder: (context, child) {
-                    final easyLoadingBuilder = EasyLoading.init();
-                    return FTheme(
-                      data: _forUiTheme,
-                      child: FToaster(
-                        child: FTooltipGroup(
-                          child: easyLoadingBuilder(context, child),
-                        ),
-                      ),
+                return BlocBuilder<ThemeCubit, ThemeMode>(
+                  builder: (context, themeMode) {
+                    final brightness =
+                        MediaQuery.platformBrightnessOf(context);
+                    final isDark = themeMode == ThemeMode.dark ||
+                        (themeMode == ThemeMode.system &&
+                            brightness == Brightness.dark);
+                    final activeForUiTheme =
+                        isDark ? _forUiDarkTheme : _forUiLightTheme;
+                    return MaterialApp.router(
+                      debugShowCheckedModeBanner: false,
+                      localizationsDelegates: [
+                        AppLocalizations.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                        ...FLocalizations.localizationsDelegates,
+                      ],
+                      supportedLocales: AppLocalizations.supportedLocales,
+                      title: 'Fitness Training',
+                      theme: _forUiLightTheme.toApproximateMaterialTheme(),
+                      darkTheme: _forUiDarkTheme.toApproximateMaterialTheme(),
+                      themeMode: themeMode,
+                      routerDelegate: _appRouter.delegate(),
+                      routeInformationParser: _appRouter.defaultRouteParser(),
+                      builder: (context, child) {
+                        final easyLoadingBuilder = EasyLoading.init();
+                        return FTheme(
+                          data: activeForUiTheme,
+                          child: FToaster(
+                            child: FTooltipGroup(
+                              child: easyLoadingBuilder(context, child),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 );

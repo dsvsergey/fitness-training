@@ -120,9 +120,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         .join();
 
     return Scaffold(
+      backgroundColor: context.theme.colors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: context.theme.colors.background,
+        foregroundColor: context.theme.colors.foreground,
         elevation: 0,
         title: Text(fullName.isEmpty ? 'Contact' : fullName),
         actions: [
@@ -160,12 +161,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'Upcoming trainings',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1E1E1E),
+                color: context.theme.colors.foreground,
               ),
             ),
             const SizedBox(height: 8),
@@ -175,11 +176,11 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                 child: Center(child: FCircularProgress()),
               )
             else if (_appointments.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   'No upcoming sessions yet.',
-                  style: TextStyle(color: Color(0xFF9E9E9E)),
+                  style: TextStyle(color: context.theme.colors.mutedForeground),
                 ),
               )
             else
@@ -218,10 +219,10 @@ class _ProfileHeader extends StatelessWidget {
                 trainee.fullName.trim().isEmpty
                     ? 'No Name'
                     : trainee.fullName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E1E1E),
+                  color: context.theme.colors.foreground,
                 ),
               ),
               if (trainee.email != null)
@@ -229,8 +230,9 @@ class _ProfileHeader extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
                     trainee.email!,
-                    style: const TextStyle(
-                        fontSize: 13, color: Color(0xFF6E6E6E)),
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: context.theme.colors.mutedForeground),
                   ),
                 ),
             ],
@@ -267,16 +269,16 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFAFA),
+        color: context.theme.colors.secondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEDEDED)),
+        border: Border.all(color: context.theme.colors.border),
       ),
       child: Column(
         children: [
           for (var i = 0; i < rows.length; i++) ...[
             rows[i],
             if (i < rows.length - 1)
-              const Divider(height: 14, color: Color(0xFFEDEDED)),
+              Divider(height: 14, color: context.theme.colors.border),
           ],
         ],
       ),
@@ -300,20 +302,21 @@ class _InfoRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: const Color(0xFF6E6E6E)),
+        Icon(icon, size: 16, color: context.theme.colors.mutedForeground),
         const SizedBox(width: 10),
         SizedBox(
           width: 64,
           child: Text(
             label,
-            style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
+            style: TextStyle(
+                fontSize: 12, color: context.theme.colors.mutedForeground),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
-                fontSize: 13, color: Color(0xFF1E1E1E)),
+            style: TextStyle(
+                fontSize: 13, color: context.theme.colors.foreground),
           ),
         ),
       ],
@@ -342,8 +345,8 @@ class _AppointmentRow extends StatelessWidget {
         subtitle: Text(timeStr),
         suffix: Text(
           '${appointment.duration}m',
-          style: const TextStyle(
-              fontSize: 12, color: Color(0xFF6E6E6E)),
+          style: TextStyle(
+              fontSize: 12, color: context.theme.colors.mutedForeground),
         ),
       ),
     );

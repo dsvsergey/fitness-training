@@ -33,7 +33,7 @@ Future<TimeOfDay?> showTimeSlotPicker(
   return showModalBottomSheet<TimeOfDay>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: context.theme.colors.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -205,20 +205,21 @@ class _TimeSlotPickerState extends State<_TimeSlotPicker> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Pick start time',
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E1E1E),
+                        color: context.theme.colors.foreground,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Session: ${widget.durationMinutes} min  •  '
                       '$busyCount booked, $freeCount free slots',
-                      style: const TextStyle(
-                          fontSize: 12, color: Color(0xFF6E6E6E)),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: context.theme.colors.mutedForeground),
                     ),
                   ],
                 ),
@@ -243,7 +244,7 @@ class _TimeSlotPickerState extends State<_TimeSlotPicker> {
             ],
           ),
         ),
-        const Divider(height: 1, color: Color(0xFFEDEDED)),
+        Divider(height: 1, color: context.theme.colors.border),
         // ── Slots list ─────────────────────────────────────────────────────
         Expanded(
           child: ListView.builder(
@@ -312,22 +313,35 @@ class _SlotRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final destructive = context.theme.colors.destructive;
+    final warningBg = isDark
+        ? const Color(0x33FFC107)
+        : const Color(0xFFFFF8E1);
+    final warningFg = isDark
+        ? const Color(0xFFFFD54F)
+        : const Color(0xFF8A6D00);
+
     final bg = switch (state) {
-      _SlotState.free => isSelected ? const Color(0xFF1E1E1E) : Colors.white,
-      _SlotState.busy => const Color(0xFFFEEBEE),
-      _SlotState.wontFit => const Color(0xFFFFF8E1),
+      _SlotState.free => isSelected
+          ? context.theme.colors.primary
+          : context.theme.colors.background,
+      _SlotState.busy => destructive.withValues(alpha: isDark ? 0.18 : 0.12),
+      _SlotState.wontFit => warningBg,
     };
     final fg = switch (state) {
-      _SlotState.free =>
-        isSelected ? Colors.white : const Color(0xFF1E1E1E),
-      _SlotState.busy => const Color(0xFFB42318),
-      _SlotState.wontFit => const Color(0xFF8A6D00),
+      _SlotState.free => isSelected
+          ? context.theme.colors.primaryForeground
+          : context.theme.colors.foreground,
+      _SlotState.busy => destructive,
+      _SlotState.wontFit => warningFg,
     };
     final trailingFg = switch (state) {
-      _SlotState.free =>
-        isSelected ? Colors.white70 : const Color(0xFF6E6E6E),
-      _SlotState.busy => const Color(0xFFB42318),
-      _SlotState.wontFit => const Color(0xFF8A6D00),
+      _SlotState.free => isSelected
+          ? context.theme.colors.primaryForeground.withValues(alpha: 0.75)
+          : context.theme.colors.mutedForeground,
+      _SlotState.busy => destructive,
+      _SlotState.wontFit => warningFg,
     };
 
     return InkWell(
@@ -336,8 +350,8 @@ class _SlotRow extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: bg,
-          border: const Border(
-            bottom: BorderSide(color: Color(0xFFF1F1F1), width: 1),
+          border: Border(
+            bottom: BorderSide(color: context.theme.colors.border, width: 1),
           ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -363,10 +377,11 @@ class _SlotRow extends StatelessWidget {
               ),
             ),
             if (state == _SlotState.free && !isSelected)
-              const Icon(FIcons.chevronRight,
-                  size: 16, color: Color(0xFF9E9E9E)),
+              Icon(FIcons.chevronRight,
+                  size: 16, color: context.theme.colors.mutedForeground),
             if (isSelected)
-              const Icon(FIcons.circleCheck, size: 16, color: Colors.white),
+              Icon(FIcons.circleCheck,
+                  size: 16, color: context.theme.colors.primaryForeground),
           ],
         ),
       ),
@@ -388,13 +403,13 @@ class _LegendDot extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(3),
-            border: Border.all(color: const Color(0xFFE0E0E0), width: 0.5),
+            border: Border.all(color: context.theme.colors.border, width: 0.5),
           ),
         ),
         const SizedBox(width: 6),
         Text(label,
-            style:
-                const TextStyle(fontSize: 11, color: Color(0xFF6E6E6E))),
+            style: TextStyle(
+                fontSize: 11, color: context.theme.colors.mutedForeground)),
       ],
     );
   }

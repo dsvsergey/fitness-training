@@ -104,11 +104,11 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
                   '${_title ?? ''} ${_programTitle ?? ''}',
                   style: context.theme.typography.lg.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                   ),
                 ),
               ),
-              const Divider(height: 1, color: Color(0xFFE0E0E0)),
+              Divider(height: 1, color: context.theme.colors.border),
               Expanded(
                 child: machines.isEmpty
                     ? Center(
@@ -118,20 +118,20 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
                             Icon(
                               Icons.fitness_center_outlined,
                               size: 56,
-                              color: const Color(0xFFBDBDBD),
+                              color: context.theme.colors.mutedForeground,
                             ),
                             const SizedBox(height: 12),
                             Text(
                               'No machines yet',
                               style: context.theme.typography.sm.copyWith(
-                                color: const Color(0xFF9E9E9E),
+                                color: context.theme.colors.mutedForeground,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Tap "Add machine" to get started',
                               style: context.theme.typography.xs.copyWith(
-                                color: const Color(0xFFBDBDBD),
+                                color: context.theme.colors.mutedForeground,
                               ),
                             ),
                           ],
@@ -162,14 +162,16 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
                                         value: 'Edit',
                                         child: Row(
                                           children: [
-                                            const Icon(Icons.edit,
-                                                color: Color(0xFF1E1E1E)),
+                                            Icon(Icons.edit,
+                                                color: context
+                                                    .theme.colors.foreground),
                                             const SizedBox(width: 8),
                                             Text(
                                               AppLocalizations.of(context)!
                                                   .edit,
-                                              style: const TextStyle(
-                                                color: Color(0xFF1E1E1E),
+                                              style: TextStyle(
+                                                color: context
+                                                    .theme.colors.foreground,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
@@ -180,14 +182,16 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
                                         value: 'Delete',
                                         child: Row(
                                           children: [
-                                            const Icon(Icons.delete,
-                                                color: Colors.red),
+                                            Icon(Icons.delete,
+                                                color: context
+                                                    .theme.colors.destructive),
                                             const SizedBox(width: 8),
                                             Text(
                                               AppLocalizations.of(context)!
                                                   .delete,
-                                              style: const TextStyle(
-                                                color: Colors.red,
+                                              style: TextStyle(
+                                                color: context
+                                                    .theme.colors.destructive,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
@@ -245,22 +249,21 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
                                       horizontal: 16, vertical: 10),
                                   decoration: BoxDecoration(
                                     color: _selectedMachines.contains(machine)
-                                        ? const Color(0xFF1E1E1E)
-                                        : const Color(0xFFF5F5F5),
+                                        ? context.theme.colors.primary
+                                        : context.theme.colors.secondary,
                                     borderRadius: BorderRadius.circular(24),
                                     border: Border.all(
                                       color: _selectedMachines.contains(machine)
-                                          ? const Color(0xFF1E1E1E)
-                                          : const Color(0xFFE0E0E0),
+                                          ? context.theme.colors.primary
+                                          : context.theme.colors.border,
                                     ),
                                   ),
                                   child: Text(
                                     machine.name.capitalizeEachWord(),
                                     style: TextStyle(
-                                      color:
-                                          _selectedMachines.contains(machine)
-                                              ? Colors.white
-                                              : const Color(0xFF1E1E1E),
+                                      color: _selectedMachines.contains(machine)
+                                          ? context.theme.colors.primaryForeground
+                                          : context.theme.colors.foreground,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),

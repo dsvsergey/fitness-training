@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/svg.dart';
+import 'package:forui/forui.dart';
 
 class SettingsCamersWidget extends StatelessWidget {
   const SettingsCamersWidget({
@@ -30,8 +30,8 @@ class SettingsCamersWidget extends StatelessWidget {
             onPressed: onPressed,
             child: Text(
               title,
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: context.theme.colors.foreground,
                 fontSize: 18,
                 fontFamily: "Inter",
                 fontWeight: FontWeight.w700,
