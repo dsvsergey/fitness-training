@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 class WorkoutSettingsWidget extends StatelessWidget {
   const WorkoutSettingsWidget({
@@ -27,21 +28,21 @@ class WorkoutSettingsWidget extends StatelessWidget {
                     children: [
                       Text(
                         textOne,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
                           fontSize: 21.0,
-                          color: Colors.grey,
+                          color: context.theme.colors.mutedForeground,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         textProgramOne,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                           fontSize: 21.0,
-                          color: Colors.black,
+                          color: context.theme.colors.foreground,
                         ),
                       ),
                     ],
@@ -54,21 +55,21 @@ class WorkoutSettingsWidget extends StatelessWidget {
                     children: [
                       Text(
                         textTwo,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
                           fontSize: 21.0,
-                          color: Colors.grey,
+                          color: context.theme.colors.mutedForeground,
                         ),
                       ),
                       const Spacer(),
                       Text(
                         textProgramTwo,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                           fontSize: 21.0,
-                          color: Colors.black,
+                          color: context.theme.colors.foreground,
                         ),
                       ),
                     ],

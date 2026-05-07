@@ -30,7 +30,7 @@ Future<bool?> showCreateAppointmentSheet(
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: context.theme.colors.background,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -226,7 +226,7 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
     if (!mounted) return;
     final picked = await showModalBottomSheet<TraineeEntity>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: context.theme.colors.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -294,7 +294,7 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
     if (_programs.isEmpty) return;
     final picked = await showModalBottomSheet<ProgramFitnessEntity>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: context.theme.colors.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -431,12 +431,12 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'New Training',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                   ),
                 ),
                 IconButton(
@@ -454,23 +454,23 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
             const SizedBox(height: 14),
             _buildDateTimeRow(),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Duration',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF6E6E6E),
+                color: context.theme.colors.mutedForeground,
               ),
             ),
             const SizedBox(height: 8),
             _buildDurationChips(),
             const SizedBox(height: 14),
-            const Text(
+            Text(
               'Notes',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF6E6E6E),
+                color: context.theme.colors.mutedForeground,
               ),
             ),
             const SizedBox(height: 6),
@@ -483,8 +483,8 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
               const SizedBox(height: 12),
               Text(
                 _error!,
-                style: const TextStyle(
-                    fontSize: 13, color: Color(0xFFD32F2F)),
+                style: TextStyle(
+                    fontSize: 13, color: context.theme.colors.destructive),
               ),
             ],
             const SizedBox(height: 20),
@@ -514,12 +514,13 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFE0E0E0)),
+          border: Border.all(color: context.theme.colors.border),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            const Icon(FIcons.user, size: 18, color: Color(0xFF6E6E6E)),
+            Icon(FIcons.user,
+                size: 18, color: context.theme.colors.mutedForeground),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -527,8 +528,8 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
                 style: TextStyle(
                   fontSize: 15,
                   color: _trainee == null
-                      ? const Color(0xFF9E9E9E)
-                      : const Color(0xFF1E1E1E),
+                      ? context.theme.colors.mutedForeground
+                      : context.theme.colors.foreground,
                 ),
               ),
             ),
@@ -539,7 +540,8 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
                 child: FCircularProgress(),
               )
             else if (!isLocked)
-              const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
+              Icon(Icons.chevron_right,
+                  color: context.theme.colors.mutedForeground),
           ],
         ),
       ),
@@ -570,12 +572,13 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFE0E0E0)),
+          border: Border.all(color: context.theme.colors.border),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            const Icon(FIcons.dumbbell, size: 18, color: Color(0xFF6E6E6E)),
+            Icon(FIcons.dumbbell,
+                size: 18, color: context.theme.colors.mutedForeground),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -583,8 +586,8 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
                 style: TextStyle(
                   fontSize: 15,
                   color: isPlaceholder
-                      ? const Color(0xFF9E9E9E)
-                      : const Color(0xFF1E1E1E),
+                      ? context.theme.colors.mutedForeground
+                      : context.theme.colors.foreground,
                 ),
               ),
             ),
@@ -592,7 +595,8 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
               const SizedBox(
                   width: 16, height: 16, child: FCircularProgress())
             else if (tappable)
-              const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
+              Icon(Icons.chevron_right,
+                  color: context.theme.colors.mutedForeground),
           ],
         ),
       ),
@@ -642,25 +646,27 @@ class _CreateAppointmentSheetState extends State<_CreateAppointmentSheet> {
             controller: _customDurationCtrl,
             keyboardType: TextInputType.number,
             onChanged: _onCustomDurationChanged,
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(
+                fontSize: 14, color: context.theme.colors.foreground),
             decoration: InputDecoration(
               isDense: true,
               hintText: 'Custom',
-              hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
+              hintStyle:
+                  TextStyle(color: context.theme.colors.mutedForeground),
               suffixText: 'm',
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                borderSide: BorderSide(color: context.theme.colors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+                borderSide: BorderSide(color: context.theme.colors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: const BorderSide(color: Color(0xFF1E1E1E)),
+                borderSide: BorderSide(color: context.theme.colors.foreground),
               ),
             ),
           ),
@@ -689,19 +695,19 @@ class _PickerTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFE0E0E0)),
+          border: Border.all(color: context.theme.colors.border),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: const Color(0xFF6E6E6E)),
+            Icon(icon, size: 18, color: context.theme.colors.mutedForeground),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 text,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    fontSize: 14, color: Color(0xFF1E1E1E)),
+                style: TextStyle(
+                    fontSize: 14, color: context.theme.colors.foreground),
               ),
             ),
           ],
@@ -730,11 +736,13 @@ class _DurationChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF1E1E1E) : Colors.white,
+          color: selected
+              ? context.theme.colors.primary
+              : context.theme.colors.background,
           border: Border.all(
             color: selected
-                ? const Color(0xFF1E1E1E)
-                : const Color(0xFFE0E0E0),
+                ? context.theme.colors.primary
+                : context.theme.colors.border,
           ),
           borderRadius: BorderRadius.circular(20),
         ),
@@ -743,7 +751,9 @@ class _DurationChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: selected ? Colors.white : const Color(0xFF1E1E1E),
+            color: selected
+                ? context.theme.colors.primaryForeground
+                : context.theme.colors.foreground,
           ),
         ),
       ),

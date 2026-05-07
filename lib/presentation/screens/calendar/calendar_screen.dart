@@ -59,8 +59,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               prefilledDate: state.selectedDay ?? DateTime.now(),
               existingAppointments: existing,
             ),
-            backgroundColor: const Color(0xFF1E1E1E),
-            child: const Icon(Icons.add, color: Colors.white),
+            backgroundColor: context.theme.colors.primary,
+            child: Icon(Icons.add, color: context.theme.colors.primaryForeground),
           );
         },
       ),
@@ -96,13 +96,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 headline,
                                 style: context.theme.typography.xl.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF1E1E1E),
+                                  color: context.theme.colors.foreground,
                                 ),
                               ),
                               Text(
                                 subtitle,
                                 style: context.theme.typography.sm.copyWith(
-                                  color: const Color(0xFF6E6E6E),
+                                  color: context.theme.colors.mutedForeground,
                                 ),
                               ),
                             ],
@@ -112,7 +112,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           icon: Icon(
                             FIcons.calendar,
                             size: isTablet ? 28 : 22,
-                            color: const Color(0xFF1E1E1E),
+                            color: context.theme.colors.foreground,
                           ),
                           onPressed: () {
                             AutoRouter.of(context)
@@ -188,24 +188,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.calendar_today_outlined,
                               size: 64,
-                              color: Color(0xFFBDBDBD),
+                              color: context.theme.colors.mutedForeground,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               'No appointments yet',
                               style: context.theme.typography.lg.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF1E1E1E),
+                                color: context.theme.colors.foreground,
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
                               'Your schedule will appear here',
                               style: context.theme.typography.sm.copyWith(
-                                color: const Color(0xFF9E9E9E),
+                                color: context.theme.colors.mutedForeground,
                               ),
                             ),
                           ],

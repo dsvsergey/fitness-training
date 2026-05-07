@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:forui/forui.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
+import '../../../core/bloc/bloc_theme/theme_cubit.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/coach_entity.dart';
 import '../../widgets/button_widget.dart';
@@ -48,13 +49,13 @@ class SettingsScreen extends StatelessWidget {
                             bottom: 0,
                             child: CircleAvatar(
                               radius: 16,
-                              backgroundColor: const Color(0xFF1E1E1E),
+                              backgroundColor: context.theme.colors.primary,
                               child: IconButton(
                                 onPressed: () {},
                                 padding: EdgeInsets.zero,
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.camera_alt,
-                                  color: Colors.white,
+                                  color: context.theme.colors.primaryForeground,
                                   size: 16,
                                 ),
                               ),
@@ -75,6 +76,8 @@ class SettingsScreen extends StatelessWidget {
                         },
                         title: 'Change Info',
                       ),
+                      const SizedBox(height: 20),
+                      const _ThemeSelector(),
                       const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
@@ -112,6 +115,79 @@ class SettingsScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ThemeSelector extends StatelessWidget {
+  const _ThemeSelector();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, mode) {
+        final cubit = context.read<ThemeCubit>();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Appearance',
+              style: context.theme.typography.md.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _ThemeOption(
+                    label: 'Auto',
+                    selected: mode == ThemeMode.system,
+                    onTap: () => cubit.setMode(ThemeMode.system),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ThemeOption(
+                    label: 'Light',
+                    selected: mode == ThemeMode.light,
+                    onTap: () => cubit.setMode(ThemeMode.light),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _ThemeOption(
+                    label: 'Dark',
+                    selected: mode == ThemeMode.dark,
+                    onTap: () => cubit.setMode(ThemeMode.dark),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return FButton(
+      onPress: onTap,
+      variant: selected ? FButtonVariant.primary : FButtonVariant.outline,
+      child: Text(label),
     );
   }
 }

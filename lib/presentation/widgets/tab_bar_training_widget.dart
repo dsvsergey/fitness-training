@@ -41,7 +41,7 @@ class _TabBarTrainingWidgetState extends State<TabBarTrainingWidget> {
             tabAlignment: TabAlignment.fill,
             labelColor: context.theme.colors.foreground,
             unselectedLabelColor: context.theme.colors.mutedForeground,
-            indicatorColor: const Color(0xFF1E1E1E),
+            indicatorColor: context.theme.colors.foreground,
             indicatorWeight: 3,
             indicatorSize: TabBarIndicatorSize.tab,
             labelPadding: const EdgeInsets.symmetric(vertical: 10),

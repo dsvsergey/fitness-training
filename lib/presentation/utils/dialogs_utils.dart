@@ -263,7 +263,7 @@ class DialogUtils {
     return showDialog<ProgramMachineEntity>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: context.theme.colors.background,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -494,7 +494,7 @@ class DialogUtils {
     return showDialog<int?>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: context.theme.colors.background,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -635,7 +635,7 @@ class DialogUtils {
     return showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: context.theme.colors.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         contentPadding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
@@ -678,8 +678,8 @@ class DialogUtils {
                 'height': heightController.text,
               }),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E1E1E),
-                foregroundColor: Colors.white,
+                backgroundColor: context.theme.colors.primary,
+                foregroundColor: context.theme.colors.primaryForeground,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -916,7 +916,7 @@ class DialogUtils {
             : AppLocalizations.of(context)!.newMachine;
 
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: context.theme.colors.background,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -943,8 +943,8 @@ class DialogUtils {
                 onPressed: () =>
                     Navigator.of(context).pop({'name': nameController.text}),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1E1E),
-                  foregroundColor: Colors.white,
+                  backgroundColor: context.theme.colors.primary,
+                  foregroundColor: context.theme.colors.primaryForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
