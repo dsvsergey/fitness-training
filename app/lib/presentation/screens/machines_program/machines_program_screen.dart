@@ -98,14 +98,32 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: SingleChildScrollView(
+                child: ReorderableListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: FTileGroup(
-                    children: state.program!.programMachines!.map((pm) {
-                      final isCompleted = pm.workouts
-                          .where((w) => w.dateSession == today)
-                          .isNotEmpty;
-                      return FTile(
+                  itemCount: state.program!.programMachines!.length,
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > oldIndex) newIndex -= 1;
+                    final orderedIds = state.program!.programMachines!
+                        .map((pm) => pm.id!)
+                        .toList();
+                    final movedId = orderedIds.removeAt(oldIndex);
+                    orderedIds.insert(newIndex, movedId);
+                    context.read<MachinesProgramScreenBloc>().add(
+                          ReorderMachinesEvent(
+                            programId: widget.program.id!,
+                            orderedIds: orderedIds,
+                          ),
+                        );
+                  },
+                  itemBuilder: (context, index) {
+                    final pm = state.program!.programMachines![index];
+                    final isCompleted = pm.workouts
+                        .where((w) => w.dateSession == today)
+                        .isNotEmpty;
+                    return Padding(
+                      key: ValueKey(pm.id),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: FTile(
                         prefix: Icon(
                           isCompleted
                               ? FIcons.circleCheck
@@ -123,7 +141,10 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                                 : null,
                           ),
                         ),
-                        suffix: const Icon(FIcons.chevronRight),
+                        suffix: ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(FIcons.gripVertical),
+                        ),
                         onPress: () => AutoRouter.of(context)
                             .push(
                               SettingsProgramRoute(
@@ -141,59 +162,48 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                                     ),
                                   ),
                             ),
-                      );
-                    }).toList(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              if (currentAppointment != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                  child: ButtonWidget(
+                    onPressed: () => DialogUtils.showConfirmationDialog(
+                      context,
+                      AppLocalizations.of(context)!.finishWorkout,
+                      AppLocalizations.of(context)!.finishWorkoutMessage,
+                    ).then((value) {
+                      if (value ?? false) {
+                        final programId = state.program!.id!;
+                        final now = DateTime.now();
+                        final dateOnly =
+                            DateTime(now.year, now.month, now.day);
+                        final program = state.program!.rebuild(
+                          (p0) => p0..workoutDate = dateOnly,
+                        );
+                        return GetIt.I<ProgramFitnessUsecase>()
+                            .updateProgram(programId, program)
+                            .then((_) {
+                          GetIt.I<WorkoutAppointmentUsecase>()
+                              .setWorkoutCompleted(currentAppointment.id!)
+                              .then(
+                                (_) => BlocProvider.of<CalendarBloc>(context)
+                                    .add(
+                                  FilterListAppointments(
+                                    selectedDay: dateOnly,
+                                  ),
+                                ),
+                              );
+                          AutoRouter.of(context).popUntilRoot();
+                        });
+                      }
+                    }),
+                    title: AppLocalizations.of(context)!.finishWorkout,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                child: ButtonWidget(
-                  onPressed: currentAppointment == null
-                      ? null
-                      : () => DialogUtils.showConfirmationDialog(
-                                context,
-                                AppLocalizations.of(context)!.finishWorkout,
-                                AppLocalizations.of(context)!
-                                    .finishWorkoutMessage,
-                              ).then((value) {
-                            if (value ?? false) {
-                              final programId = state.program!.id!;
-                              final now = DateTime.now();
-                              final dateOnly =
-                                  DateTime(now.year, now.month, now.day);
-                              final program = state.program?.rebuild(
-                                (p0) => p0..workoutDate = dateOnly,
-                              );
-                              final appointmentId =
-                                  GetIt.I<ApplicationBloc>()
-                                      .state
-                                      .currentAppointment
-                                      ?.id;
-                              if (appointmentId != null) {
-                                return GetIt.I<ProgramFitnessUsecase>()
-                                    .updateProgram(programId, program!)
-                                    .then((_) {
-                                  GetIt.I<WorkoutAppointmentUsecase>()
-                                      .setWorkoutCompleted(appointmentId)
-                                      .then(
-                                        (_) =>
-                                            BlocProvider.of<CalendarBloc>(
-                                              context,
-                                            ).add(
-                                              FilterListAppointments(
-                                                selectedDay: dateOnly,
-                                              ),
-                                            ),
-                                      );
-                                  AutoRouter.of(context).popUntilRoot();
-                                });
-                              }
-                            }
-                          }),
-                  title: AppLocalizations.of(context)!.finishWorkout,
-                ),
-              ),
             ],
           );
         },

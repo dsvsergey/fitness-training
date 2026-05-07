@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:fitness_training/core/bloc/bloc_application/application_bloc.dart';
 import 'package:fitness_training/core/resources/resources.dart';
 import 'package:fitness_training/core/router/router.dart';
+import 'package:fitness_training/data/repositories/email_history_storage.dart';
 import 'package:fitness_training/domain/usecases/fitness/auth_usecase.dart';
 import 'package:fitness_training/presentation/widgets/button_widget.dart';
 import 'package:fitness_training/presentation/widgets/text_field_widget.dart';
@@ -19,9 +20,22 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailCtrl = TextEditingController();
+  final _emailCtrl = FAutocompleteController();
   final _passwordCtrl = TextEditingController();
   bool _googleLoading = false;
+  List<String> _recentEmails = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecentEmails();
+  }
+
+  Future<void> _loadRecentEmails() async {
+    final emails = await GetIt.I<EmailHistoryStorage>().read();
+    if (!mounted) return;
+    setState(() => _recentEmails = emails);
+  }
 
   @override
   void dispose() {
@@ -103,10 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    TextFieldWidget(
-                      controller: _emailCtrl,
-                      hintText: 'Email',
+                    FAutocomplete(
+                      items: _recentEmails,
+                      control: FAutocompleteControl.managed(
+                        controller: _emailCtrl,
+                      ),
+                      hint: 'Email',
                       keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
                     ),
                     const SizedBox(height: 14),
                     TextFieldWidget(

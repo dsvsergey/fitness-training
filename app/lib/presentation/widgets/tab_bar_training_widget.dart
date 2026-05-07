@@ -16,9 +16,11 @@ class TabBarTrainingWidget extends StatefulWidget {
   const TabBarTrainingWidget({
     super.key,
     required this.model,
+    this.highlightedProgramId,
   });
 
   final TraineeEntity model;
+  final int? highlightedProgramId;
 
   @override
   State<TabBarTrainingWidget> createState() => _TabBarTrainingWidgetState();
@@ -82,6 +84,7 @@ class _TabBarTrainingWidgetState extends State<TabBarTrainingWidget> {
                           .sorted((a, b) => a.number!.compareTo(b.number!))
                           .toList() ??
                       [],
+                  highlightedProgramId: widget.highlightedProgramId,
                   onDismissed: (program) {},
                   onArchived: (program) =>
                       GetIt.I<ProgramFitnessUsecase>()
@@ -101,6 +104,7 @@ class _TabBarTrainingWidgetState extends State<TabBarTrainingWidget> {
                           .sorted((a, b) => a.number!.compareTo(b.number!))
                           .toList() ??
                       [],
+                  highlightedProgramId: widget.highlightedProgramId,
                   onDismissed: (program) {},
                   onArchived: (program) =>
                       GetIt.I<ProgramFitnessUsecase>()

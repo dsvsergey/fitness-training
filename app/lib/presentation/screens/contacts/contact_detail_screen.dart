@@ -10,7 +10,9 @@ import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
+import '../../utils/dialogs_utils.dart';
 import '../../widgets/create_appointment_sheet.dart';
+import '../../widgets/user_avatar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
 
 /// Detail screen for a single trainee (contact). Shows profile info and the
@@ -26,12 +28,14 @@ class ContactDetailScreen extends StatefulWidget {
 }
 
 class _ContactDetailScreenState extends State<ContactDetailScreen> {
+  late TraineeEntity _trainee;
   List<WorkoutAppointmentEntity> _appointments = const [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
+    _trainee = widget.trainee;
     _loadAppointments();
   }
 
@@ -50,7 +54,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           ..coachIds = coachIds),
       );
       final mine = (result.appointments ?? const <WorkoutAppointmentEntity>[])
-          .where((a) => a.trainee.id == widget.trainee.id)
+          .where((a) => a.trainee.id == _trainee.id)
           .toList()
         ..sort((a, b) => a.startAt.compareTo(b.startAt));
       if (!mounted) return;
@@ -70,7 +74,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   Future<void> _openSchedule() async {
     final ok = await showCreateAppointmentSheet(
       context,
-      prefilledTrainee: widget.trainee,
+      prefilledTrainee: _trainee,
       existingAppointments: _appointments,
     );
     if (ok == true) await _loadAppointments();
@@ -79,15 +83,35 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   void _openPrograms() {
     context
         .read<ApplicationBloc>()
-        .add(SelectTraineeEvent(selectedTrainee: widget.trainee));
+        .add(SelectTraineeEvent(selectedTrainee: _trainee));
     BlocProvider.of<ProgramScreenBloc>(context)
-        .add(UpdateTraineeEvent(trainee: widget.trainee));
+        .add(UpdateTraineeEvent(trainee: _trainee));
     AutoRouter.of(context).push(const ProgramRoute());
+  }
+
+  Future<void> _openEdit() async {
+    if (_trainee.id == null) return;
+    final updated = await DialogUtils.showEditTraineeDialog(
+      context: context,
+      trainee: _trainee,
+    );
+    if (updated == null || !mounted) return;
+    try {
+      final saved =
+          await GetIt.I<TraineeUsecase>().updateTrainee(_trainee.id!, updated);
+      if (!mounted) return;
+      setState(() => _trainee = saved);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update trainee')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final t = widget.trainee;
+    final t = _trainee;
     final fullName = t.fullName.trim();
     final initials = fullName
         .split(' ')
@@ -101,6 +125,13 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         foregroundColor: const Color(0xFF1E1E1E),
         elevation: 0,
         title: Text(fullName.isEmpty ? 'Contact' : fullName),
+        actions: [
+          IconButton(
+            tooltip: 'Edit',
+            onPressed: _openEdit,
+            icon: const Icon(Icons.edit_outlined),
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView(
@@ -168,20 +199,12 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final avatar = trainee.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(trainee.photoUrl!),
-            fallback: Text(initials.isEmpty ? 'NA' : initials),
-            size: 72,
-          )
-        : FAvatar.raw(
-            size: 72,
-            child: Text(
-              initials.isEmpty ? 'NA' : initials,
-              style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w600),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: trainee.photoUrl,
+      initials: initials.isEmpty ? 'NA' : initials,
+      size: 72,
+      textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+    );
 
     return Row(
       children: [

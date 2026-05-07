@@ -11,6 +11,7 @@ import "package:forui/forui.dart";
 import "package:get_it/get_it.dart";
 import "package:intl/intl.dart";
 
+import "../../../core/bloc/bloc_application/application_bloc.dart";
 import "../../../core/resources/resources.dart";
 import "../../../core/router/router.dart";
 import "../../../domain/entities/fitness/fitness.dart";
@@ -51,6 +52,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
 
   bool isGridView = true;
   double timer = 0;
+
+  bool get _isWorkoutMode =>
+      GetIt.I<ApplicationBloc>().state.currentAppointment != null;
 
   @override
   void dispose() {
@@ -535,8 +539,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                     builder: (context, state) => CustomTimerWidget(
                       title: AppLocalizations.of(context)!.timer,
                       image: AppSvgs.timer,
-                      onPressed: () =>
-                          onTimerButtonPressed(context, state),
+                      onPressed: _isWorkoutMode
+                          ? () => onTimerButtonPressed(context, state)
+                          : null,
                     ),
                   ),
                 ),
@@ -545,11 +550,13 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                   child: CustomTimerWidget(
                     title: AppLocalizations.of(context)!.metronome,
                     image: AppSvgs.metronom,
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const MetronomeControl(),
-                      ),
-                    ),
+                    onPressed: _isWorkoutMode
+                        ? () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const MetronomeControl(),
+                              ),
+                            )
+                        : null,
                   ),
                 ),
               ],
@@ -694,19 +701,22 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                         builder: (context, state) => CustomTimerWidget(
                           title: AppLocalizations.of(context)!.timer,
                           image: AppSvgs.timer,
-                          onPressed: () =>
-                              onTimerButtonPressed(context, state),
+                          onPressed: _isWorkoutMode
+                              ? () => onTimerButtonPressed(context, state)
+                              : null,
                         ),
                       ),
                       const SizedBox(height: 60),
                       CustomTimerWidget(
                         title: AppLocalizations.of(context)!.metronome,
                         image: AppSvgs.metronom,
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const MetronomeControl(),
-                          ),
-                        ),
+                        onPressed: _isWorkoutMode
+                            ? () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const MetronomeControl(),
+                                  ),
+                                )
+                            : null,
                       ),
                     ],
                   ),

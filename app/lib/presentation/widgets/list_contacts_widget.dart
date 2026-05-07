@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import 'user_avatar_widget.dart';
 
 class ListContactsWidget extends StatelessWidget {
   const ListContactsWidget({
@@ -25,20 +26,13 @@ class ListContactsWidget extends StatelessWidget {
         .take(2)
         .join();
 
-    final avatar = client.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(client.photoUrl!),
-            fallback: Text(initials),
-            size: 48,
-          )
-        : FAvatar.raw(
-            size: 48,
-            child: Text(
-              initials,
-              style: context.theme.typography.sm
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: client.photoUrl,
+      initials: initials,
+      size: 48,
+      textStyle: context.theme.typography.sm
+          .copyWith(fontWeight: FontWeight.bold),
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

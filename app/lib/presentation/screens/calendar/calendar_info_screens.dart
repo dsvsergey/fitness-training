@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../../domain/entities/fitness/fitness.dart';
+import '../../widgets/user_avatar_widget.dart';
 import '../../widgets/user_cart_widget.dart';
 
 @RoutePage()
@@ -22,20 +23,13 @@ class CalendarInfoScreens extends StatelessWidget {
         .take(2)
         .join();
 
-    final avatar = trainee.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(trainee.photoUrl!),
-            fallback: Text(initials),
-            size: 120,
-          )
-        : FAvatar.raw(
-            size: 120,
-            child: Text(
-              initials,
-              style: context.theme.typography.xl3
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: trainee.photoUrl,
+      initials: initials,
+      size: 120,
+      textStyle: context.theme.typography.xl3
+          .copyWith(fontWeight: FontWeight.bold),
+    );
 
     return Scaffold(
       appBar: PreferredSize(

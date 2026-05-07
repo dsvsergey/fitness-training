@@ -26,6 +26,8 @@ abstract class ProgramFitnessUsecase {
   Future<void> deleteProgram(int programId);
   Future<ProgramFitnessEntity> updateProgramMachines(
       ProgramUpdateMachinesEntity updateEntity);
+  Future<ProgramFitnessEntity> reorderMachines(
+      int programId, List<int> orderedIds);
 }
 
 @LazySingleton(as: ProgramFitnessUsecase)
@@ -89,5 +91,12 @@ class ProgramFitnessUsecaseImpl implements ProgramFitnessUsecase {
           ProgramUpdateMachinesEntity updateEntity) =>
       _api
           .updateProgramMachines(updateEntity.model)
+          .then((value) => value.entity);
+
+  @override
+  Future<ProgramFitnessEntity> reorderMachines(
+          int programId, List<int> orderedIds) =>
+      _api
+          .reorderProgramMachines(programId, orderedIds)
           .then((value) => value.entity);
 }
