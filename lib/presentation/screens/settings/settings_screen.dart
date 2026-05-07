@@ -7,6 +7,7 @@ import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/coach_entity.dart';
 import '../../widgets/button_widget.dart';
+import '../../widgets/user_avatar_widget.dart';
 import '../../widgets/user_info_widget.dart';
 
 @RoutePage()
@@ -35,22 +36,13 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       Stack(
                         children: [
-                          state.user?.coach?.imageUrl != null
-                              ? FAvatar(
-                                  image: NetworkImage(
-                                    state.user!.coach!.imageUrl!,
-                                  ),
-                                  fallback: Text(initials),
-                                  size: 120,
-                                )
-                              : FAvatar.raw(
-                                  size: 120,
-                                  child: Text(
-                                    initials,
-                                    style: context.theme.typography.xl2
-                                        .copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                          UserAvatarWidget(
+                            photoUrl: state.user?.coach?.imageUrl,
+                            initials: initials,
+                            size: 120,
+                            textStyle: context.theme.typography.xl2
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
                           Positioned(
                             right: 0,
                             bottom: 0,

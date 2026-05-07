@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/dio_settings/dio_settings_backend.dart';
 import '../../models/fitness/fitness.dart';
 import 'fitness.dart';
@@ -41,94 +39,50 @@ class WorkoutSessionRepositoryImpl
   }) =>
       fitness.dio
           .get(
-        "/workout-sessions/",
-        queryParameters: {
-          "skip": skip,
-          "limit": limit,
-        },
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-      )
-          .then((value) {
-        return (value.data as List)
-            .map((item) => WorkoutSessionModel.fromJson(item))
-            .toList();
-      }).catchError(onException);
+            "/workout-sessions/",
+            queryParameters: {"skip": skip, "limit": limit},
+          )
+          .then((value) => (value.data as List)
+              .map((item) => WorkoutSessionModel.fromJson(item))
+              .toList())
+          .catchError(onException);
 
   @override
   Future<WorkoutSessionModel> getWorkoutSession(int sessionId) => fitness.dio
-          .get(
-        "/workout-sessions/$sessionId",
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-      )
-          .then((value) {
-        return WorkoutSessionModel.fromJson(value.data);
-      }).catchError(onException);
+      .get("/workout-sessions/$sessionId")
+      .then((value) => WorkoutSessionModel.fromJson(value.data))
+      .catchError(onException);
 
   @override
   Future<WorkoutSessionModel> createWorkoutSession(
           WorkoutSessionModel session) =>
       fitness.dio
-          .post(
-        "/workout-sessions/",
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-        data: session.toJson(),
-      )
-          .then((value) {
-        return WorkoutSessionModel.fromJson(value.data);
-      }).catchError(onException);
+          .post("/workout-sessions/", data: session.toJson())
+          .then((value) => WorkoutSessionModel.fromJson(value.data))
+          .catchError(onException);
 
   @override
   Future<WorkoutSessionModel> updateWorkoutSession(
           int sessionId, WorkoutSessionModel session) =>
       fitness.dio
-          .put(
-        "/workout-sessions/$sessionId",
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-        data: session.toJson(),
-      )
-          .then((value) {
-        return WorkoutSessionModel.fromJson(value.data);
-      }).catchError(onException);
+          .put("/workout-sessions/$sessionId", data: session.toJson())
+          .then((value) => WorkoutSessionModel.fromJson(value.data))
+          .catchError(onException);
 
   @override
   Future<void> deleteWorkoutSession(int sessionId) => fitness.dio
-      .delete(
-        "/workout-sessions/$sessionId",
-        options: Options(headers: {
-          'Content-Type': 'application/json',
-          'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-        }),
-      )
+      .delete("/workout-sessions/$sessionId")
       .catchError(onException);
 
   @override
   Future<List<WorkoutSessionModel>> getHistory(
       int traineeId, int machineSettingId) {
     return fitness.dio
-        .get(
-      "/workout-sessions/history/$traineeId/$machineSettingId/",
-      options: Options(headers: {
-        'Content-Type': 'application/json',
-        'Authorization': GetIt.I<ApplicationBloc>().state.user?.authorization,
-      }),
-    )
-        .then((value) {
-      return (value.data as List)
-          .map((item) => WorkoutSessionModel.fromJson(item))
-          .toList();
-    }).catchError((onError) {
+        .get("/workout-sessions/history/$traineeId/$machineSettingId/")
+        .then((value) => (value.data as List)
+            .map((item) => WorkoutSessionModel.fromJson(item))
+            .toList())
+        .catchError((onError) {
       if (onError is DioException) {
         if (onError.response?.statusCode == 404) {
           return Future.value(<WorkoutSessionModel>[]);

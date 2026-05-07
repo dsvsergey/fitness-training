@@ -43,6 +43,11 @@ class LogoutEvent extends ApplicationEvent {
   List<Object?> get props => [];
 }
 
+class RestoreSessionEvent extends ApplicationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
 class SelectTraineeEvent extends ApplicationEvent {
   final TraineeEntity? selectedTrainee;
   final WorkoutAppointmentEntity? selectedAppointment;

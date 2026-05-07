@@ -3,6 +3,7 @@ import 'package:forui/forui.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import 'user_avatar_widget.dart';
 
 class GridCalendarWidget extends StatelessWidget {
   const GridCalendarWidget({
@@ -27,20 +28,13 @@ class GridCalendarWidget extends StatelessWidget {
         .take(2)
         .join();
 
-    final avatar = appointment.trainee.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(appointment.trainee.photoUrl!),
-            fallback: Text(initials),
-            size: avatarSize,
-          )
-        : FAvatar.raw(
-            size: avatarSize,
-            child: Text(
-              initials,
-              style: context.theme.typography.xl2
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: appointment.trainee.photoUrl,
+      initials: initials,
+      size: avatarSize,
+      textStyle: context.theme.typography.xl2
+          .copyWith(fontWeight: FontWeight.bold),
+    );
 
     final nameColor =
         isCompleted ? context.theme.colors.mutedForeground : null;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import 'user_avatar_widget.dart';
 
 class GridContactsWidget extends StatelessWidget {
   const GridContactsWidget({
@@ -25,20 +26,13 @@ class GridContactsWidget extends StatelessWidget {
         .take(2)
         .join();
 
-    final avatar = model.photoUrl != null
-        ? FAvatar(
-            image: NetworkImage(model.photoUrl!),
-            fallback: Text(initials),
-            size: avatarSize,
-          )
-        : FAvatar.raw(
-            size: avatarSize,
-            child: Text(
-              initials,
-              style: context.theme.typography.lg
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          );
+    final avatar = UserAvatarWidget(
+      photoUrl: model.photoUrl,
+      initials: initials,
+      size: avatarSize,
+      textStyle: context.theme.typography.lg
+          .copyWith(fontWeight: FontWeight.bold),
+    );
 
     return GestureDetector(
       onTap: onTap,
