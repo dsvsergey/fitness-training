@@ -18,11 +18,21 @@ class HomeScreen extends StatelessWidget {
       ],
       builder: (context, child) {
         final tabRouter = AutoTabsRouter.of(context);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Scaffold(
           body: child,
           bottomNavigationBar: FBottomNavigationBar(
             index: tabRouter.activeIndex,
             onChange: tabRouter.setActiveIndex,
+            // In dark mode, lift the nav bar above the page background so it
+            // doesn't blend in. Light mode keeps forui's default surface.
+            style: isDark
+                ? FBottomNavigationBarStyleDelta.delta(
+                    decoration: DecorationDelta.boxDelta(
+                      color: context.theme.colors.secondary,
+                    ),
+                  )
+                : const FBottomNavigationBarStyleDelta.context(),
             children: const [
               FBottomNavigationBarItem(
                 icon: Icon(FIcons.calendar),
