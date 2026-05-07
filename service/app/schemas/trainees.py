@@ -1,8 +1,18 @@
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from pydantic import BaseModel, EmailStr, field_validator
+from datetime import date, datetime
 
 from app.schemas.programs import ProgramSchema
+
+
+def _parse_birth_date(value):
+    if value is None or isinstance(value, date):
+        return value
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, str):
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).date()
+    return value
 
 
 class TraineeRegister(BaseModel):
@@ -28,7 +38,13 @@ class TraineeBase(BaseModel):
     notes: Optional[str] = None
     weight: Optional[float] = None
     height: Optional[float] = None
+    birth_date: Optional[date] = None
     programs: Optional[list[ProgramSchema]] = None
+
+    @field_validator("birth_date", mode="before")
+    @classmethod
+    def _coerce_birth_date(cls, v):
+        return _parse_birth_date(v)
 
 
 class TraineeCreate(TraineeBase):
@@ -50,7 +66,13 @@ class TraineeUpdate(BaseModel):
     notes: Optional[str] = None
     weight: Optional[float] = None
     height: Optional[float] = None
+    birth_date: Optional[date] = None
     password: Optional[str] = None
+
+    @field_validator("birth_date", mode="before")
+    @classmethod
+    def _coerce_birth_date(cls, v):
+        return _parse_birth_date(v)
 
 
 class TraineeInDBBase(TraineeBase):
@@ -92,7 +114,13 @@ class TraineeSchema(BaseModel):
     notes: Optional[str] = None
     weight: Optional[float] = None
     height: Optional[float] = None
+    birth_date: Optional[date] = None
     programs: Optional[list[ProgramSchema]] = None
+
+    @field_validator("birth_date", mode="before")
+    @classmethod
+    def _coerce_birth_date(cls, v):
+        return _parse_birth_date(v)
 
     class Config:
         from_attributes = True

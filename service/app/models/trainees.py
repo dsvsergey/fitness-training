@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, Integer, String, Float, Boolean
+from sqlalchemy import Column, Date, DateTime, Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -24,6 +24,7 @@ class Trainee(Base):
     notes = Column(String, nullable=True)
     weight = Column(Float, nullable=True)
     height = Column(Float, nullable=True)
+    birth_date = Column(Date, nullable=True)
 
     # OAuth fields
     oauth_provider = Column(String, nullable=True)   # "google" or None for local
