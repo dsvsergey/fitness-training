@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/dio_settings/dio_settings_backend.dart';
 import '../../models/fitness/fitness.dart';
 import 'fitness.dart';
@@ -34,14 +32,9 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
       .get(
         "/coaches/",
         queryParameters: {"skip": skip, "limit": limit},
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                authorization ??
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
+        options: authorization != null
+            ? Options(headers: {'Authorization': authorization})
+            : null,
       )
       .then((value) {
         if (value.data is! List) {
@@ -57,16 +50,7 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
 
   @override
   Future<CoachModel> getCoach(int coachId) => fitness.dio
-      .get(
-        "/coaches/$coachId",
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
+      .get("/coaches/$coachId")
       .then((value) {
         if (value.data is! Map<String, dynamic>) {
           throw FormatException(
@@ -79,17 +63,7 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
 
   @override
   Future<CoachModel> createCoach(CoachModel coach) => fitness.dio
-      .post(
-        "/coaches/",
-        data: coach.toJson(),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
+      .post("/coaches/", data: coach.toJson())
       .then((value) {
         if (value.data is! Map<String, dynamic>) {
           throw FormatException(
@@ -102,17 +76,7 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
 
   @override
   Future<CoachModel> updateCoach(int coachId, CoachModel coach) => fitness.dio
-      .put(
-        "/coaches/me/",
-        data: coach.toJson(),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
+      .put("/coaches/me/", data: coach.toJson())
       .then((value) {
         if (value.data is! Map<String, dynamic>) {
           throw FormatException(
@@ -125,15 +89,6 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
 
   @override
   Future<void> deleteCoach(int coachId) => fitness.dio
-      .delete(
-        "/coaches/$coachId",
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
+      .delete("/coaches/$coachId")
       .catchError(onException);
 }
