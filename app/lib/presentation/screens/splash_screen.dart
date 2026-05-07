@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
+import 'package:fitness_training/core/bloc/bloc_application/application_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/router/router.dart';
-import '../../data/repositories/preferences_repository.dart';
 
-// ignore_for_file: use_build_context_synchronously
 @RoutePage()
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,13 +21,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _routing() async {
-    final prefsRepo = PreferencesRepository();
-    final token = await prefsRepo.getToken();
+    final bloc = context.read<ApplicationBloc>();
+    bloc.add(RestoreSessionEvent());
 
-    await Future.delayed(const Duration(seconds: 2));
+    final settledState = bloc.stream.firstWhere(
+      (s) => s is AuthSucces || s is AuthLogout || s is ApplicationError,
+    );
+    final results = await Future.wait([
+      settledState,
+      Future.delayed(const Duration(seconds: 2)),
+    ]);
+    if (!mounted) return;
 
-    if (token?.accessToken != null &&
-        !(token?.expires?.isBefore(DateTime.now()) ?? true)) {
+    final state = results[0] as ApplicationState;
+    if (state is AuthSucces) {
       AutoRouter.of(context).replace(const HomeRoute());
     } else {
       AutoRouter.of(context).replace(const LoginRoute());
