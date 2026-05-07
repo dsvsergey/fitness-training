@@ -1,4 +1,6 @@
 import "package:equatable/equatable.dart";
+import "package:fitness_training/data/repositories/email_history_storage.dart";
+import "package:fitness_training/data/repositories/token_storage.dart";
 import "package:fitness_training/domain/entities/fitness/coach_entity.dart";
 import "package:fitness_training/domain/entities/fitness/trainee_entity.dart";
 import "package:fitness_training/domain/entities/fitness/user_fitness_entity.dart";
@@ -18,10 +20,11 @@ part "application_state.dart";
 @singleton
 class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
   ApplicationBloc() : super(ApplicationInitial()) {
+    on<RestoreSessionEvent>(_onRestoreSession);
     on<LoginEvent>(_onLogin);
     on<RegisterEvent>(_onRegister);
     on<GoogleLoginEvent>(_onGoogleLogin);
-    on<LogoutEvent>((event, emit) => emit(AuthLogout()));
+    on<LogoutEvent>(_onLogout);
     on<SelectTraineeEvent>(
       (event, emit) => emit(SelectedCurrentTrainee(
         state,
@@ -38,11 +41,35 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
     );
   }
 
+  Future<void> _onRestoreSession(
+    RestoreSessionEvent event,
+    Emitter<ApplicationState> emit,
+  ) async {
+    final storage = GetIt.I<TokenStorage>();
+    final token = await storage.read();
+    if (token == null || token.isEmpty || TokenStorage.isExpired(token)) {
+      if (token != null) await storage.clear();
+      emit(AuthLogout());
+      return;
+    }
+    try {
+      emit(AuthLoading());
+      final user = await GetIt.I<AuthUsecase>().loginWithToken(token);
+      final coaches = await _fetchCoaches(user.authorization);
+      emit(AuthSucces(user: user, isAuth: true, coaches: coaches));
+    } catch (_) {
+      await storage.clear();
+      emit(AuthLogout());
+    }
+  }
+
   Future<void> _onLogin(LoginEvent event, Emitter<ApplicationState> emit) async {
     try {
       emit(AuthLoading());
       final user = await GetIt.I<AuthUsecase>()
           .login(email: event.email, password: event.password);
+      await _persistToken(user.token);
+      await _rememberEmail(user.coach?.email ?? event.email);
       final coaches = await _fetchCoaches(user.authorization);
       emit(AuthSucces(user: user, isAuth: true, coaches: coaches));
     } catch (e) {
@@ -75,10 +102,32 @@ class ApplicationBloc extends Bloc<ApplicationEvent, ApplicationState> {
     try {
       emit(AuthLoading());
       final user = await GetIt.I<AuthUsecase>().loginWithToken(event.token);
+      await _persistToken(user.token);
+      await _rememberEmail(user.coach?.email);
       final coaches = await _fetchCoaches(user.authorization);
       emit(AuthSucces(user: user, isAuth: true, coaches: coaches));
     } catch (e) {
       emit(ApplicationError(state, error: _errorMessage(e)));
+    }
+  }
+
+  Future<void> _onLogout(
+    LogoutEvent event,
+    Emitter<ApplicationState> emit,
+  ) async {
+    await GetIt.I<TokenStorage>().clear();
+    emit(AuthLogout());
+  }
+
+  Future<void> _persistToken(String? token) async {
+    if (token != null && token.isNotEmpty) {
+      await GetIt.I<TokenStorage>().save(token);
+    }
+  }
+
+  Future<void> _rememberEmail(String? email) async {
+    if (email != null && email.trim().isNotEmpty) {
+      await GetIt.I<EmailHistoryStorage>().add(email);
     }
   }
 
