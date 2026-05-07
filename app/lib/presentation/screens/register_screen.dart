@@ -162,12 +162,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     FButton(
                       onPress: isLoading ? null : _submit,
                       child: isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: context.theme.colors.primaryForeground,
                               ),
                             )
                           : const Text('Create Account'),

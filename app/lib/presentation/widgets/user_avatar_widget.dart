@@ -17,7 +17,11 @@ class UserAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fallback = Text(initials, style: textStyle);
+    final fallback = Text(
+      initials,
+      textAlign: TextAlign.center,
+      style: (textStyle ?? const TextStyle()).copyWith(height: 1.0),
+    );
     final url = photoUrl;
     if (url == null || url.isEmpty) {
       return FAvatar.raw(size: size, child: fallback);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 import '../../core/resources/resources.dart';
 import 'settings_camers_widget.dart';
@@ -12,7 +13,7 @@ class ImageUserWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       //radius: 19.r,
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: context.theme.colors.primary,
       child: Center(
         child: IconButton(
           onPressed: () {
@@ -21,15 +22,16 @@ class ImageUserWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
               ),
               context: context,
-              builder: (context) => Container(
+              backgroundColor: context.theme.colors.background,
+              builder: (sheetCtx) => Container(
                 height: 250,
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(50),
                     topRight: Radius.circular(50),
                   ),
-                  color: Colors.white,
+                  color: context.theme.colors.background,
                 ),
                 child: Column(
                   children: [
@@ -38,7 +40,7 @@ class ImageUserWidget extends StatelessWidget {
                       width: 50,
                       height: 7,
                       decoration: ShapeDecoration(
-                        color: const Color(0xFFD9D9D9),
+                        color: context.theme.colors.border,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
                         ),
@@ -65,9 +67,9 @@ class ImageUserWidget extends StatelessWidget {
               ),
             );
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.camera_alt,
-            color: Colors.white,
+            color: context.theme.colors.primaryForeground,
           ),
         ),
       ),

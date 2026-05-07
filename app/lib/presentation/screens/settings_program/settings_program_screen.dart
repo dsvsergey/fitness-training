@@ -331,8 +331,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                               hintText: AppLocalizations.of(
                                                       context)!
                                                   .noteHint,
-                                              hintStyle: const TextStyle(
-                                                  color: Color(0xFFBDBDBD)),
+                                              hintStyle: TextStyle(
+                                                  color: context.theme.colors
+                                                      .mutedForeground),
                                             ),
                                           ),
                                         ),

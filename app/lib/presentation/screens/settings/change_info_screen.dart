@@ -55,25 +55,25 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: context.theme.colors.background,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF1E1E1E)),
+            icon: Icon(Icons.arrow_back, color: context.theme.colors.foreground),
             onPressed: () => AutoRouter.of(context).pop(),
           ),
-          title: const Text(
+          title: Text(
             'Edit Profile',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1E1E1E),
+              color: context.theme.colors.foreground,
             ),
           ),
           centerTitle: true,
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: context.theme.colors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -176,8 +176,8 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1E1E),
-                  foregroundColor: Colors.white,
+                  backgroundColor: context.theme.colors.primary,
+                  foregroundColor: context.theme.colors.primaryForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -224,10 +224,10 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF6E6E6E),
+            color: context.theme.colors.mutedForeground,
           ),
         ),
         const SizedBox(height: 6),
@@ -236,13 +236,13 @@ class _Field extends StatelessWidget {
           onChanged: onChanged,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          style: const TextStyle(fontSize: 15, color: Color(0xFF1E1E1E)),
+          style: TextStyle(fontSize: 15, color: context.theme.colors.foreground),
           decoration: InputDecoration(
             isDense: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             filled: true,
-            fillColor: const Color(0xFFF5F5F5),
+            fillColor: context.theme.colors.secondary,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
@@ -254,7 +254,7 @@ class _Field extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide:
-                  const BorderSide(color: Color(0xFF1E1E1E), width: 1.5),
+                  BorderSide(color: context.theme.colors.foreground, width: 1.5),
             ),
           ),
         ),

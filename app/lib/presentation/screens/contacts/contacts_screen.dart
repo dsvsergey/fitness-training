@@ -80,7 +80,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: context.theme.colors.background,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -95,24 +95,26 @@ class _ContactsScreenState extends State<ContactsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text(
+        backgroundColor: context.theme.colors.background,
+        title: Text(
           'Delete trainee',
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E1E1E),
+            color: context.theme.colors.foreground,
           ),
         ),
         content: Text(
           'Remove ${trainee.fullName}? This cannot be undone.',
-          style: const TextStyle(fontSize: 14, color: Color(0xFF6E6E6E)),
+          style: TextStyle(
+              fontSize: 14, color: context.theme.colors.mutedForeground),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(color: Color(0xFF6E6E6E)),
+              style: TextStyle(color: context.theme.colors.mutedForeground),
             ),
           ),
           TextButton(
@@ -140,11 +142,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
+      backgroundColor: context.theme.colors.background,
       floatingActionButton: FloatingActionButton(
         heroTag: 'contacts_fab',
         onPressed: () => _showTraineeForm(context),
-        backgroundColor: const Color(0xFF1E1E1E),
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: context.theme.colors.primary,
+        child: Icon(Icons.add, color: context.theme.colors.primaryForeground),
       ),
       body: SafeArea(
         child: Padding(
@@ -192,27 +195,28 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     final itemCount = clients.length + (hasMore ? 1 : 0);
 
                     if (clients.isEmpty && state is! ContactsLoading) {
-                      return const Center(
+                      return Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.people_outline,
-                                size: 64, color: Color(0xFFBDBDBD)),
-                            SizedBox(height: 16),
+                                size: 64,
+                                color: context.theme.colors.mutedForeground),
+                            const SizedBox(height: 16),
                             Text(
                               'No contacts yet',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF1E1E1E),
+                                color: context.theme.colors.foreground,
                               ),
                             ),
-                            SizedBox(height: 6),
+                            const SizedBox(height: 6),
                             Text(
                               'Tap + to add your first trainee',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Color(0xFF9E9E9E),
+                                color: context.theme.colors.mutedForeground,
                               ),
                             ),
                           ],
@@ -281,16 +285,17 @@ class _ContactsScreenState extends State<ContactsScreen> {
               // ── Search bar ──────────────────────────────────────────────
               TextField(
                 controller: _searchController,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
-                  color: Color(0xFF1E1E1E),
+                  color: context.theme.colors.foreground,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Search',
-                  hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
-                  prefixIcon: const Icon(
+                  hintStyle:
+                      TextStyle(color: context.theme.colors.mutedForeground),
+                  prefixIcon: Icon(
                     Icons.search,
-                    color: Color(0xFF9E9E9E),
+                    color: context.theme.colors.mutedForeground,
                     size: 20,
                   ),
                   contentPadding: const EdgeInsets.symmetric(
@@ -310,7 +315,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF5F5F5),
+                  fillColor: context.theme.colors.secondary,
                 ),
               ),
             ],
@@ -429,10 +434,10 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
               children: [
                 Text(
                   _isEdit ? 'Edit Trainee' : 'New Trainee',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E1E1E),
+                    color: context.theme.colors.foreground,
                   ),
                 ),
                 IconButton(
@@ -513,8 +518,8 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
               child: ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E1E1E),
-                  foregroundColor: Colors.white,
+                  backgroundColor: context.theme.colors.primary,
+                  foregroundColor: context.theme.colors.primaryForeground,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -556,10 +561,10 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF6E6E6E),
+            color: context.theme.colors.mutedForeground,
           ),
         ),
         const SizedBox(height: 4),
@@ -568,22 +573,23 @@ class _Field extends StatelessWidget {
           keyboardType: keyboardType,
           obscureText: obscureText,
           maxLines: maxLines,
-          style: const TextStyle(fontSize: 15, color: Color(0xFF1E1E1E)),
+          style: TextStyle(
+              fontSize: 15, color: context.theme.colors.foreground),
           decoration: InputDecoration(
             isDense: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: BorderSide(color: context.theme.colors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+              borderSide: BorderSide(color: context.theme.colors.border),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF1E1E1E)),
+              borderSide: BorderSide(color: context.theme.colors.foreground),
             ),
           ),
         ),

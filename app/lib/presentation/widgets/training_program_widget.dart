@@ -55,7 +55,7 @@ class TrainingProgramWidget extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: EdgeInsets.only(left: 20),
-                child: Icon(FIcons.archive, color: Colors.white),
+                child: Icon(FIcons.archive),
               ),
             ),
           ),
@@ -65,7 +65,7 @@ class TrainingProgramWidget extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: Padding(
                 padding: EdgeInsets.only(right: 20),
-                child: Icon(FIcons.archive, color: Colors.white),
+                child: Icon(FIcons.archive),
               ),
             ),
           ),
