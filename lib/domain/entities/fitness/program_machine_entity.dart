@@ -21,6 +21,9 @@ abstract class ProgramMachineEntity
   @BuiltValueField(wireName: 'program_id')
   int get programId;
 
+  @BuiltValueField(wireName: 'index')
+  int? get index;
+
   MachineEntity? get machine;
 
   int? get seats;

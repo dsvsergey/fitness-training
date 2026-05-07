@@ -22,6 +22,9 @@ abstract class ProgramMachineModel
   @BuiltValueField(wireName: 'program_id')
   int get programId;
 
+  @BuiltValueField(wireName: 'index')
+  int? get index;
+
   MachineModel? get machine;
 
   int? get seats;
@@ -73,6 +76,7 @@ extension ProgramMachineModelExtension on ProgramMachineModel {
     ..id = id
     ..machineId = machineId
     ..programId = programId
+    ..index = index
     ..machine = machine?.entity.toBuilder()
     ..back = back
     ..handle = handle
@@ -94,6 +98,7 @@ extension ProgramMachineEntityExtension on ProgramMachineEntity {
     ..id = id
     ..machineId = machineId
     ..programId = programId
+    ..index = index
     ..machine = machine?.model.toBuilder()
     ..back = back
     ..handle = handle
