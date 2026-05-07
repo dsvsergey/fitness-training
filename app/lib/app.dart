@@ -81,7 +81,12 @@ class _MyAppState extends State<MyApp> {
         ],
         child: TextFieldUnfocus(
             child: SharedPrefsWidget(
-          child: ScreenUtilInit(
+          child: BlocListener<ApplicationBloc, ApplicationState>(
+            listenWhen: (prev, curr) => prev.isAuth && curr is AuthLogout,
+            listener: (context, state) {
+              _appRouter.replaceAll([const LoginRoute()]);
+            },
+            child: ScreenUtilInit(
               designSize: const Size(360, 800),
               minTextAdapt: true,
               splitScreenMode: true,
@@ -112,7 +117,9 @@ class _MyAppState extends State<MyApp> {
                     );
                   },
                 );
-              }),
+              },
+            ),
+          ),
         )),
       ),
     );

@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/dio_settings/dio_settings_backend.dart';
 import '../../models/fitness/fitness.dart';
 import 'fitness.dart';
@@ -31,13 +29,6 @@ class MachineRepositoryImpl
       final response = await fitness.dio.get(
         "/machines/",
         queryParameters: {"skip": skip, "limit": limit},
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
       );
       return (response.data as List)
           .map((item) => MachineModel.fromJson(item))
@@ -50,69 +41,25 @@ class MachineRepositoryImpl
 
   @override
   Future<MachineModel> getMachine(int machineId) => fitness.dio
-      .get(
-        "/machines/$machineId",
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
-      .then((value) {
-        return MachineModel.fromJson(value.data);
-      })
+      .get("/machines/$machineId")
+      .then((value) => MachineModel.fromJson(value.data))
       .catchError(onException);
 
   @override
   Future<MachineModel> createMachine(MachineModel machine) => fitness.dio
-      .post(
-        "/machines/",
-        data: machine.toJson(),
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
-      .then((value) {
-        return MachineModel.fromJson(value.data);
-      })
+      .post("/machines/", data: machine.toJson())
+      .then((value) => MachineModel.fromJson(value.data))
       .catchError(onException);
 
   @override
   Future<MachineModel> updateMachine(int machineId, MachineModel machine) =>
       fitness.dio
-          .put(
-            "/machines/$machineId",
-            data: machine.toJson(),
-            options: Options(
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization':
-                    GetIt.I<ApplicationBloc>().state.user?.authorization,
-              },
-            ),
-          )
-          .then((value) {
-            return MachineModel.fromJson(value.data);
-          })
+          .put("/machines/$machineId", data: machine.toJson())
+          .then((value) => MachineModel.fromJson(value.data))
           .catchError(onException);
 
   @override
   Future<void> deleteMachine(int machineId) => fitness.dio
-      .delete(
-        "/machines/$machineId",
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':
-                GetIt.I<ApplicationBloc>().state.user?.authorization,
-          },
-        ),
-      )
+      .delete("/machines/$machineId")
       .catchError(onException);
 }
