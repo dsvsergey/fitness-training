@@ -30,10 +30,12 @@ class MachinesProgramScreen extends StatefulWidget {
 }
 
 class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
+  // Captured when the screen mounts so an appointment lazily created on
+  // "Finish Workout" reflects the actual training start time.
+  final DateTime _startedAt = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
-    final currentAppointment =
-        GetIt.I<ApplicationBloc>().state.currentAppointment;
     context
         .read<MachinesProgramScreenBloc>()
         .add(ProgramFitnessUpdateEvent(programId: widget.program.id!));
@@ -167,47 +169,82 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                   },
                 ),
               ),
-              if (currentAppointment != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                  child: ButtonWidget(
-                    onPressed: () => DialogUtils.showConfirmationDialog(
-                      context,
-                      AppLocalizations.of(context)!.finishWorkout,
-                      AppLocalizations.of(context)!.finishWorkoutMessage,
-                    ).then((value) {
-                      if (value ?? false) {
-                        final programId = state.program!.id!;
-                        final now = DateTime.now();
-                        final dateOnly =
-                            DateTime(now.year, now.month, now.day);
-                        final program = state.program!.rebuild(
-                          (p0) => p0..workoutDate = dateOnly,
-                        );
-                        return GetIt.I<ProgramFitnessUsecase>()
-                            .updateProgram(programId, program)
-                            .then((_) {
-                          GetIt.I<WorkoutAppointmentUsecase>()
-                              .setWorkoutCompleted(currentAppointment.id!)
-                              .then(
-                                (_) => BlocProvider.of<CalendarBloc>(context)
-                                    .add(
-                                  FilterListAppointments(
-                                    selectedDay: dateOnly,
-                                  ),
-                                ),
-                              );
-                          AutoRouter.of(context).popUntilRoot();
-                        });
-                      }
-                    }),
-                    title: AppLocalizations.of(context)!.finishWorkout,
-                  ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                child: ButtonWidget(
+                  onPressed: () => _onFinishPressed(context, state.program!),
+                  title: AppLocalizations.of(context)!.finishWorkout,
                 ),
+              ),
             ],
           );
         },
       ),
     );
+  }
+
+  Future<void> _onFinishPressed(
+    BuildContext context,
+    ProgramFitnessEntity program,
+  ) async {
+    final confirmed = await DialogUtils.showConfirmationDialog(
+      context,
+      AppLocalizations.of(context)!.finishWorkout,
+      AppLocalizations.of(context)!.finishWorkoutMessage,
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final now = DateTime.now();
+    final dateOnly = DateTime(now.year, now.month, now.day);
+    final updatedProgram =
+        program.rebuild((p0) => p0..workoutDate = dateOnly);
+
+    try {
+      await GetIt.I<ProgramFitnessUsecase>()
+          .updateProgram(program.id!, updatedProgram);
+
+      // Lazy-create an appointment if the coach started training directly from
+      // a client (no upfront booking). Otherwise reuse the one selected on
+      // entry. The appointment row is the source of truth for History.
+      final appBloc = GetIt.I<ApplicationBloc>();
+      var appointment = appBloc.state.currentAppointment;
+      if (appointment == null) {
+        final coach = appBloc.state.user?.coach;
+        if (coach == null || coach.id == null) {
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No coach context — please re-login.'),
+            ),
+          );
+          return;
+        }
+        final durationMinutes = now.difference(_startedAt).inMinutes;
+        appointment = await GetIt.I<WorkoutAppointmentUsecase>()
+            .createWorkoutAppointment(
+          WorkoutAppointmentEntity((b) => b
+            ..trainee = widget.trainee.toBuilder()
+            ..coach = coach.toBuilder()
+            ..programId = program.id
+            ..duration = durationMinutes < 1 ? 1 : durationMinutes
+            ..status = AppointmentStatusEnumEntity.booked
+            ..startAt = _startedAt
+            ..endAt = now),
+        );
+      }
+
+      await GetIt.I<WorkoutAppointmentUsecase>()
+          .setWorkoutCompleted(appointment.id!);
+
+      if (!context.mounted) return;
+      BlocProvider.of<CalendarBloc>(context)
+          .add(FilterListAppointments(selectedDay: dateOnly));
+      AutoRouter.of(context).popUntilRoot();
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to finish workout.')),
+      );
+    }
   }
 }

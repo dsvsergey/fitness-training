@@ -11,12 +11,11 @@ import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
 import '../../utils/dialogs_utils.dart';
-import '../../widgets/create_appointment_sheet.dart';
 import '../../widgets/user_avatar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
 
 /// Detail screen for a single trainee (contact). Shows profile info and the
-/// trainee's upcoming workouts, and lets the coach schedule a new training.
+/// trainee's recent completed trainings, and lets the coach start a new one.
 @RoutePage()
 class ContactDetailScreen extends StatefulWidget {
   const ContactDetailScreen({required this.trainee, super.key});
@@ -47,19 +46,23 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       final coachIds = coach?.id != null
           ? ListBuilder<int>([coach!.id!])
           : ListBuilder<int>();
+      // Look back a year for recent completed trainings with this client.
+      final startDate = DateTime.now().subtract(const Duration(days: 365));
       final result = await GetIt.I<WorkoutAppointmentUsecase>()
           .getAllWorkoutAppointments(
         filter: WorkoutAppointmentFilterEntity((p) => p
-          ..startDate = DateTime.now().toString()
+          ..startDate = startDate.toString()
           ..coachIds = coachIds),
       );
       final mine = (result.appointments ?? const <WorkoutAppointmentEntity>[])
-          .where((a) => a.trainee.id == _trainee.id)
+          .where((a) =>
+              a.trainee.id == _trainee.id &&
+              a.status == AppointmentStatusEnumEntity.completed)
           .toList()
-        ..sort((a, b) => a.startAt.compareTo(b.startAt));
+        ..sort((a, b) => b.startAt.compareTo(a.startAt));
       if (!mounted) return;
       setState(() {
-        _appointments = mine;
+        _appointments = mine.take(10).toList();
         _loading = false;
       });
     } catch (_) {
@@ -69,15 +72,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         _loading = false;
       });
     }
-  }
-
-  Future<void> _openSchedule() async {
-    final ok = await showCreateAppointmentSheet(
-      context,
-      prefilledTrainee: _trainee,
-      existingAppointments: _appointments,
-    );
-    if (ok == true) await _loadAppointments();
   }
 
   void _openPrograms() {
@@ -142,27 +136,13 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             const SizedBox(height: 16),
             _InfoCard(trainee: t),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: FButton(
-                    onPress: _openSchedule,
-                    child: const Text('Schedule training'),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: FButton(
-                    onPress: _openPrograms,
-                    variant: FButtonVariant.outline,
-                    child: const Text('Programs'),
-                  ),
-                ),
-              ],
+            FButton(
+              onPress: _openPrograms,
+              child: const Text('Start training'),
             ),
             const SizedBox(height: 24),
             Text(
-              'Upcoming trainings',
+              'Recent trainings',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -179,7 +159,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
-                  'No upcoming sessions yet.',
+                  'No trainings yet.',
                   style: TextStyle(color: context.theme.colors.mutedForeground),
                 ),
               )

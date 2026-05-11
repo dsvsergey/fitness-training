@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
-import '../../widgets/create_appointment_sheet.dart';
 import '../../widgets/grid_calendar_widget.dart';
 import '../../widgets/list_calendar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
@@ -46,24 +45,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
-      floatingActionButton: BlocBuilder<CalendarBloc, CalendarState>(
-        builder: (context, state) {
-          final List<WorkoutAppointmentEntity> existing =
-              state is CalendarFilteredSuccess
-              ? state.appointmentsFilteredList
-              : const [];
-          return FloatingActionButton(
-            heroTag: 'calendar_fab',
-            onPressed: () => showCreateAppointmentSheet(
-              context,
-              prefilledDate: state.selectedDay ?? DateTime.now(),
-              existingAppointments: existing,
-            ),
-            backgroundColor: context.theme.colors.primary,
-            child: Icon(Icons.add, color: context.theme.colors.primaryForeground),
-          );
-        },
-      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -189,13 +170,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.calendar_today_outlined,
+                              FIcons.history,
                               size: 64,
                               color: context.theme.colors.mutedForeground,
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No appointments yet',
+                              'No trainings yet',
                               style: context.theme.typography.lg.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: context.theme.colors.foreground,
@@ -203,7 +184,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              'Your schedule will appear here',
+                              'Completed trainings will appear here',
                               style: context.theme.typography.sm.copyWith(
                                 color: context.theme.colors.mutedForeground,
                               ),

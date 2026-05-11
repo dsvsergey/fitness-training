@@ -35,8 +35,8 @@ class HomeScreen extends StatelessWidget {
                 : const FBottomNavigationBarStyleDelta.context(),
             children: const [
               FBottomNavigationBarItem(
-                icon: Icon(FIcons.calendar),
-                label: Text('Calendar'),
+                icon: Icon(FIcons.history),
+                label: Text('History'),
               ),
               FBottomNavigationBarItem(
                 icon: Icon(FIcons.users),
