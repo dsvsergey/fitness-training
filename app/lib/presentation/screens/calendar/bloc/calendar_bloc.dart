@@ -43,8 +43,13 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
         // appointmentList.sort((a, b) => a.startAt.compareTo(b.startAt));
 
         final workDays = appointmentResult.workDays?.toList();
+        // History tab: only show completed sessions. The backend filter doesn't
+        // accept a status param, so filter client-side after fetch.
         final appointmentsFilteredList = appointmentResult.appointments
-            ?.toList();
+            ?.where(
+              (a) => a.status == AppointmentStatusEnumEntity.completed,
+            )
+            .toList();
         appointmentsFilteredList?.sort(
           (a, b) => a.startAt.compareTo(b.startAt),
         );
