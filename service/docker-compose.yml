@@ -1,0 +1,72 @@
+services:
+  api:
+    container_name: fitness_svr
+    build: .
+    command: uvicorn main:app --host 0.0.0.0
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - fitness_network
+
+  db:
+    image: postgres:16
+    container_name: fitness_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fitness
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - fitness_network
+
+  redis:
+    image: redis:latest
+    container_name: fitness_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - fitness_network
+
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A celery_worker:celery_app worker --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    networks:
+      - fitness_network
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A celery_worker:celery_app beat --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    networks:
+      - fitness_network
+
+volumes:
+  db_data: {}
+
+networks:
+  fitness_network: {}
