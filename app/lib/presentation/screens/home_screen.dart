@@ -12,8 +12,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoTabsRouter(
       routes: const [
-        CalendarRoute(),
         ContactsRoute(),
+        CalendarRoute(),
         SettingsRoute(),
       ],
       builder: (context, child) {
@@ -35,12 +35,12 @@ class HomeScreen extends StatelessWidget {
                 : const FBottomNavigationBarStyleDelta.context(),
             children: const [
               FBottomNavigationBarItem(
-                icon: Icon(FIcons.history),
-                label: Text('History'),
-              ),
-              FBottomNavigationBarItem(
                 icon: Icon(FIcons.users),
                 label: Text('Contacts'),
+              ),
+              FBottomNavigationBarItem(
+                icon: Icon(FIcons.history),
+                label: Text('History'),
               ),
               FBottomNavigationBarItem(
                 icon: Icon(FIcons.settings),
