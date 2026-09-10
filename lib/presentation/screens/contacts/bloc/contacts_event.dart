@@ -18,12 +18,11 @@ final class FindByNameContactsList extends ContactsEvent {
 
 final class CreateTraineeEvent extends ContactsEvent {
   final TraineeEntity trainee;
-  final String password;
 
-  CreateTraineeEvent({required this.trainee, required this.password});
+  CreateTraineeEvent({required this.trainee});
 
   @override
-  List<Object?> get props => [trainee, password];
+  List<Object?> get props => [trainee];
 }
 
 final class UpdateTraineeContactEvent extends ContactsEvent {
