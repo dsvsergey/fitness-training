@@ -48,7 +48,9 @@ class TraineeBase(BaseModel):
 
 
 class TraineeCreate(TraineeBase):
-    password: str
+    # Optional: a coach-created trainee has no login yet. A password is set
+    # later via the password-reset flow when dashboard access is granted.
+    password: Optional[str] = None
 
 
 class TraineeUpdate(BaseModel):
