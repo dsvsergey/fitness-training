@@ -48,8 +48,8 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
 
     on<CreateTraineeEvent>((event, emit) async {
       try {
-        final created = await GetIt.I<TraineeUsecase>()
-            .createTrainee(event.trainee, password: event.password);
+        final created =
+            await GetIt.I<TraineeUsecase>().createTrainee(event.trainee);
         final clients = List<TraineeEntity>.from(state.clients ?? [])
           ..insert(0, created);
         emit(ContactsSuccess(state,

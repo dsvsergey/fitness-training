@@ -346,7 +346,6 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
       TextEditingController(text: widget.trainee?.lastName ?? '');
   late final _emailCtrl =
       TextEditingController(text: widget.trainee?.email ?? '');
-  late final _passwordCtrl = TextEditingController();
   late final _phoneCtrl =
       TextEditingController(text: widget.trainee?.mobilePhone ?? '');
   late final _weightCtrl = TextEditingController(
@@ -363,7 +362,6 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
     _firstNameCtrl.dispose();
     _lastNameCtrl.dispose();
     _emailCtrl.dispose();
-    _passwordCtrl.dispose();
     _phoneCtrl.dispose();
     _weightCtrl.dispose();
     _heightCtrl.dispose();
@@ -375,14 +373,9 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
     final firstName = _firstNameCtrl.text.trim();
     final lastName = _lastNameCtrl.text.trim();
     final email = _emailCtrl.text.trim();
-    final password = _passwordCtrl.text;
 
     if (firstName.isEmpty || lastName.isEmpty || email.isEmpty) {
       setState(() => _error = 'First name, last name and email are required.');
-      return;
-    }
-    if (!_isEdit && password.isEmpty) {
-      setState(() => _error = 'Password is required for new trainee.');
       return;
     }
 
@@ -406,10 +399,7 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
         trainee: trainee,
       ));
     } else {
-      bloc.add(CreateTraineeEvent(
-        trainee: trainee,
-        password: password,
-      ));
+      bloc.add(CreateTraineeEvent(trainee: trainee));
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -466,14 +456,6 @@ class _TraineeFormSheetState extends State<_TraineeFormSheet> {
               controller: _emailCtrl,
               keyboardType: TextInputType.emailAddress,
             ),
-            if (!_isEdit) ...[
-              const SizedBox(height: 12),
-              _Field(
-                label: 'Password *',
-                controller: _passwordCtrl,
-                obscureText: true,
-              ),
-            ],
             const SizedBox(height: 12),
             _Field(
               label: 'Phone',
@@ -544,14 +526,12 @@ class _Field extends StatelessWidget {
     required this.label,
     required this.controller,
     this.keyboardType,
-    this.obscureText = false,
     this.maxLines = 1,
   });
 
   final String label;
   final TextEditingController controller;
   final TextInputType? keyboardType;
-  final bool obscureText;
   final int maxLines;
 
   @override
@@ -571,7 +551,6 @@ class _Field extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: keyboardType,
-          obscureText: obscureText,
           maxLines: maxLines,
           style: TextStyle(
               fontSize: 15, color: context.theme.colors.foreground),
