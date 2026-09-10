@@ -39,7 +39,9 @@ class TraineeService:
         """Create trainee directly (admin use, email marked verified)."""
         db_trainee = Trainee(
             email=trainee.email,
-            hashed_password=get_password_hash(trainee.password),
+            hashed_password=(
+                get_password_hash(trainee.password) if trainee.password else None
+            ),
             first_name=trainee.first_name,
             last_name=trainee.last_name,
             mobile_phone=trainee.mobile_phone,
