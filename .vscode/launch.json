@@ -1,0 +1,97 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "App: debug (choose device)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "App: debug (Chrome)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart",
+      "deviceId": "chrome"
+    },
+    {
+      "name": "App: debug (macOS)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart",
+      "deviceId": "macos"
+    },
+    {
+      "name": "App: profile",
+      "type": "dart",
+      "request": "launch",
+      "flutterMode": "profile",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "App: tests",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/app",
+      "program": "test/"
+    },
+    {
+      "name": "Service: API (uvicorn --reload)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"],
+      "cwd": "${workspaceFolder}/service",
+      "envFile": "${workspaceFolder}/service/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Service: API (no reload, breakpoints)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["main:app", "--host", "0.0.0.0", "--port", "8000"],
+      "cwd": "${workspaceFolder}/service",
+      "envFile": "${workspaceFolder}/service/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Service: Celery worker",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "celery",
+      "args": ["-A", "celery_worker.celery_app", "worker", "--loglevel=info"],
+      "cwd": "${workspaceFolder}/service",
+      "envFile": "${workspaceFolder}/service/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Service: pytest",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests", "-v"],
+      "cwd": "${workspaceFolder}/service",
+      "envFile": "${workspaceFolder}/service/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full stack: API + App",
+      "configurations": [
+        "Service: API (uvicorn --reload)",
+        "App: debug (choose device)"
+      ],
+      "stopAll": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "dart.flutterSdkPath": "app/.fvm/versions/3.41.6",
+  "dart.projectSearchDepth": 3,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["service/tests"],
+  "files.exclude": {
+    ".claude/worktrees": true
+  }
+}
