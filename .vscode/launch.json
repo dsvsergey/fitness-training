@@ -33,6 +33,32 @@
       "program": "lib/main.dart"
     },
     {
+      "name": "App: release (choose device)",
+      "type": "dart",
+      "request": "launch",
+      "flutterMode": "release",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "App: release (macOS)",
+      "type": "dart",
+      "request": "launch",
+      "flutterMode": "release",
+      "deviceId": "macos",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "App: release (Chrome)",
+      "type": "dart",
+      "request": "launch",
+      "flutterMode": "release",
+      "deviceId": "chrome",
+      "cwd": "${workspaceFolder}/app",
+      "program": "lib/main.dart"
+    },
+    {
       "name": "App: tests",
       "type": "dart",
       "request": "launch",
