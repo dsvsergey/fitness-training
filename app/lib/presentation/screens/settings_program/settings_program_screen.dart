@@ -11,7 +11,6 @@ import "package:forui/forui.dart";
 import "package:get_it/get_it.dart";
 import "package:intl/intl.dart";
 
-import "../../../core/bloc/bloc_application/application_bloc.dart";
 import "../../../core/resources/resources.dart";
 import "../../../core/router/router.dart";
 import "../../../domain/entities/fitness/fitness.dart";
@@ -53,8 +52,12 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
   bool isGridView = true;
   double timer = 0;
 
-  bool get _isWorkoutMode =>
-      GetIt.I<ApplicationBloc>().state.currentAppointment != null;
+  /// The timer writes its result into an unfinished workout session, so it
+  /// needs one to exist. It deliberately does not depend on a calendar
+  /// appointment: a coach can start training straight from a client.
+  WorkoutSessionEntity? _pendingSession(SettingsProgramState state) =>
+      state.programMachine?.workouts
+          .firstWhereOrNull((w) => w.dateSession == null);
 
   @override
   void dispose() {
@@ -513,12 +516,14 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                       ),
                       const SizedBox(width: 20),
                       Text(
+                        // The row above is guarded by `workouts.isNotEmpty`,
+                        // which does not imply a *planned* session exists, so
+                        // this lookup has to tolerate finding nothing.
                         programMachine.workouts
-                                .where((w) =>
+                                .firstWhereOrNull((w) =>
                                     w.sessionStatus ==
                                     SessionStatusEnumEntity.planned)
-                                .first
-                                .weight
+                                ?.weight
                                 ?.toString() ??
                             '',
                         style: context.theme.typography.xl2.copyWith(
@@ -540,7 +545,7 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                     builder: (context, state) => CustomTimerWidget(
                       title: AppLocalizations.of(context)!.timer,
                       image: AppSvgs.timer,
-                      onPressed: _isWorkoutMode
+                      onPressed: _pendingSession(state) != null
                           ? () => onTimerButtonPressed(context, state)
                           : null,
                     ),
@@ -551,13 +556,11 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                   child: CustomTimerWidget(
                     title: AppLocalizations.of(context)!.metronome,
                     image: AppSvgs.metronom,
-                    onPressed: _isWorkoutMode
-                        ? () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const MetronomeControl(),
-                              ),
-                            )
-                        : null,
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const MetronomeControl(),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -702,7 +705,7 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                         builder: (context, state) => CustomTimerWidget(
                           title: AppLocalizations.of(context)!.timer,
                           image: AppSvgs.timer,
-                          onPressed: _isWorkoutMode
+                          onPressed: _pendingSession(state) != null
                               ? () => onTimerButtonPressed(context, state)
                               : null,
                         ),
@@ -711,13 +714,11 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                       CustomTimerWidget(
                         title: AppLocalizations.of(context)!.metronome,
                         image: AppSvgs.metronom,
-                        onPressed: _isWorkoutMode
-                            ? () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const MetronomeControl(),
-                                  ),
-                                )
-                            : null,
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const MetronomeControl(),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -734,12 +735,13 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
     BuildContext context,
     SettingsProgramState state,
   ) async {
-    final WorkoutSessionEntity? workoutSession = state.programMachine?.workouts
-        .firstWhereOrNull((w) => w.dateSession == null);
+    final WorkoutSessionEntity? workoutSession = _pendingSession(state);
+    final String? trainerName = state.programMachine?.machine?.name;
+    final int? weight = workoutSession?.weight;
+    if (workoutSession == null || trainerName == null || weight == null) return;
 
-    double? value = await context.router.push<double>(StopwatchTimerRoutes(
-        trainerName: state.programMachine!.machine!.name,
-        weight: workoutSession!.weight!));
+    double? value = await context.router.push<double>(
+        StopwatchTimerRoutes(trainerName: trainerName, weight: weight));
 
     if (value != null) {
       final workoutSessionUsecase = GetIt.I<WorkoutSessionUsecase>();
