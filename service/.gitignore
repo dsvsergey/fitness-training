@@ -38,3 +38,9 @@ celerybeat-schedule
 *.sql
 
 CLAUDE.md
+
+# Local virtualenv used to run the test suite
+.venv/
+
+# Uploaded media (coach avatars) — back up separately from the database
+media/

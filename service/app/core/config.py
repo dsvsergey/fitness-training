@@ -77,6 +77,14 @@ class Settings:
         # API base URL (used in email verification links — points directly to the API)
         self.API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
+        # Media storage (coach avatars). MEDIA_ROOT is a path inside the
+        # container; PUBLIC_BASE_URL must be the externally reachable origin,
+        # because avatar URLs are stored absolute in the database.
+        self.MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/app/media")
+        self.PUBLIC_BASE_URL = os.getenv(
+            "PUBLIC_BASE_URL", "http://localhost:8000"
+        ).rstrip("/")
+
         self.ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
         self.SUPPRESS_SENDING_EMAILS = strtobool(
