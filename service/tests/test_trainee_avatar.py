@@ -17,7 +17,9 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.core.config import settings  # noqa: E402
+from app.models.trainees import Trainee  # noqa: E402
 from app.services import avatar_storage  # noqa: E402
+from app.services.trainee_service import TraineeService  # noqa: E402
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 32
 JPEG = b"\xff\xd8\xff" + b"\x00" * 32
@@ -100,3 +102,67 @@ def test_delete_avatar_ignores_a_missing_trainee_file(media_root):
 def test_delete_avatar_still_ignores_urls_we_did_not_write(media_root):
     # A Mindbody client photo can land in the same column.
     avatar_storage.delete_avatar("https://clients.mindbodyonline.com/photo/7.jpg")
+
+
+# ---------------------------------------------------------------------------
+# Deleting a trainee must take its avatar file with it, or the media directory
+# accumulates files nothing can ever reference again.
+# ---------------------------------------------------------------------------
+
+
+class _FakeQuery:
+    def __init__(self, result):
+        self._result = result
+
+    def filter(self, *args, **kwargs):
+        return self
+
+    def first(self):
+        return self._result
+
+
+class _FakeSession:
+    """Just enough Session for get_trainee/delete_trainee."""
+
+    def __init__(self, trainee):
+        self._trainee = trainee
+        self.deleted = []
+        self.commits = 0
+
+    def query(self, model):
+        return _FakeQuery(self._trainee)
+
+    def delete(self, obj):
+        self.deleted.append(obj)
+
+    def commit(self):
+        self.commits += 1
+
+
+def test_deleting_a_trainee_removes_its_avatar_file(media_root):
+    url = _save_trainee(7, PNG)
+    stored = media_root / "avatars" / url.rsplit("/", 1)[1]
+    trainee = Trainee(id=7, photo_url=url)
+    session = _FakeSession(trainee)
+
+    assert TraineeService(db=session).delete_trainee(7) is True
+
+    assert session.deleted == [trainee]
+    assert not stored.exists()
+
+
+def test_deleting_a_trainee_without_an_avatar_still_succeeds():
+    session = _FakeSession(Trainee(id=7, photo_url=None))
+
+    assert TraineeService(db=session).delete_trainee(7) is True
+
+
+def test_deleting_a_missing_trainee_touches_nothing(media_root):
+    url = _save_trainee(7, PNG)
+    stored = media_root / "avatars" / url.rsplit("/", 1)[1]
+    session = _FakeSession(None)
+
+    assert TraineeService(db=session).delete_trainee(7) is False
+
+    assert session.deleted == []
+    assert stored.exists()

@@ -10,6 +10,7 @@ from app.core.email import send_password_reset_email
 from app.core.security import get_password_hash, verify_password
 from app.crud.users import create_user
 from app.models.coachs import Coach
+from app.services import avatar_storage
 from app.models.users import User
 from app.schemas.coachs import CoachCreate, CoachUpdate
 from app.schemas.users import UserDBCreate
@@ -127,8 +128,12 @@ class CoachService:
             self.db.delete(db_coach.user)
 
         # Delete coach
+        image_url = db_coach.image_url
         self.db.delete(db_coach)
         self.db.commit()
+        # Only after the row is gone: an avatar with no coach is litter, but a
+        # coach whose avatar we deleted early would show a broken image.
+        avatar_storage.delete_avatar(image_url)
         return True
 
     def activate_coach(self, coach_id: int) -> bool:

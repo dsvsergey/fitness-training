@@ -13,6 +13,7 @@ from app.core.auth import (
 from app.core.email import send_password_reset_email, send_verification_email
 from app.core.security import get_password_hash, verify_password
 from app.models.trainees import Trainee
+from app.services import avatar_storage
 from app.schemas.trainees import TraineeCreate, TraineeRegister, TraineeUpdate
 
 logger = logging.getLogger(__name__)
@@ -82,8 +83,12 @@ class TraineeService:
         db_trainee = self.get_trainee(trainee_id)
         if not db_trainee:
             return False
+        photo_url = db_trainee.photo_url
         self.db.delete(db_trainee)
         self.db.commit()
+        # Only after the row is gone: an avatar with no trainee is litter, but
+        # a trainee whose avatar we deleted early would show a broken image.
+        avatar_storage.delete_avatar(photo_url)
         return True
 
     def authenticate(self, email: str, password: str) -> Optional[Trainee]:

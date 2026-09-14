@@ -16,7 +16,9 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.core.config import settings  # noqa: E402
+from app.models.coachs import Coach  # noqa: E402
 from app.services import avatar_storage  # noqa: E402
+from app.services.coach_service import CoachService  # noqa: E402
 
 # Minimal byte sequences carrying each format's magic number. Real image
 # payloads are unnecessary: the validator reads only the header.
@@ -114,3 +116,70 @@ async def test_read_upload_rejects_oversized_payload():
 
     with pytest.raises(avatar_storage.AvatarValidationError):
         await avatar_storage.read_upload(oversized)
+
+
+# ---------------------------------------------------------------------------
+# Deleting a coach must take their avatar file with it, or the media directory
+# accumulates files nothing can ever reference again.
+# ---------------------------------------------------------------------------
+
+
+class _FakeQuery:
+    def __init__(self, result):
+        self._result = result
+
+    def filter(self, *args, **kwargs):
+        return self
+
+    def first(self):
+        return self._result
+
+
+class _FakeSession:
+    """Just enough Session for get_coach/delete_coach."""
+
+    def __init__(self, coach):
+        self._coach = coach
+        self.deleted = []
+        self.commits = 0
+
+    def query(self, model):
+        return _FakeQuery(self._coach)
+
+    def delete(self, obj):
+        self.deleted.append(obj)
+
+    def commit(self):
+        self.commits += 1
+
+
+def test_deleting_a_coach_removes_their_avatar_file(media_root):
+    url = avatar_storage.save_avatar(42, PNG)
+    stored = media_root / "avatars" / url.rsplit("/", 1)[1]
+    coach = Coach(id=42, image_url=url)
+    session = _FakeSession(coach)
+
+    assert CoachService(db=session).delete_coach(42) is True
+
+    assert coach in session.deleted
+    assert not stored.exists()
+
+
+def test_deleting_a_coach_leaves_a_google_picture_url_alone():
+    # image_url also holds the Google OAuth `picture` URL, which is not ours
+    # to delete — and is not a local file to begin with.
+    coach = Coach(id=42, image_url="https://lh3.googleusercontent.com/a/xyz=s96-c")
+    session = _FakeSession(coach)
+
+    assert CoachService(db=session).delete_coach(42) is True
+
+
+def test_deleting_a_missing_coach_touches_nothing(media_root):
+    url = avatar_storage.save_avatar(42, PNG)
+    stored = media_root / "avatars" / url.rsplit("/", 1)[1]
+    session = _FakeSession(None)
+
+    assert CoachService(db=session).delete_coach(42) is False
+
+    assert session.deleted == []
+    assert stored.exists()
