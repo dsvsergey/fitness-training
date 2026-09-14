@@ -10,7 +10,13 @@ from sqlalchemy.orm import Session
 
 from app.core.auth import create_access_token
 from app.core.config import settings
-from app.core.oauth import exchange_google_code, get_google_authorize_url, get_google_user_info, verify_google_state
+from app.core.oauth import (
+    build_success_redirect,
+    exchange_google_code,
+    get_google_authorize_url,
+    get_google_user_info,
+    verify_google_state,
+)
 from app.db.session import get_db
 from app.schemas.coachs import (
     CoachCreateWithPassword,
@@ -247,17 +253,24 @@ async def password_reset_confirm(body: PasswordResetConfirm, db: Session = Depen
 
 
 @router.get("/google/authorize", response_model=GoogleAuthorizeResponse)
-async def google_authorize(role: str = "coach") -> Any:
+async def google_authorize(role: str = "coach", client: str = "web") -> Any:
     """Return the Google OAuth authorization URL.
 
     Pass `role=coach` (default) or `role=trainee` to determine what type of
     account to create when the user signs in for the first time.
+
+    Pass `client=mobile` from the Flutter app: the callback then redirects to
+    the app's deep-link scheme instead of the web frontend. The URL must be
+    opened in the system browser — Google blocks OAuth inside embedded
+    WebViews (`disallowed_useragent`).
     """
     if role not in ("trainee", "coach"):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="role must be 'trainee' or 'coach'")
+    if client not in ("web", "mobile"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="client must be 'web' or 'mobile'")
     if not settings.GOOGLE_CLIENT_ID:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Google OAuth is not configured")
-    return {"url": get_google_authorize_url(role=role)}
+    return {"url": get_google_authorize_url(role=role, client=client)}
 
 
 @router.get("/google/callback")
@@ -274,6 +287,7 @@ async def google_callback(code: str, state: str, db: Session = Depends(get_db)) 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     role: str = state_data.get("role", "trainee")
+    client: str = state_data.get("client", "web")
 
     # Exchange code for Google access token
     try:
@@ -300,9 +314,8 @@ async def google_callback(code: str, state: str, db: Session = Depends(get_db)) 
         jwt = create_access_token(sub=f"trainee:{trainee.id}")
         user_sub = f"trainee:{trainee.id}"
 
-    # If FRONTEND_URL is configured, redirect back with token
-    if settings.FRONTEND_URL and settings.FRONTEND_URL != "http://localhost:3000":
-        redirect_url = f"{settings.FRONTEND_URL}/auth/callback?{urlencode({'token': jwt, 'sub': user_sub})}"
+    redirect_url = build_success_redirect(client, jwt, user_sub)
+    if redirect_url:
         return RedirectResponse(url=redirect_url)
 
     return {"access_token": jwt, "token_type": "bearer"}

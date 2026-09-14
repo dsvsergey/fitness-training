@@ -61,7 +61,14 @@ class Settings:
         self.GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
         self.GOOGLE_REDIRECT_URI = os.getenv(
             "GOOGLE_REDIRECT_URI",
-            "http://localhost:8000/api/v1/auth/google/callback",
+            "http://localhost:8000/api/v1/google/callback",
+        )
+
+        # Deep-link the mobile app registers for the OAuth hand-back.
+        # The Google callback redirects here with ?token=&sub= when the flow was
+        # started with client=mobile. Must match `callbackUrlScheme` in the app.
+        self.GOOGLE_MOBILE_REDIRECT_URI = os.getenv(
+            "GOOGLE_MOBILE_REDIRECT_URI", "fitnesscoach://auth/callback"
         )
 
         # Frontend URL (used in Google OAuth redirect and password reset links)

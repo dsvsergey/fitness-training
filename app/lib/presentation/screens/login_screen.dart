@@ -7,7 +7,9 @@ import 'package:fitness_training/domain/usecases/fitness/auth_usecase.dart';
 import 'package:fitness_training/presentation/widgets/button_widget.dart';
 import 'package:fitness_training/presentation/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
@@ -44,28 +46,47 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  /// Custom scheme the backend redirects to once Google has authenticated the
+  /// user. Must match `GOOGLE_MOBILE_REDIRECT_URI` on the service and the
+  /// intent filter in AndroidManifest.xml.
+  static const _callbackUrlScheme = 'fitnesscoach';
+
+  /// Google rejects the current staging redirect URI because it is a bare IP
+  /// over plain http. Flip this back to `true` once the API is served over
+  /// https on a real domain — see docs/domain-registration-ru.txt and
+  /// service/DEPLOYMENT.md §12.3.
+  static const _googleSignInEnabled = false;
+
   Future<void> _onGoogleSignIn() async {
     setState(() => _googleLoading = true);
     try {
       final authUrl = await GetIt.I<AuthUsecase>().getGoogleAuthUrl();
-      if (!mounted) return;
-      final token = await context.router.push<String?>(
-        GoogleOAuthRoute(authUrl: authUrl),
+      // Google rejects OAuth inside embedded WebViews, so this opens the
+      // system browser (Custom Tabs / ASWebAuthenticationSession).
+      final result = await FlutterWebAuth2.authenticate(
+        url: authUrl,
+        callbackUrlScheme: _callbackUrlScheme,
       );
-      if (token != null && mounted) {
+      final token = Uri.parse(result).queryParameters['token'];
+      if (token != null && token.isNotEmpty && mounted) {
         context.read<ApplicationBloc>().add(GoogleLoginEvent(token: token));
       }
-    } catch (e) {
-      if (mounted) {
-        showFToast(
-          context: context,
-          title: const Text('Failed to open Google Sign-In'),
-          variant: FToastVariant.destructive,
-        );
-      }
+    } on PlatformException catch (e) {
+      // User closed the browser — not an error worth a toast.
+      if (e.code != 'CANCELED' && mounted) _showGoogleSignInError();
+    } catch (_) {
+      if (mounted) _showGoogleSignInError();
     } finally {
       if (mounted) setState(() => _googleLoading = false);
     }
+  }
+
+  void _showGoogleSignInError() {
+    showFToast(
+      context: context,
+      title: const Text('Failed to open Google Sign-In'),
+      variant: FToastVariant.destructive,
+    );
   }
 
   @override
@@ -166,41 +187,47 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                               title: isLoading ? 'Signing in…' : 'Log In',
                             ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(child: Divider(color: colors.border)),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                            if (_googleSignInEnabled) ...[
+                              const SizedBox(height: 14),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(color: colors.border),
                                   ),
-                                  child: Text(
-                                    'or',
-                                    style: typography.sm.copyWith(
-                                      color: colors.mutedForeground,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                    ),
+                                    child: Text(
+                                      'or',
+                                      style: typography.sm.copyWith(
+                                        color: colors.mutedForeground,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Expanded(child: Divider(color: colors.border)),
-                              ],
-                            ),
-                            const SizedBox(height: 14),
-                            FButton(
-                              variant: FButtonVariant.outline,
-                              onPress: (isLoading || _googleLoading)
-                                  ? null
-                                  : _onGoogleSignIn,
-                              prefix: _googleLoading
-                                  ? const SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const _GoogleLogo(),
-                              child: const Text('Continue with Google'),
-                            ),
+                                  Expanded(
+                                    child: Divider(color: colors.border),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 14),
+                              FButton(
+                                variant: FButtonVariant.outline,
+                                onPress: (isLoading || _googleLoading)
+                                    ? null
+                                    : _onGoogleSignIn,
+                                prefix: _googleLoading
+                                    ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const _GoogleLogo(),
+                                child: const Text('Continue with Google'),
+                              ),
+                            ],
                           ],
                         );
                       },

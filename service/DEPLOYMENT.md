@@ -332,7 +332,48 @@ ufw enable
 
 ### 12.3. SSL/HTTPS
 
-Для продакшн середовища налаштуйте HTTPS через nginx або traefik.
+**HTTPS обов'язковий для Google OAuth.** Google приймає plain `http://` лише для
+`localhost`; будь-який інший хост має бути `https://` на справжньому домені.
+Голу IP-адресу (`http://207.126.161.154:8000/...`) Google відхиляє з
+`Error 400: invalid_request`, і її неможливо додати в Authorized redirect URIs.
+
+Шаблон конфігу лежить у `nginx/fitness-api.conf.template`.
+
+```bash
+# 1. Спрямуйте A-запис домену на IP сервера, дочекайтесь поширення DNS
+dig +short api.example.com        # має повернути IP сервера
+
+# 2. Встановіть nginx і certbot
+apt update && apt install -y nginx certbot python3-certbot-nginx
+
+# 3. Розгорніть конфіг із підставленим доменом
+sed 's/__DOMAIN__/api.example.com/g' /opt/fitness-training-service/nginx/fitness-api.conf.template \
+  > /etc/nginx/sites-available/fitness-api
+ln -sf /etc/nginx/sites-available/fitness-api /etc/nginx/sites-enabled/fitness-api
+rm -f /etc/nginx/sites-enabled/default
+
+# 4. Випустіть сертифікат (certbot сам допише ssl_* директиви)
+certbot --nginx -d api.example.com
+nginx -t && systemctl reload nginx
+
+# 5. Закрийте прямий доступ до :8000 ззовні
+ufw delete allow 8000
+ufw allow 80 && ufw allow 443
+```
+
+Після цього оновіть `.env` на сервері та перезапустіть контейнер:
+
+```bash
+GOOGLE_REDIRECT_URI=https://api.example.com/api/v1/google/callback
+FORCE_HTTPS_ADMIN=true
+docker restart fitness_svr
+```
+
+І додайте той самий URI в **Authorized redirect URIs** OAuth-клієнта в
+[Google Cloud Console](https://console.cloud.google.com/apis/credentials).
+Не забудьте оновити `baseUrl` у Flutter-застосунку
+(`app/lib/core/dio_settings/dio_settings_auth.dart` і `dio_settings_backend.dart`)
+на `https://api.example.com/api/v1/`.
 
 ---
 

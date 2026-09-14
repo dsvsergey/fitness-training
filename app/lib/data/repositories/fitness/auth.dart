@@ -65,7 +65,10 @@ class AuthRepositoryImpl extends AuthRepository with FitnessRepository {
   @override
   Future<String> getGoogleAuthUrl() =>
       _auth.dio
-          .get('/google/authorize')
+          .get(
+            '/google/authorize',
+            queryParameters: {'client': 'mobile'},
+          )
           .then((r) => r.data['url'] as String)
           .catchError(onException);
 

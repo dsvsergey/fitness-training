@@ -147,7 +147,7 @@ Token types used in `type` claim:
 | `GET`  | `/verify-email?token=` | Verify email address |
 | `POST` | `/password-reset/request` | Send password reset email |
 | `POST` | `/password-reset/confirm` | Set new password via reset token |
-| `GET`  | `/google/authorize?role=` | Get Google OAuth URL (`role=trainee\|coach`) |
+| `GET`  | `/google/authorize?role=&client=` | Get Google OAuth URL (`role=trainee\|coach`, `client=web\|mobile`) |
 | `GET`  | `/google/callback` | Google OAuth callback (handles code exchange) |
 
 ### Model OAuth & Verification Fields
@@ -165,12 +165,21 @@ email_verified_at   DateTime nullable
 
 ### Google OAuth Flow
 
-1. Client calls `GET /api/v1/google/authorize?role=trainee` → receives `{url: "..."}`.
-2. Client opens URL in browser/WebView.
+1. Client calls `GET /api/v1/google/authorize?role=trainee&client=mobile` → receives `{url: "..."}`.
+2. Client opens URL in the **system browser**. Google rejects OAuth inside embedded WebViews (`disallowed_useragent`) — the Flutter app uses `flutter_web_auth_2` (Chrome Custom Tabs / `ASWebAuthenticationSession`).
 3. Google redirects to `/api/v1/google/callback?code=...&state=...`.
-4. Backend verifies `state` (itsdangerous HMAC), exchanges code for tokens via `httpx`, fetches user info from Google.
+4. Backend verifies `state` (itsdangerous HMAC — carries both `role` and `client`), exchanges code for tokens via `httpx`, fetches user info from Google.
 5. Finds existing account by `oauth_id` → or by `email` (links Google to existing local account) → or creates new account.
-6. Returns JWT. If `FRONTEND_URL` is set (and not localhost), redirects to `{FRONTEND_URL}/auth/callback?token=...&sub=...`.
+6. Hands the JWT back, depending on `client` (see `oauth.build_success_redirect`):
+   - `mobile` → redirect to `{GOOGLE_MOBILE_REDIRECT_URI}?token=...&sub=...` (deep link the app is waiting on)
+   - `web` with a real `FRONTEND_URL` → redirect to `{FRONTEND_URL}/auth/callback?token=...&sub=...`
+   - otherwise → JSON `{access_token, token_type}`
+
+> **`GOOGLE_REDIRECT_URI` must be https on a real domain.** Google only allows
+> plain http for `localhost`, and rejects bare IP addresses with
+> `Error 400: invalid_request`. See `DEPLOYMENT.md` §12.3 for the nginx + certbot setup.
+
+Unit tests: `tests/test_google_oauth.py` (`pytest tests/test_google_oauth.py`, no DB required).
 
 Implementation: `app/core/oauth.py`, `app/services/trainee_service.py::get_or_create_from_google`, `app/services/coach_service.py::get_or_create_from_google`.
 
@@ -201,7 +210,8 @@ SUPPRESS_SENDING_EMAILS=False         # set True in dev to skip sending
 # Google OAuth (register at https://console.cloud.google.com/)
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
-GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/google/callback
+GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/google/callback   # https + real domain in prod
+GOOGLE_MOBILE_REDIRECT_URI=fitnesscoach://auth/callback            # deep link for the Flutter app
 
 # Frontend URL — used in email links and Google OAuth redirect
 FRONTEND_URL=http://localhost:3000
@@ -254,9 +264,14 @@ ssh root@207.126.161.154 "docker restart fitness_svr"
 
 ### Google Cloud Console (required for OAuth)
 
-Add both URIs to **Authorized redirect URIs** in the OAuth 2.0 Client:
-- `http://localhost:8000/api/v1/google/callback` (local dev)
-- `http://207.126.161.154:8000/api/v1/google/callback` (staging)
+Add these URIs to **Authorized redirect URIs** in the OAuth 2.0 Client:
+- `http://localhost:8000/api/v1/google/callback` (local dev — http is allowed only for localhost)
+- `https://<your-domain>/api/v1/google/callback` (staging/prod)
+
+> The old staging entry `http://207.126.161.154:8000/api/v1/google/callback` does
+> **not** work and cannot be registered: Google requires https on a domain with a
+> public TLD and rejects bare IPs with `Error 400: invalid_request`. Set up TLS
+> first (`DEPLOYMENT.md` §12.3), then point `GOOGLE_REDIRECT_URI` at the domain.
 
 ---
 
@@ -264,7 +279,7 @@ Add both URIs to **Authorized redirect URIs** in the OAuth 2.0 Client:
 
 See `docs/auth-api-flutter.md` for the full Flutter developer guide covering:
 - All auth endpoints with request/response examples
-- Google OAuth WebView flow
+- Google OAuth flow via the system browser (`flutter_web_auth_2`)
 - Deep link handling for email verification and password reset
 - JWT decoding in Dart
 - Recommended packages

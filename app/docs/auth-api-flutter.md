@@ -193,23 +193,37 @@ POST /api/v1/login/
 Після Google OAuth автоматично створюється **Coach** (за замовчуванням).
 
 ```
-Flutter app  →  GET /google/authorize  →  відкрити WebView/браузер
-Google       →  redirect з ?code=&state=
-Backend      →  обмін кодом, створює/знаходить coach, повертає JWT
-Flutter app  ←  отримує JWT
+Flutter app  →  GET /google/authorize?client=mobile  →  відкрити СИСТЕМНИЙ браузер
+Google       →  redirect з ?code=&state=  на /google/callback
+Backend      →  обмін кодом, створює/знаходить coach, робить redirect на deep link
+Flutter app  ←  fitnesscoach://auth/callback?token=<jwt>&sub=coach:7
 ```
+
+> ⚠️ **Не використовуйте WebView.** Google блокує OAuth у вбудованих WebView
+> (`disallowed_useragent`, «This browser or app may not be secure»). Сторінку входу
+> треба відкривати в системному браузері: Chrome Custom Tabs на Android,
+> `ASWebAuthenticationSession` на iOS/macOS. У застосунку це робить
+> `flutter_web_auth_2`.
+
+> ⚠️ **`GOOGLE_REDIRECT_URI` на бекенді має бути `https://` на справжньому домені.**
+> Google дозволяє plain `http://` лише для `localhost`, а голу IP-адресу відхиляє
+> з `Error 400: invalid_request`.
+
+> 🚧 **Кнопку «Continue with Google» тимчасово приховано** — прапорець
+> `_googleSignInEnabled` у `lib/presentation/screens/login_screen.dart`.
+> Поверніть його в `true`, коли API працюватиме по https на домені
+> (`docs/domain-registration-ru.txt`, `service/DEPLOYMENT.md` §12.3).
 
 ### Step 1 — Отримати URL авторизації
 
 ```
-GET /api/v1/google/authorize
+GET /api/v1/google/authorize?client=mobile
 ```
 
-Параметр `role` за замовчуванням — `coach`. Передавати не обов'язково.
-
-| Query param | Values | Default |
-|-------------|--------|---------|
-| `role` | `coach`, `trainee` | `coach` |
+| Query param | Values | Default | Опис |
+|-------------|--------|---------|------|
+| `role` | `coach`, `trainee` | `coach` | тип акаунту при першому вході |
+| `client` | `web`, `mobile` | `web` | куди повернути JWT; з застосунку завжди `mobile` |
 
 **Response `200 OK`:**
 ```json
@@ -218,33 +232,35 @@ GET /api/v1/google/authorize
 }
 ```
 
-### Step 2 — Відкрити у WebView
+### Step 2 — Відкрити у системному браузері
 
-Відкрийте отриманий `url` у WebView або через `url_launcher`.
+```dart
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+
+final authUrl = await GetIt.I<AuthUsecase>().getGoogleAuthUrl();
+final result = await FlutterWebAuth2.authenticate(
+  url: authUrl,
+  callbackUrlScheme: 'fitnesscoach',
+);
+final token = Uri.parse(result).queryParameters['token'];
+```
+
+Схема `fitnesscoach` має збігатися з:
+- `GOOGLE_MOBILE_REDIRECT_URI` у `.env` бекенду;
+- `intent-filter` у `android/app/src/main/AndroidManifest.xml`.
 
 ### Step 3 — Обробити callback
 
-Після підтвердження Google робить redirect на:
-```
-http://207.126.161.154:8000/api/v1/google/callback?code=...&state=...
-```
+Бекенд обмінює код і, залежно від `client`, віддає JWT одним із трьох способів:
 
-Бекенд обмінює код та:
+| `client` | Умова | Результат |
+|----------|-------|-----------|
+| `mobile` | завжди | `302` на `{GOOGLE_MOBILE_REDIRECT_URI}?token=<jwt>&sub=coach:7` |
+| `web` | `FRONTEND_URL` налаштований | `302` на `{FRONTEND_URL}/auth/callback?token=<jwt>&sub=coach:7` |
+| `web` | `FRONTEND_URL` за замовчуванням | JSON `{"access_token": "...", "token_type": "bearer"}` |
 
-**Option A — FRONTEND_URL налаштований (production):**  
-Redirects на `{FRONTEND_URL}/auth/callback?token=<jwt>&sub=coach:7`  
-→ Перехопіть цей URL у WebView, витягніть `token` з query params.
-
-**Option B — FRONTEND_URL не налаштований (staging):**  
-Повертає JSON:
-```json
-{
-  "access_token": "eyJhbGci...",
-  "token_type": "bearer"
-}
-```
-
-> **Поточний staging:** повертає JSON напряму (Option B).
+Далі передайте `token` у `GoogleLoginEvent` — `loginWithToken` розбере `sub` з JWT
+і підтягне профіль через `GET /coaches/me/`.
 
 ### Поведінка для існуючих користувачів
 
@@ -431,8 +447,8 @@ Authorization: Bearer <coach_token>
 dependencies:
   flutter_secure_storage: ^9.0.0   # зберігання JWT
   dio: ^5.0.0                       # HTTP клієнт
-  url_launcher: ^6.0.0              # відкрити Google OAuth URL
-  webview_flutter: ^4.0.0           # WebView для OAuth
+  url_launcher: ^6.0.0              # зовнішні посилання
+  flutter_web_auth_2: ^4.1.0        # Google OAuth у системному браузері
   app_links: ^6.0.0                 # deep link (password reset)
 ```
 
@@ -453,9 +469,9 @@ Login
        └─ 401 → show error
 
 Google OAuth (реєстрація або вхід)
-  └─ GET /google/authorize  (role=coach за замовчуванням)
-       └─ open URL in WebView/browser
-            └─ intercept callback redirect
+  └─ GET /google/authorize?client=mobile  (role=coach за замовчуванням)
+       └─ FlutterWebAuth2.authenticate → системний браузер (НЕ WebView)
+            └─ redirect на fitnesscoach://auth/callback?token=...
                  └─ extract token → save → navigate to home
 
 Password Reset (deep link)

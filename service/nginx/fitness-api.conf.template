@@ -1,0 +1,49 @@
+# nginx site for the fitness API, terminating TLS in front of the uvicorn
+# container on :8000.
+#
+# Google OAuth requires this: the authorized redirect URI must be https on a
+# real domain — plain http is only accepted for localhost, and a bare IP
+# address is rejected with "Error 400: invalid_request".
+#
+# Usage:
+#   sed 's/__DOMAIN__/api.example.com/g' fitness-api.conf.template \
+#     > /etc/nginx/sites-available/fitness-api
+#   ln -s /etc/nginx/sites-available/fitness-api /etc/nginx/sites-enabled/
+#   certbot --nginx -d api.example.com      # fills in the ssl_* lines below
+
+server {
+    listen 80;
+    server_name __DOMAIN__;
+
+    # certbot writes its challenge files here
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name __DOMAIN__;
+
+    # Managed by certbot — these paths appear after the first `certbot --nginx`
+    ssl_certificate     /etc/letsencrypt/live/__DOMAIN__/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/__DOMAIN__/privkey.pem;
+
+    client_max_body_size 20M;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        # Starlette-Admin and the OAuth redirects need to know the scheme is
+        # https, otherwise they build http:// URLs behind the proxy.
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_redirect off;
+    }
+}

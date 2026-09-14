@@ -8,7 +8,6 @@ import '../../presentation/screens/calendar/calendar_screen.dart';
 import '../../presentation/screens/calendar/table_calendar_screen.dart';
 import '../../presentation/screens/contacts/contact_detail_screen.dart';
 import '../../presentation/screens/contacts/contacts_screen.dart';
-import '../../presentation/screens/google_oauth_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/login_screen.dart';
 import '../../presentation/screens/machines_program/machines_program_screen.dart';
@@ -34,7 +33,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: PhotoRoute.page, path: '/photo'),
         AutoRoute(page: LoginRoute.page, path: '/login'),
         AutoRoute(page: RegisterRoute.page, path: '/register'),
-        AutoRoute(page: GoogleOAuthRoute.page, path: '/googleOAuth'),
         AutoRoute(
           page: HomeRoute.page,
           path: '/home',
