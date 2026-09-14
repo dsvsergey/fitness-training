@@ -77,10 +77,16 @@ class Settings:
         # API base URL (used in email verification links — points directly to the API)
         self.API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 
-        # Media storage (coach avatars). MEDIA_ROOT is a path inside the
-        # container; PUBLIC_BASE_URL must be the externally reachable origin,
-        # because avatar URLs are stored absolute in the database.
-        self.MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/app/media")
+        # Media storage (coach avatars). The default is derived from where the
+        # code lives, so it resolves to /app/media in the container and to
+        # service/media when running locally. PUBLIC_BASE_URL must be the
+        # externally reachable origin, because avatar URLs are stored absolute
+        # in the database.
+        default_media_root = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            "media",
+        )
+        self.MEDIA_ROOT = os.getenv("MEDIA_ROOT", default_media_root)
         self.PUBLIC_BASE_URL = os.getenv(
             "PUBLIC_BASE_URL", "http://localhost:8000"
         ).rstrip("/")

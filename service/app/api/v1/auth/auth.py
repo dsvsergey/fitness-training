@@ -3,7 +3,7 @@ import os
 from typing import Any, List
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -35,6 +35,7 @@ from app.schemas.token import (
 )
 from app.schemas.trainees import TraineeRegister, TraineeResponse
 from app.api.v1.dependencies import get_current_user
+from app.services import avatar_storage
 from app.services.coach_service import CoachService
 from app.services.trainee_service import TraineeService
 
@@ -135,6 +136,69 @@ async def update_current_coach(
     if not coach:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Coach not found")
     return coach
+
+
+@router.post("/coaches/me/avatar/", response_model=CoachResponse)
+async def upload_current_coach_avatar(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+) -> Any:
+    """Store an avatar image for the authenticated coach."""
+    if not current_user.startswith("coach:"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Coach account required."
+        )
+    coach_id = int(current_user.split(":")[1])
+
+    coach_service = CoachService(db)
+    coach = coach_service.get_coach(coach_id)
+    if not coach:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Coach not found"
+        )
+
+    previous_url = coach.image_url
+    try:
+        data = await avatar_storage.read_upload(file)
+        image_url = avatar_storage.save_avatar(coach_id, data)
+    except avatar_storage.AvatarValidationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)
+        ) from exc
+
+    updated = coach_service.update_coach(coach_id, CoachUpdate(image_url=image_url))
+    # Only once the new URL is committed, so a failed write never leaves the
+    # coach with a dangling image_url.
+    avatar_storage.delete_avatar(previous_url)
+    logger.info(f"Avatar updated for coach {coach_id}")
+    return updated
+
+
+@router.delete("/coaches/me/avatar/", response_model=CoachResponse)
+async def delete_current_coach_avatar(
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user),
+) -> Any:
+    """Remove the authenticated coach's avatar."""
+    if not current_user.startswith("coach:"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Coach account required."
+        )
+    coach_id = int(current_user.split(":")[1])
+
+    coach_service = CoachService(db)
+    coach = coach_service.get_coach(coach_id)
+    if not coach:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Coach not found"
+        )
+
+    previous_url = coach.image_url
+    updated = coach_service.update_coach(coach_id, CoachUpdate(image_url=None))
+    avatar_storage.delete_avatar(previous_url)
+    logger.info(f"Avatar removed for coach {coach_id}")
+    return updated
 
 
 @router.put("/coaches/me/password/")

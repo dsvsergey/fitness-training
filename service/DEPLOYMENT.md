@@ -213,6 +213,22 @@ docker compose exec db pg_dump -U postgres fitness > backup_$(date +%Y%m%d_%H%M%
 docker compose exec -i db psql -U postgres fitness < backup_file.sql
 ```
 
+### 8.3. Завантажені медіафайли
+
+Аватарки тренерів записуються у `MEDIA_ROOT` (усередині контейнера це
+`/app/media`, на хості — `service/media/` через bind-mount `.:/app`) і
+роздаються за адресою `/media/avatars/...`.
+
+**Дамп бази даних їх не покриває** — цей каталог треба бекапити окремо:
+
+```bash
+tar czf media_backup_$(date +%Y%m%d_%H%M%S).tar.gz media/
+```
+
+`PUBLIC_BASE_URL` має збігатися з origin, за яким клієнти реально звертаються,
+бо URL аватарок зберігаються в базі абсолютними. Якщо зміниться хост або схема,
+раніше збережені значення `image_url` показуватимуть на старий origin.
+
 ## 9. Оновлення проекту
 
 ### 9.1. Отримання нових змін

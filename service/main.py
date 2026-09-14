@@ -1,4 +1,6 @@
 import logging
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.middleware import Middleware
 from fastapi.responses import RedirectResponse
@@ -82,6 +84,15 @@ def start_application():
 
     app.include_router(api_router)
     include_starlette(app, engine)
+
+    # Serve uploaded media (coach avatars). nginx proxies location / straight
+    # through to uvicorn, so this needs no site-config change.
+    os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
+    app.mount(
+        "/media",
+        StaticFiles(directory=settings.MEDIA_ROOT),
+        name="media",
+    )
 
     # Log startup information
     logger.info(f"Starting {settings.PROJECT_TITLE} v{settings.PROJECT_VERSION}")
