@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../domain/entities/fitness/coach_entity.dart';
@@ -22,6 +23,9 @@ class ChangeInfoScreen extends StatefulWidget {
 
 class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
   late CoachEntity _coach = widget.coach;
+
+  final _picker = ImagePicker();
+  bool _uploadingAvatar = false;
 
   late final _firstNameCtrl =
       TextEditingController(text: widget.coach.firstName ?? '');
@@ -44,11 +48,61 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
     super.dispose();
   }
 
+  Future<void> _pickAvatar(ImageSource source) async {
+    if (_uploadingAvatar) return;
+
+    // Not `final`: assigning inside the try block would leave it only
+    // conditionally assigned as far as definite-assignment analysis is
+    // concerned, and the analyzer rejects that.
+    XFile? picked;
+    try {
+      picked = await _picker.pickImage(source: source, imageQuality: 85);
+    } catch (e) {
+      _reportAvatarError(e);
+      return;
+    }
+    if (picked == null) return;
+
+    // Bytes rather than a path: XFile.path is a blob URL on web.
+    final bytes = await picked.readAsBytes();
+    final filename = picked.name;
+    await _runAvatarRequest(
+      () => GetIt.I<CoachUsecase>().uploadAvatar(bytes, filename),
+    );
+  }
+
+  Future<void> _deleteAvatar() =>
+      _runAvatarRequest(() => GetIt.I<CoachUsecase>().deleteAvatar());
+
+  Future<void> _runAvatarRequest(Future<CoachEntity> Function() request) async {
+    setState(() => _uploadingAvatar = true);
+    try {
+      final updated = await request();
+      if (!mounted) return;
+      setState(
+        () => _coach = _coach.rebuild((b) => b..imageUrl = updated.imageUrl),
+      );
+      // Keeps the avatar on SettingsScreen in step with this one.
+      context.read<ApplicationBloc>().add(UpdateCoachInfoEvent(coach: _coach));
+    } catch (e) {
+      _reportAvatarError(e);
+    } finally {
+      if (mounted) setState(() => _uploadingAvatar = false);
+    }
+  }
+
+  void _reportAvatarError(Object error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Could not update photo: $error')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final initials = [
-      if ((widget.coach.firstName ?? '').isNotEmpty) widget.coach.firstName![0],
-      if ((widget.coach.lastName ?? '').isNotEmpty) widget.coach.lastName![0],
+      if ((_coach.firstName ?? '').isNotEmpty) _coach.firstName![0],
+      if ((_coach.lastName ?? '').isNotEmpty) _coach.lastName![0],
     ].join();
 
     return Scaffold(
@@ -87,16 +141,33 @@ class _ChangeInfoScreenState extends State<ChangeInfoScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   UserAvatarWidget(
-                    photoUrl: widget.coach.imageUrl,
+                    photoUrl: _coach.imageUrl,
                     initials: initials.isEmpty ? '?' : initials,
                     size: 120,
                     textStyle: context.theme.typography.xl2
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
-                  const Positioned(
+                  if (_uploadingAvatar)
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: context.theme.colors.background
+                              .withValues(alpha: 0.6),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    ),
+                  Positioned(
                     right: -4,
                     bottom: -4,
-                    child: ImageUserWidget(),
+                    child: ImageUserWidget(
+                      hasPhoto: (_coach.imageUrl ?? '').isNotEmpty,
+                      onSourceSelected: _pickAvatar,
+                      onDelete: _deleteAvatar,
+                    ),
                   ),
                 ],
               ),
