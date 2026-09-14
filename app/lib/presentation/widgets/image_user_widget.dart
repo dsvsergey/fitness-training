@@ -15,6 +15,7 @@ class ImageUserWidget extends StatelessWidget {
     required this.onSourceSelected,
     required this.onDelete,
     this.hasPhoto = false,
+    this.size,
   });
 
   final ValueChanged<ImageSource> onSourceSelected;
@@ -22,6 +23,11 @@ class ImageUserWidget extends StatelessWidget {
 
   /// Controls whether the "Delete Photo" option is offered at all.
   final bool hasPhoto;
+
+  /// Diameter of the badge. Defaults to whatever CircleAvatar and IconButton
+  /// pick on their own, which suits a large profile avatar; pass a smaller
+  /// value when the badge sits on a smaller one.
+  final double? size;
 
   void _showSheet(BuildContext context) {
     showModalBottomSheet(
@@ -87,11 +93,18 @@ class ImageUserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = this.size;
     return CircleAvatar(
+      radius: size == null ? null : size / 2,
       backgroundColor: context.theme.colors.primary,
       child: Center(
         child: IconButton(
           onPressed: () => _showSheet(context),
+          // The defaults leave an IconButton at its 48px minimum, which is
+          // wider than a scaled-down badge.
+          padding: size == null ? null : EdgeInsets.zero,
+          constraints: size == null ? null : const BoxConstraints(),
+          iconSize: size == null ? null : size * 0.55,
           icon: Icon(
             Icons.camera_alt,
             color: context.theme.colors.primaryForeground,

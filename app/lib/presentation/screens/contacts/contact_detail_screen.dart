@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
@@ -11,8 +12,10 @@ import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
 import '../../utils/dialogs_utils.dart';
+import '../../widgets/image_user_widget.dart';
 import '../../widgets/user_avatar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
+import 'bloc/contacts_bloc.dart';
 
 /// Detail screen for a single trainee (contact). Shows profile info and the
 /// trainee's recent completed trainings, and lets the coach start a new one.
@@ -30,6 +33,9 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   late TraineeEntity _trainee;
   List<WorkoutAppointmentEntity> _appointments = const [];
   bool _loading = true;
+
+  final _picker = ImagePicker();
+  bool _uploadingAvatar = false;
 
   @override
   void initState() {
@@ -74,6 +80,69 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     }
   }
 
+  Future<void> _pickAvatar(ImageSource source) async {
+    if (_uploadingAvatar || _trainee.id == null) return;
+
+    // Not `final`: assigning inside the try block would leave it only
+    // conditionally assigned as far as definite-assignment analysis is
+    // concerned, and the analyzer rejects that.
+    XFile? picked;
+    try {
+      picked = await _picker.pickImage(source: source, imageQuality: 85);
+    } catch (e) {
+      _reportAvatarError(e);
+      return;
+    }
+    if (picked == null) return;
+
+    // Bytes rather than a path: XFile.path is a blob URL on web.
+    final bytes = await picked.readAsBytes();
+    final filename = picked.name;
+    await _runAvatarRequest(
+      () => GetIt.I<TraineeUsecase>()
+          .uploadAvatar(_trainee.id!, bytes, filename),
+    );
+  }
+
+  Future<void> _deleteAvatar() async {
+    if (_uploadingAvatar || _trainee.id == null) return;
+    await _runAvatarRequest(
+      () => GetIt.I<TraineeUsecase>().deleteAvatar(_trainee.id!),
+    );
+  }
+
+  Future<void> _runAvatarRequest(Future<TraineeEntity> Function() request) async {
+    setState(() => _uploadingAvatar = true);
+    try {
+      final updated = await request();
+      if (!mounted) return;
+      setState(
+        () => _trainee = _trainee.rebuild((b) => b..photoUrl = updated.photoUrl),
+      );
+      _publishToContactsList();
+    } catch (e) {
+      _reportAvatarError(e);
+    } finally {
+      if (mounted) setState(() => _uploadingAvatar = false);
+    }
+  }
+
+  void _reportAvatarError(Object error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Could not update photo: $error')),
+    );
+  }
+
+  /// ContactsBloc lives for the whole app, so the list it already fetched
+  /// would otherwise keep showing the trainee as it was before this screen
+  /// changed them.
+  void _publishToContactsList() {
+    context.read<ContactsBloc>().add(
+          ReplaceTraineeContactEvent(trainee: _trainee),
+        );
+  }
+
   void _openPrograms() {
     context
         .read<ApplicationBloc>()
@@ -95,6 +164,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           await GetIt.I<TraineeUsecase>().updateTrainee(_trainee.id!, updated);
       if (!mounted) return;
       setState(() => _trainee = saved);
+      _publishToContactsList();
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +202,13 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
-            _ProfileHeader(trainee: t, initials: initials),
+            _ProfileHeader(
+              trainee: t,
+              initials: initials,
+              uploading: _uploadingAvatar,
+              onSourceSelected: _pickAvatar,
+              onDeletePhoto: _deleteAvatar,
+            ),
             const SizedBox(height: 16),
             _InfoCard(trainee: t),
             const SizedBox(height: 20),
@@ -173,18 +249,59 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.trainee, required this.initials});
+  const _ProfileHeader({
+    required this.trainee,
+    required this.initials,
+    required this.uploading,
+    required this.onSourceSelected,
+    required this.onDeletePhoto,
+  });
 
   final TraineeEntity trainee;
   final String initials;
+  final bool uploading;
+  final ValueChanged<ImageSource> onSourceSelected;
+  final VoidCallback onDeletePhoto;
 
   @override
   Widget build(BuildContext context) {
-    final avatar = UserAvatarWidget(
-      photoUrl: trainee.photoUrl,
-      initials: initials.isEmpty ? 'NA' : initials,
-      size: 72,
-      textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+    const avatarSize = 72.0;
+    final avatar = Stack(
+      clipBehavior: Clip.none,
+      children: [
+        UserAvatarWidget(
+          photoUrl: trainee.photoUrl,
+          initials: initials.isEmpty ? 'NA' : initials,
+          size: avatarSize,
+          textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+        ),
+        if (uploading)
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: context.theme.colors.background.withValues(alpha: 0.6),
+              ),
+              child: const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            ),
+          ),
+        Positioned(
+          right: -2,
+          bottom: -2,
+          child: ImageUserWidget(
+            size: 30,
+            hasPhoto: (trainee.photoUrl ?? '').isNotEmpty,
+            onSourceSelected: onSourceSelected,
+            onDelete: onDeletePhoto,
+          ),
+        ),
+      ],
     );
 
     return Row(

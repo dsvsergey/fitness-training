@@ -25,6 +25,7 @@ class Trainee(Base):
     weight = Column(Float, nullable=True)
     height = Column(Float, nullable=True)
     birth_date = Column(Date, nullable=True)
+    photo_url = Column(String, nullable=True)
 
     # OAuth fields
     oauth_provider = Column(String, nullable=True)   # "google" or None for local

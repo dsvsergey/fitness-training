@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -16,6 +18,12 @@ abstract class TraineeRepository {
   Future<TraineeModel> createTrainee(TraineeModel trainee, {String? password});
   Future<TraineeModel> updateTrainee(int traineeId, TraineeModel trainee);
   Future<void> deleteTrainee(int traineeId);
+  Future<TraineeModel> uploadAvatar(
+    int traineeId,
+    Uint8List bytes,
+    String filename,
+  );
+  Future<TraineeModel> deleteAvatar(int traineeId);
 }
 
 @Singleton(as: TraineeRepository)
@@ -90,4 +98,38 @@ class TraineeRepositoryImpl
   Future<void> deleteTrainee(int traineeId) => fitness.dio
       .delete("/trainees/$traineeId")
       .catchError(onException);
+
+  @override
+  Future<TraineeModel> uploadAvatar(
+    int traineeId,
+    Uint8List bytes,
+    String filename,
+  ) async {
+    final form = FormData.fromMap({
+      'file': MultipartFile.fromBytes(bytes, filename: filename),
+    });
+
+    try {
+      final value = await fitness.dio.post(
+        "/trainees/$traineeId/avatar/",
+        data: form,
+        // BaseOptions pins application/json for every request; without this
+        // override the multipart body is mislabelled and the upload fails.
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      return TraineeModel.fromJson(value.data);
+    } on DioException catch (e) {
+      return onException(e);
+    }
+  }
+
+  @override
+  Future<TraineeModel> deleteAvatar(int traineeId) async {
+    try {
+      final value = await fitness.dio.delete("/trainees/$traineeId/avatar/");
+      return TraineeModel.fromJson(value.data);
+    } on DioException catch (e) {
+      return onException(e);
+    }
+  }
 }

@@ -38,6 +38,17 @@ final class UpdateTraineeContactEvent extends ContactsEvent {
   List<Object?> get props => [traineeId, trainee];
 }
 
+/// Swaps in a trainee the detail screen already saved, so the list stops
+/// showing the version it fetched. Local only — no request is made.
+final class ReplaceTraineeContactEvent extends ContactsEvent {
+  final TraineeEntity trainee;
+
+  ReplaceTraineeContactEvent({required this.trainee});
+
+  @override
+  List<Object?> get props => [trainee];
+}
+
 final class DeleteTraineeEvent extends ContactsEvent {
   final int traineeId;
 

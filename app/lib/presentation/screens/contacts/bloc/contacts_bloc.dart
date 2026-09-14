@@ -75,6 +75,14 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       }
     });
 
+    on<ReplaceTraineeContactEvent>((event, emit) {
+      final clients = (state.clients ?? [])
+          .map((c) => c.id == event.trainee.id ? event.trainee : c)
+          .toList();
+      emit(ContactsSuccess(state,
+          clients: clients, hasMoreData: state.hasMoreData ?? false));
+    });
+
     on<DeleteTraineeEvent>((event, emit) async {
       try {
         await GetIt.I<TraineeUsecase>().deleteTrainee(event.traineeId);

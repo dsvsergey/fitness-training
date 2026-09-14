@@ -39,6 +39,7 @@ class TraineeBase(BaseModel):
     weight: Optional[float] = None
     height: Optional[float] = None
     birth_date: Optional[date] = None
+    photo_url: Optional[str] = None
     programs: Optional[list[ProgramSchema]] = None
 
     @field_validator("birth_date", mode="before")
@@ -69,6 +70,7 @@ class TraineeUpdate(BaseModel):
     weight: Optional[float] = None
     height: Optional[float] = None
     birth_date: Optional[date] = None
+    photo_url: Optional[str] = None
     password: Optional[str] = None
 
     @field_validator("birth_date", mode="before")
@@ -117,6 +119,7 @@ class TraineeSchema(BaseModel):
     weight: Optional[float] = None
     height: Optional[float] = None
     birth_date: Optional[date] = None
+    photo_url: Optional[str] = None
     programs: Optional[list[ProgramSchema]] = None
 
     @field_validator("birth_date", mode="before")

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fitness_training/data/models/fitness/fitness.dart';
 import 'package:injectable/injectable.dart';
 
@@ -14,6 +16,12 @@ abstract class TraineeUsecase {
   Future<TraineeEntity> createTrainee(TraineeEntity trainee, {String? password});
   Future<TraineeEntity> updateTrainee(int traineeId, TraineeEntity trainee);
   Future<void> deleteTrainee(int traineeId);
+  Future<TraineeEntity> uploadAvatar(
+    int traineeId,
+    Uint8List bytes,
+    String filename,
+  );
+  Future<TraineeEntity> deleteAvatar(int traineeId);
 }
 
 @LazySingleton(as: TraineeUsecase)
@@ -48,4 +56,18 @@ class TraineeUsecaseImpl implements TraineeUsecase {
       _api
           .updateTrainee(traineeId, trainee.model)
           .then((value) => value.entity);
+
+  @override
+  Future<TraineeEntity> uploadAvatar(
+    int traineeId,
+    Uint8List bytes,
+    String filename,
+  ) =>
+      _api
+          .uploadAvatar(traineeId, bytes, filename)
+          .then((value) => value.entity);
+
+  @override
+  Future<TraineeEntity> deleteAvatar(int traineeId) =>
+      _api.deleteAvatar(traineeId).then((value) => value.entity);
 }
