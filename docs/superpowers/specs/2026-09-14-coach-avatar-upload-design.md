@@ -182,7 +182,7 @@ exercising the pure helpers in `avatar_storage.py` against `tmp_path`.
 - deleting an already-absent file does not raise
 
 **Client** — `app/test/image_user_widget_test.dart`, following the existing
-`test/settings_program_buttons_test.dart` pattern: pumping the widget and
+`test/settings_program_screen_test.dart` pattern: pumping the widget and
 tapping each of the three options invokes the matching callback, and "Delete
 Photo" is absent when `hasPhoto` is false.
 
