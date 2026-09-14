@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
@@ -15,6 +17,8 @@ abstract class CoachRepository {
   Future<CoachModel> createCoach(CoachModel coach);
   Future<CoachModel> updateCoach(int coachId, CoachModel coach);
   Future<void> deleteCoach(int coachId);
+  Future<CoachModel> uploadAvatar(Uint8List bytes, String filename);
+  Future<CoachModel> deleteAvatar();
 }
 
 @Singleton(as: CoachRepository)
@@ -90,5 +94,43 @@ class CoachRepositoryImpl with FitnessRepository implements CoachRepository {
   @override
   Future<void> deleteCoach(int coachId) => fitness.dio
       .delete("/coaches/$coachId")
+      .catchError(onException);
+
+  @override
+  Future<CoachModel> uploadAvatar(Uint8List bytes, String filename) {
+    final form = FormData.fromMap({
+      'file': MultipartFile.fromBytes(bytes, filename: filename),
+    });
+
+    return fitness.dio
+        .post(
+          "/coaches/me/avatar/",
+          data: form,
+          // BaseOptions pins application/json for every request; without this
+          // override the multipart body is mislabelled and the upload fails.
+          options: Options(contentType: 'multipart/form-data'),
+        )
+        .then((value) {
+          if (value.data is! Map<String, dynamic>) {
+            throw FormatException(
+              'Expected Map but got ${value.data.runtimeType}',
+            );
+          }
+          return CoachModel.fromJson(value.data);
+        })
+        .catchError(onException);
+  }
+
+  @override
+  Future<CoachModel> deleteAvatar() => fitness.dio
+      .delete("/coaches/me/avatar/")
+      .then((value) {
+        if (value.data is! Map<String, dynamic>) {
+          throw FormatException(
+            'Expected Map but got ${value.data.runtimeType}',
+          );
+        }
+        return CoachModel.fromJson(value.data);
+      })
       .catchError(onException);
 }
