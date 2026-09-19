@@ -1951,7 +1951,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "annotation_singleton",
-      "community": 3,
+      "community": 117,
       "norm_label": "@singleton"
     },
     {
@@ -2231,7 +2231,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "users_dsv_projects_fitness_apps_fitness_training_app_lib_core_bloc_bloc_application_application_bloc_logoutevent",
-      "community": 3,
+      "community": 117,
       "norm_label": "logoutevent"
     },
     {
@@ -2961,7 +2961,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_core_dio_settings_dio_settings_backend_diosettingsbackend",
-      "community": 3,
+      "community": 117,
       "norm_label": "diosettingsbackend"
     },
     {
@@ -2981,7 +2981,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_core_dio_settings_dio_settings_backend_setup",
-      "community": 3,
+      "community": 117,
       "norm_label": "setup"
     },
     {
@@ -8781,7 +8781,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "package_fitness_training_data_models_fitness_fitness_dart",
-      "community": 25,
+      "community": 883,
       "norm_label": "package:fitness_training/data/models/fitness/fitness.dart"
     },
     {
@@ -25901,7 +25901,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_email_history_storage_emailhistorystorage",
-      "community": 3,
+      "community": 117,
       "norm_label": "emailhistorystorage"
     },
     {
@@ -26001,7 +26001,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "fitnessrepository",
-      "community": 3,
+      "community": 163,
       "norm_label": "fitnessrepository"
     },
     {
@@ -26371,7 +26371,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine",
-      "community": 3,
+      "community": 266,
       "norm_label": "machine.dart"
     },
     {
@@ -26381,7 +26381,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_machinerepository",
-      "community": 3,
+      "community": 266,
       "norm_label": "machinerepository"
     },
     {
@@ -26391,7 +26391,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_machinerepositoryimpl",
-      "community": 3,
+      "community": 266,
       "norm_label": "machinerepositoryimpl"
     },
     {
@@ -26401,7 +26401,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_fitnessrepository",
-      "community": 3,
+      "community": 266,
       "norm_label": "fitnessrepository"
     },
     {
@@ -26411,7 +26411,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "class_machinerepositoryimpl_with",
-      "community": 3,
+      "community": 266,
       "norm_label": "class machinerepositoryimpl\n    with"
     },
     {
@@ -26421,7 +26421,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_fitness",
-      "community": 3,
+      "community": 266,
       "norm_label": "fitness"
     },
     {
@@ -26431,7 +26431,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_getmachines",
-      "community": 3,
+      "community": 266,
       "norm_label": "getmachines"
     },
     {
@@ -26441,7 +26441,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_getmachine",
-      "community": 3,
+      "community": 266,
       "norm_label": "getmachine"
     },
     {
@@ -26451,7 +26451,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_createmachine",
-      "community": 3,
+      "community": 266,
       "norm_label": "createmachine"
     },
     {
@@ -26461,7 +26461,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_updatemachine",
-      "community": 3,
+      "community": 266,
       "norm_label": "updatemachine"
     },
     {
@@ -26471,7 +26471,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_machine_deletemachine",
-      "community": 3,
+      "community": 266,
       "norm_label": "deletemachine"
     },
     {
@@ -26911,7 +26911,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_workout_appointment_workoutappointmentrepository",
-      "community": 3,
+      "community": 163,
       "norm_label": "workoutappointmentrepository"
     },
     {
@@ -26921,7 +26921,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_workout_appointment_workoutappointmentrepositoryimpl",
-      "community": 3,
+      "community": 163,
       "norm_label": "workoutappointmentrepositoryimpl"
     },
     {
@@ -27491,7 +27491,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_token_storage_tokenstorage",
-      "community": 3,
+      "community": 117,
       "norm_label": "tokenstorage"
     },
     {
@@ -33581,7 +33581,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase",
-      "community": 25,
+      "community": 883,
       "norm_label": "auth_usecase.dart"
     },
     {
@@ -33591,7 +33591,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_authusecase",
-      "community": 25,
+      "community": 883,
       "norm_label": "authusecase"
     },
     {
@@ -33601,7 +33601,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_authusecaseimpl",
-      "community": 25,
+      "community": 883,
       "norm_label": "authusecaseimpl"
     },
     {
@@ -33621,7 +33621,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_api",
-      "community": 25,
+      "community": 883,
       "norm_label": "_api"
     },
     {
@@ -33631,7 +33631,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_login",
-      "community": 25,
+      "community": 883,
       "norm_label": "login"
     },
     {
@@ -33641,7 +33641,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_register",
-      "community": 25,
+      "community": 883,
       "norm_label": "register"
     },
     {
@@ -33651,7 +33651,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_getgoogleauthurl",
-      "community": 25,
+      "community": 883,
       "norm_label": "getgoogleauthurl"
     },
     {
@@ -33661,7 +33661,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_auth_usecase_loginwithtoken",
-      "community": 25,
+      "community": 883,
       "norm_label": "loginwithtoken"
     },
     {
@@ -33991,7 +33991,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase",
-      "community": 163,
+      "community": 25,
       "norm_label": "program_fitness_usecase.dart"
     },
     {
@@ -34001,7 +34001,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_programfitnessusecase",
-      "community": 163,
+      "community": 25,
       "norm_label": "programfitnessusecase"
     },
     {
@@ -34011,7 +34011,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_programfitnessusecaseimpl",
-      "community": 163,
+      "community": 25,
       "norm_label": "programfitnessusecaseimpl"
     },
     {
@@ -34021,7 +34021,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_api",
-      "community": 163,
+      "community": 25,
       "norm_label": "_api"
     },
     {
@@ -34031,7 +34031,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_getprograms",
-      "community": 163,
+      "community": 25,
       "norm_label": "getprograms"
     },
     {
@@ -34041,7 +34041,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_getarchives",
-      "community": 163,
+      "community": 25,
       "norm_label": "getarchives"
     },
     {
@@ -34051,7 +34051,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_getprogram",
-      "community": 163,
+      "community": 25,
       "norm_label": "getprogram"
     },
     {
@@ -34061,7 +34061,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_createprogram",
-      "community": 163,
+      "community": 25,
       "norm_label": "createprogram"
     },
     {
@@ -34071,7 +34071,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_createprogramwithmachines",
-      "community": 163,
+      "community": 25,
       "norm_label": "createprogramwithmachines"
     },
     {
@@ -34081,7 +34081,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_updateprogram",
-      "community": 163,
+      "community": 25,
       "norm_label": "updateprogram"
     },
     {
@@ -34091,7 +34091,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_setarchiveprogram",
-      "community": 163,
+      "community": 25,
       "norm_label": "setarchiveprogram"
     },
     {
@@ -34101,7 +34101,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_deleteprogram",
-      "community": 163,
+      "community": 25,
       "norm_label": "deleteprogram"
     },
     {
@@ -34111,7 +34111,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_updateprogrammachines",
-      "community": 163,
+      "community": 25,
       "norm_label": "updateprogrammachines"
     },
     {
@@ -34121,7 +34121,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_program_fitness_usecase_reordermachines",
-      "community": 163,
+      "community": 25,
       "norm_label": "reordermachines"
     },
     {
@@ -34351,7 +34351,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase",
-      "community": 25,
+      "community": 163,
       "norm_label": "workout_appointment_usecase.dart"
     },
     {
@@ -34361,7 +34361,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_workoutappointmentusecase",
-      "community": 25,
+      "community": 163,
       "norm_label": "workoutappointmentusecase"
     },
     {
@@ -34371,7 +34371,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_workoutappointmentusecaseimpl",
-      "community": 25,
+      "community": 163,
       "norm_label": "workoutappointmentusecaseimpl"
     },
     {
@@ -34381,7 +34381,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_api",
-      "community": 25,
+      "community": 163,
       "norm_label": "_api"
     },
     {
@@ -34391,7 +34391,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_getallworkoutappointments",
-      "community": 25,
+      "community": 163,
       "norm_label": "getallworkoutappointments"
     },
     {
@@ -34401,7 +34401,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_getworkoutappointment",
-      "community": 25,
+      "community": 163,
       "norm_label": "getworkoutappointment"
     },
     {
@@ -34411,7 +34411,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_createworkoutappointment",
-      "community": 25,
+      "community": 163,
       "norm_label": "createworkoutappointment"
     },
     {
@@ -34421,7 +34421,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_updateworkoutappointment",
-      "community": 25,
+      "community": 163,
       "norm_label": "updateworkoutappointment"
     },
     {
@@ -34431,7 +34431,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_deleteworkoutappointment",
-      "community": 25,
+      "community": 163,
       "norm_label": "deleteworkoutappointment"
     },
     {
@@ -34441,7 +34441,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_domain_usecases_fitness_workout_appointment_usecase_setworkoutcompleted",
-      "community": 25,
+      "community": 163,
       "norm_label": "setworkoutcompleted"
     },
     {
@@ -51693,7 +51693,7 @@
       "label": "get_workout_appointments_dates()",
       "file_type": "code",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L161",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "service_app_crud_workout_appointment_get_workout_appointments_dates",
       "community": 40,
@@ -51703,7 +51703,7 @@
       "label": "update_workout_appointment()",
       "file_type": "code",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L194",
+      "source_location": "L201",
       "_origin": "ast",
       "id": "service_app_crud_workout_appointment_update_workout_appointment",
       "community": 40,
@@ -51713,7 +51713,7 @@
       "label": "set_workout_completed()",
       "file_type": "code",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L219",
+      "source_location": "L226",
       "_origin": "ast",
       "id": "service_app_crud_workout_appointment_set_workout_completed",
       "community": 40,
@@ -51723,7 +51723,7 @@
       "label": "delete_workout_appointment()",
       "file_type": "code",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L232",
+      "source_location": "L239",
       "_origin": "ast",
       "id": "service_app_crud_workout_appointment_delete_workout_appointment",
       "community": 40,
@@ -51733,7 +51733,7 @@
       "label": "get_workout_appointment_stats_by_month_and_coach()",
       "file_type": "code",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L245",
+      "source_location": "L252",
       "_origin": "ast",
       "id": "service_app_crud_workout_appointment_get_workout_appointment_stats_by_month_and_coach",
       "community": 40,
@@ -51743,7 +51743,7 @@
       "label": "get_workout_appointment_results()",
       "file_type": "code",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L276",
+      "source_location": "L283",
       "_origin": "ast",
       "id": "service_app_crud_workout_appointment_get_workout_appointment_results",
       "community": 40,
@@ -56954,7 +56954,7 @@
       "source_location": "L2016",
       "_origin": "ast",
       "id": "app_docs_llms_full_determinate_progress",
-      "community": 266,
+      "community": 27,
       "norm_label": "determinate progress"
     },
     {
@@ -56964,7 +56964,7 @@
       "source_location": "L2072",
       "_origin": "ast",
       "id": "app_docs_llms_full_cli_2072",
-      "community": 266,
+      "community": 27,
       "norm_label": "cli"
     },
     {
@@ -56974,7 +56974,7 @@
       "source_location": "L2082",
       "_origin": "ast",
       "id": "app_docs_llms_full_usage_2082",
-      "community": 266,
+      "community": 27,
       "norm_label": "usage"
     },
     {
@@ -56984,7 +56984,7 @@
       "source_location": "L2084",
       "_origin": "ast",
       "id": "app_docs_llms_full_fdeterminateprogress",
-      "community": 266,
+      "community": 27,
       "norm_label": "`fdeterminateprogress(...)`"
     },
     {
@@ -59574,7 +59574,7 @@
       "source_location": "L9376",
       "_origin": "ast",
       "id": "app_docs_llms_full_customizing_widget_styles",
-      "community": 27,
+      "community": 884,
       "norm_label": "customizing widget styles"
     },
     {
@@ -59584,7 +59584,7 @@
       "source_location": "L9382",
       "_origin": "ast",
       "id": "app_docs_llms_full_deltas",
-      "community": 27,
+      "community": 884,
       "norm_label": "deltas"
     },
     {
@@ -59594,7 +59594,7 @@
       "source_location": "L9428",
       "_origin": "ast",
       "id": "app_docs_llms_full_variants_9428",
-      "community": 27,
+      "community": 884,
       "norm_label": "variants"
     },
     {
@@ -59604,7 +59604,7 @@
       "source_location": "L9501",
       "_origin": "ast",
       "id": "app_docs_llms_full_cli_9501",
-      "community": 27,
+      "community": 884,
       "norm_label": "cli"
     },
     {
@@ -133267,7 +133267,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L138",
+      "source_location": "L143",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_filter_workout_appointments",
       "target": "timedelta"
@@ -133278,7 +133278,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L171",
+      "source_location": "L178",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointments_dates",
       "target": "timedelta"
@@ -136720,7 +136720,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L232",
+      "source_location": "L239",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment",
       "target": "service_app_crud_workout_appointment_delete_workout_appointment",
@@ -136770,7 +136770,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L276",
+      "source_location": "L283",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment",
       "target": "service_app_crud_workout_appointment_get_workout_appointment_results",
@@ -136780,7 +136780,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L245",
+      "source_location": "L252",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment",
       "target": "service_app_crud_workout_appointment_get_workout_appointment_stats_by_month_and_coach",
@@ -136790,7 +136790,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L161",
+      "source_location": "L168",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment",
       "target": "service_app_crud_workout_appointment_get_workout_appointments_dates",
@@ -136821,7 +136821,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L219",
+      "source_location": "L226",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment",
       "target": "service_app_crud_workout_appointment_set_workout_completed",
@@ -136831,7 +136831,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L194",
+      "source_location": "L201",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment",
       "target": "service_app_crud_workout_appointment_update_workout_appointment",
@@ -136853,7 +136853,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L167",
+      "source_location": "L174",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointments_dates",
       "target": "service_app_crud_workout_appointment_parse_datetime",
@@ -136886,7 +136886,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L245",
+      "source_location": "L252",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointment_stats_by_month_and_coach",
       "target": "service_app_crud_workout_appointment_py_datetime",
@@ -136897,7 +136897,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L161",
+      "source_location": "L168",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointments_dates",
       "target": "service_app_crud_workout_appointment_py_datetime",
@@ -136951,7 +136951,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L232",
+      "source_location": "L239",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_delete_workout_appointment",
       "target": "service_app_crud_workout_appointment_py_session",
@@ -136995,7 +136995,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L276",
+      "source_location": "L283",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointment_results",
       "target": "service_app_crud_workout_appointment_py_session",
@@ -137006,7 +137006,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L245",
+      "source_location": "L252",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointment_stats_by_month_and_coach",
       "target": "service_app_crud_workout_appointment_py_session",
@@ -137017,7 +137017,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L161",
+      "source_location": "L168",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointments_dates",
       "target": "service_app_crud_workout_appointment_py_session",
@@ -137028,7 +137028,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L219",
+      "source_location": "L226",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_set_workout_completed",
       "target": "service_app_crud_workout_appointment_py_session",
@@ -137039,7 +137039,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L194",
+      "source_location": "L201",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_update_workout_appointment",
       "target": "service_app_crud_workout_appointment_py_session",
@@ -137094,7 +137094,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L276",
+      "source_location": "L283",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointment_results",
       "target": "service_app_crud_workout_appointment_py_workoutappointment",
@@ -137105,7 +137105,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L219",
+      "source_location": "L226",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_set_workout_completed",
       "target": "service_app_crud_workout_appointment_py_workoutappointment",
@@ -137116,7 +137116,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L194",
+      "source_location": "L201",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_update_workout_appointment",
       "target": "service_app_crud_workout_appointment_py_workoutappointment",
@@ -137159,7 +137159,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L212",
+      "source_location": "L219",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_update_workout_appointment",
       "target": "service_app_crud_workout_appointment_coerce_status",
@@ -137225,7 +137225,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L161",
+      "source_location": "L168",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointments_dates",
       "target": "service_app_schemas_workout_appointment_appointmentfilterschema",
@@ -137236,7 +137236,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L194",
+      "source_location": "L201",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_update_workout_appointment",
       "target": "service_app_schemas_workout_appointment_workoutappointmentschema",
@@ -137258,7 +137258,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L245",
+      "source_location": "L252",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointment_stats_by_month_and_coach",
       "target": "service_app_schemas_workout_appointment_workoutappointmentstatsschema",
@@ -137269,7 +137269,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "service/app/crud/workout_appointment.py",
-      "source_location": "L276",
+      "source_location": "L283",
       "weight": 1.0,
       "source": "service_app_crud_workout_appointment_get_workout_appointment_results",
       "target": "service_app_schemas_workout_appointment_workoutappointmentresultschema",
@@ -151277,5 +151277,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1cea16cb363d74a282926eaca1060418a90353b9"
+  "built_at_commit": "8f75069e5ff1a4bd72cd84a77a52fb190b28bf76"
 }

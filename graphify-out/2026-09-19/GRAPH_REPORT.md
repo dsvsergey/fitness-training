@@ -884,8 +884,8 @@ Cohesion: 0.06
 Nodes (57): ContactsBloc, props, searchQuery, ContactDetailScreen, _ContactDetailScreenState, _publishToContactsList, build, _clients (+49 more)
 
 ### Community 3 - "fitness.dart"
-Cohesion: 0.05
-Nodes (51): @singleton, DioSettingsAuth, DioSettingsBackend, setup, _auth, AuthRepository, AuthRepositoryImpl, getCoachMe (+43 more)
+Cohesion: 0.06
+Nodes (42): @singleton, DioSettingsBackend, setup, EmailHistoryStorage, CoachRepository, CoachRepositoryImpl, createCoach, deleteAvatar (+34 more)
 
 ### Community 4 - "metronome_controls.dart"
 Cohesion: 0.04
@@ -981,7 +981,7 @@ Nodes (38): @RoutePage, appointment, build, CalendarInfoScreens, CalendarScreen,
 
 ### Community 27 - "llms-full.md"
 Cohesion: 0.05
-Nodes (41): Accessing the Properties, Adding Theme Properties, CLI, CLI, Collapsible, Create a Theme Extension, Creating Custom Controllers, Creating Custom Deltas (+33 more)
+Nodes (41): Accessing the Properties, Adding Theme Properties, CLI, Collapsible, Create a Theme Extension, Creating Custom Controllers, Creating Custom Deltas, Customizing Themes (+33 more)
 
 ### Community 28 - "trainee_model.dart"
 Cohesion: 0.05
@@ -1180,8 +1180,8 @@ Cohesion: 0.07
 Nodes (27): description, endDate, id, imageUrl, location, name, notes, organizer (+19 more)
 
 ### Community 77 - "token_storage.dart"
-Cohesion: 0.07
-Nodes (25): add, clear, EmailHistoryStorage, _key, _maxEntries, read, cleanToken, getThemeMode (+17 more)
+Cohesion: 0.08
+Nodes (24): add, clear, _key, _maxEntries, read, cleanToken, getThemeMode, getToken (+16 more)
 
 ### Community 78 - "appointment_status_enum.dart"
 Cohesion: 0.08
@@ -1444,8 +1444,8 @@ Cohesion: 0.12
 Nodes (16): accessToken, apiKey, apiVersion, AppConsts, back, handle, isLogined, password (+8 more)
 
 ### Community 143 - "package:dio/dio.dart"
-Cohesion: 0.15
-Nodes (14): dio, _setup, dio, setup, FitnessRepository, onException, ../const.dart, dart:async (+6 more)
+Cohesion: 0.09
+Nodes (24): dio, DioSettingsAuth, _setup, dio, setup, _auth, AuthRepository, AuthRepositoryImpl (+16 more)
 
 ### Community 144 - "fitness.dart"
 Cohesion: 0.12
@@ -1945,7 +1945,7 @@ Nodes (4): CLI, Divider, `FDivider(...)`, Usage
 
 ### Community 268 - "Portal"
 Cohesion: 0.50
-Nodes (4): `FPortal(...)`, Portal, Usage, Visualization
+Nodes (4): CLI, `FProgress(...)`, Progress, Usage
 
 ### Community 269 - "Flutter Tips"
 Cohesion: 0.50

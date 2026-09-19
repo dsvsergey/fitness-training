@@ -265,18 +265,13 @@
     "semantic_hash": ""
   },
   "app/android/app/build.gradle.kts": {
-    "mtime": 1789063835.4412982,
-    "ast_hash": "3b9a0cd7114417431049dfb6b61b014f",
+    "mtime": 1789828595.5789797,
+    "ast_hash": "c5e2b9334965963764ce1fa3ed2a8bac",
     "semantic_hash": ""
   },
   "app/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java": {
     "mtime": 1789423146.0776587,
     "ast_hash": "3342038d6289466e1ec40739b3d0637e",
-    "semantic_hash": ""
-  },
-  "app/android/app/src/main/kotlin/com/example/fitness_training/MainActivity.kt": {
-    "mtime": 1789063835.4419997,
-    "ast_hash": "2b17601cfca76354e49edcb7b705a560",
     "semantic_hash": ""
   },
   "app/android/build.gradle.kts": {
@@ -2815,8 +2810,8 @@
     "semantic_hash": ""
   },
   "app/linux/CMakeLists.txt": {
-    "mtime": 1789063835.5526888,
-    "ast_hash": "6db00a8c020814df4dc51509294eb6b2",
+    "mtime": 1789828595.5796373,
+    "ast_hash": "3a84204bf816a54a844e6a5176287c5e",
     "semantic_hash": ""
   },
   "app/linux/flutter/CMakeLists.txt": {
@@ -3412,6 +3407,11 @@
   "app/assets/video/lsec.mp4": {
     "mtime": 1789063835.522524,
     "ast_hash": "73b62a806b24daf7a1134965732749d5",
+    "semantic_hash": ""
+  },
+  "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt": {
+    "mtime": 1789828595.6014388,
+    "ast_hash": "3bc6161254795373eed1aa4c21f2be29",
     "semantic_hash": ""
   }
 }

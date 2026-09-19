@@ -906,20 +906,20 @@
     {
       "label": "MainActivity.kt",
       "file_type": "code",
-      "source_file": "app/android/app/src/main/kotlin/com/example/fitness_training/MainActivity.kt",
+      "source_file": "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "app_android_app_src_main_kotlin_com_example_fitness_training_mainactivity",
+      "id": "app_android_app_src_main_kotlin_com_repforge_app_mainactivity",
       "community": 272,
       "norm_label": "mainactivity.kt"
     },
     {
       "label": "MainActivity",
       "file_type": "code",
-      "source_file": "app/android/app/src/main/kotlin/com/example/fitness_training/MainActivity.kt",
+      "source_file": "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt",
       "source_location": "L5",
       "_origin": "ast",
-      "id": "app_android_app_src_main_kotlin_com_example_fitness_training_mainactivity_mainactivity",
+      "id": "app_android_app_src_main_kotlin_com_repforge_app_mainactivity_mainactivity",
       "community": 272,
       "norm_label": "mainactivity"
     },
@@ -2921,7 +2921,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_core_dio_settings_dio_settings_auth_diosettingsauth",
-      "community": 3,
+      "community": 143,
       "norm_label": "diosettingsauth"
     },
     {
@@ -25901,7 +25901,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_email_history_storage_emailhistorystorage",
-      "community": 77,
+      "community": 3,
       "norm_label": "emailhistorystorage"
     },
     {
@@ -25971,7 +25971,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth",
-      "community": 3,
+      "community": 143,
       "norm_label": "auth.dart"
     },
     {
@@ -25981,7 +25981,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_authrepository",
-      "community": 3,
+      "community": 143,
       "norm_label": "authrepository"
     },
     {
@@ -25991,7 +25991,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_authrepositoryimpl",
-      "community": 3,
+      "community": 143,
       "norm_label": "authrepositoryimpl"
     },
     {
@@ -26011,7 +26011,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_auth",
-      "community": 3,
+      "community": 143,
       "norm_label": "_auth"
     },
     {
@@ -26021,7 +26021,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_login",
-      "community": 3,
+      "community": 143,
       "norm_label": "login"
     },
     {
@@ -26031,7 +26031,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_register",
-      "community": 3,
+      "community": 143,
       "norm_label": "register"
     },
     {
@@ -26041,7 +26041,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_getgoogleauthurl",
-      "community": 3,
+      "community": 143,
       "norm_label": "getgoogleauthurl"
     },
     {
@@ -26051,7 +26051,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "app_lib_data_repositories_fitness_auth_getcoachme",
-      "community": 3,
+      "community": 143,
       "norm_label": "getcoachme"
     },
     {
@@ -26061,7 +26061,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "core_dio_settings_dio_settings_auth_dart",
-      "community": 3,
+      "community": 143,
       "norm_label": "../../../core/dio_settings/dio_settings_auth.dart"
     },
     {
@@ -26071,7 +26071,7 @@
       "source_location": null,
       "_origin": "ast",
       "id": "models_fitness_fitness_dart",
-      "community": 3,
+      "community": 143,
       "norm_label": "../../models/fitness/fitness.dart"
     },
     {
@@ -56994,7 +56994,7 @@
       "source_location": "L2096",
       "_origin": "ast",
       "id": "app_docs_llms_full_progress",
-      "community": 27,
+      "community": 268,
       "norm_label": "progress"
     },
     {
@@ -57004,7 +57004,7 @@
       "source_location": "L2106",
       "_origin": "ast",
       "id": "app_docs_llms_full_cli_2106",
-      "community": 27,
+      "community": 268,
       "norm_label": "cli"
     },
     {
@@ -57014,7 +57014,7 @@
       "source_location": "L2116",
       "_origin": "ast",
       "id": "app_docs_llms_full_usage_2116",
-      "community": 27,
+      "community": 268,
       "norm_label": "usage"
     },
     {
@@ -57024,7 +57024,7 @@
       "source_location": "L2118",
       "_origin": "ast",
       "id": "app_docs_llms_full_fprogress",
-      "community": 27,
+      "community": 268,
       "norm_label": "`fprogress(...)`"
     },
     {
@@ -59364,7 +59364,7 @@
       "source_location": "L8493",
       "_origin": "ast",
       "id": "app_docs_llms_full_portal",
-      "community": 268,
+      "community": 27,
       "norm_label": "portal"
     },
     {
@@ -59374,7 +59374,7 @@
       "source_location": "L8562",
       "_origin": "ast",
       "id": "app_docs_llms_full_usage_8562",
-      "community": 268,
+      "community": 27,
       "norm_label": "usage"
     },
     {
@@ -59384,7 +59384,7 @@
       "source_location": "L8564",
       "_origin": "ast",
       "id": "app_docs_llms_full_fportal",
-      "community": 268,
+      "community": 27,
       "norm_label": "`fportal(...)`"
     },
     {
@@ -59394,7 +59394,7 @@
       "source_location": "L8589",
       "_origin": "ast",
       "id": "app_docs_llms_full_visualization",
-      "community": 268,
+      "community": 27,
       "norm_label": "visualization"
     },
     {
@@ -64578,20 +64578,20 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "app/android/app/src/main/kotlin/com/example/fitness_training/MainActivity.kt",
+      "source_file": "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt",
       "source_location": "L5",
       "weight": 1.0,
-      "source": "app_android_app_src_main_kotlin_com_example_fitness_training_mainactivity",
-      "target": "app_android_app_src_main_kotlin_com_example_fitness_training_mainactivity_mainactivity",
+      "source": "app_android_app_src_main_kotlin_com_repforge_app_mainactivity",
+      "target": "app_android_app_src_main_kotlin_com_repforge_app_mainactivity_mainactivity",
       "confidence_score": 1.0
     },
     {
       "relation": "inherits",
       "confidence": "EXTRACTED",
-      "source_file": "app/android/app/src/main/kotlin/com/example/fitness_training/MainActivity.kt",
+      "source_file": "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt",
       "source_location": "L5",
       "weight": 1.0,
-      "source": "app_android_app_src_main_kotlin_com_example_fitness_training_mainactivity_mainactivity",
+      "source": "app_android_app_src_main_kotlin_com_repforge_app_mainactivity_mainactivity",
       "target": "flutteractivity",
       "confidence_score": 1.0
     },
