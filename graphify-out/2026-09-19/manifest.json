@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/flutter_build/60b41075d1a72c3c272f4d1befbc8892/dart_build_result.json": {
-    "mtime": 1789414425.4679136,
-    "ast_hash": "ae1082fa2e1a0b54009b6e8890b62659",
+    "mtime": 1789828898.8402207,
+    "ast_hash": "0f97c63e8d2385284bd7e201cd5f6dad",
     "semantic_hash": ""
   },
   "app/.dart_tool/flutter_build/60b41075d1a72c3c272f4d1befbc8892/gen_l10n_inputs_and_outputs.json": {
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/flutter_build/60b41075d1a72c3c272f4d1befbc8892/outputs.json": {
-    "mtime": 1789419717.3818204,
+    "mtime": 1789828904.0600178,
     "ast_hash": "86f68f157d948f34bfab59ec9c01857d",
     "semantic_hash": ""
   },
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/dependencies.dependencies_hash_file.json": {
-    "mtime": 1789414467.6542313,
-    "ast_hash": "3fdc47761adcfc52241a2b29494598a5",
+    "mtime": 1789828898.8241131,
+    "ast_hash": "9dd7c61bb9d57a733c3d7e9f86af738b",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/hook.dependencies_hash_file.json": {
@@ -215,13 +215,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/input.json": {
-    "mtime": 1789414467.5099802,
+    "mtime": 1789828898.583084,
     "ast_hash": "58c60664c3b1ffa81796c4df176ba9b0",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/output.json": {
-    "mtime": 1789414467.622754,
-    "ast_hash": "673bb694ede2dc2a0647a29e94227961",
+    "mtime": 1789828898.777676,
+    "ast_hash": "57fb7cda7a4186e2f74248cee6e6cefd",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/ea0071a574/dependencies.dependencies_hash_file.json": {
@@ -265,18 +265,13 @@
     "semantic_hash": ""
   },
   "app/android/app/build.gradle.kts": {
-    "mtime": 1789063835.4412982,
-    "ast_hash": "3b9a0cd7114417431049dfb6b61b014f",
+    "mtime": 1789828595.5789797,
+    "ast_hash": "c5e2b9334965963764ce1fa3ed2a8bac",
     "semantic_hash": ""
   },
   "app/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java": {
     "mtime": 1789423146.0776587,
     "ast_hash": "3342038d6289466e1ec40739b3d0637e",
-    "semantic_hash": ""
-  },
-  "app/android/app/src/main/kotlin/com/example/fitness_training/MainActivity.kt": {
-    "mtime": 1789063835.4419997,
-    "ast_hash": "2b17601cfca76354e49edcb7b705a560",
     "semantic_hash": ""
   },
   "app/android/build.gradle.kts": {
@@ -400,12 +395,12 @@
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations.dart": {
-    "mtime": 1789421325.3216422,
+    "mtime": 1789828873.1713893,
     "ast_hash": "99abe1ecbe97a99c3d2870a3bddeb670",
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations_en.dart": {
-    "mtime": 1789421325.3193445,
+    "mtime": 1789828873.167661,
     "ast_hash": "0abb73361a1a96126a3fe41ed7fdbe93",
     "semantic_hash": ""
   },
@@ -1405,8 +1400,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contact_detail_screen.dart": {
-    "mtime": 1789423139.8041606,
-    "ast_hash": "3aeefaa6e2ff1a7588c1e98083f0998b",
+    "mtime": 1789829639.7355115,
+    "ast_hash": "2cf6af86bbceb4168cf4deed891c0cd7",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contacts_screen.dart": {
@@ -2400,8 +2395,8 @@
     "semantic_hash": ""
   },
   "service/app/crud/workout_appointment.py": {
-    "mtime": 1789063733.4881506,
-    "ast_hash": "0d8357bfbb102c0ddfc620077199d42c",
+    "mtime": 1789829637.156526,
+    "ast_hash": "7a804ca057810238f99024d9b83d1c47",
     "semantic_hash": ""
   },
   "service/app/crud/workout_sessions.py": {
@@ -2750,13 +2745,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/stderr.txt": {
-    "mtime": 1789414467.5113358,
+    "mtime": 1789828898.5849254,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/stdout.txt": {
-    "mtime": 1789414467.5126,
-    "ast_hash": "81b4d5ed9c5ccd9bcbdc8af706aba213",
+    "mtime": 1789828898.5863495,
+    "ast_hash": "94fdfe5b87c8a797c17c0c5112cc7205",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/ea0071a574/stderr.txt": {
@@ -2815,8 +2810,8 @@
     "semantic_hash": ""
   },
   "app/linux/CMakeLists.txt": {
-    "mtime": 1789063835.5526888,
-    "ast_hash": "6db00a8c020814df4dc51509294eb6b2",
+    "mtime": 1789828595.5796373,
+    "ast_hash": "3a84204bf816a54a844e6a5176287c5e",
     "semantic_hash": ""
   },
   "app/linux/flutter/CMakeLists.txt": {
@@ -3412,6 +3407,11 @@
   "app/assets/video/lsec.mp4": {
     "mtime": 1789063835.522524,
     "ast_hash": "73b62a806b24daf7a1134965732749d5",
+    "semantic_hash": ""
+  },
+  "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt": {
+    "mtime": 1789828595.6014388,
+    "ast_hash": "3bc6161254795373eed1aa4c21f2be29",
     "semantic_hash": ""
   }
 }

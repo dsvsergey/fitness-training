@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import 'contact_actions_menu.dart';
 import 'user_avatar_widget.dart';
 
 class ListContactsWidget extends StatelessWidget {
@@ -50,44 +51,10 @@ class ListContactsWidget extends StatelessWidget {
           ),
         ),
         suffix: (onEdit != null || onDelete != null)
-            ? PopupMenuButton<_Action>(
-                icon: const Icon(Icons.more_vert, size: 20),
-                onSelected: (action) {
-                  if (action == _Action.edit) onEdit?.call();
-                  if (action == _Action.delete) onDelete?.call();
-                },
-                itemBuilder: (_) => [
-                  if (onEdit != null)
-                    const PopupMenuItem(
-                      value: _Action.edit,
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, size: 18),
-                          SizedBox(width: 10),
-                          Text('Edit'),
-                        ],
-                      ),
-                    ),
-                  if (onDelete != null)
-                    const PopupMenuItem(
-                      value: _Action.delete,
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete_outline,
-                              size: 18, color: Color(0xFFD32F2F)),
-                          SizedBox(width: 10),
-                          Text('Delete',
-                              style: TextStyle(color: Color(0xFFD32F2F))),
-                        ],
-                      ),
-                    ),
-                ],
-              )
+            ? ContactActionsMenu(onEdit: onEdit, onDelete: onDelete)
             : const Icon(FIcons.chevronRight),
         onPress: onTap,
       ),
     );
   }
 }
-
-enum _Action { edit, delete }

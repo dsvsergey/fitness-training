@@ -53,11 +53,15 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           ? ListBuilder<int>([coach!.id!])
           : ListBuilder<int>();
       // Look back a year for recent completed trainings with this client.
-      final startDate = DateTime.now().subtract(const Duration(days: 365));
+      // endDate is required: without it the backend returns only the single
+      // day of startDate.
+      final now = DateTime.now();
+      final startDate = now.subtract(const Duration(days: 365));
       final result = await GetIt.I<WorkoutAppointmentUsecase>()
           .getAllWorkoutAppointments(
         filter: WorkoutAppointmentFilterEntity((p) => p
           ..startDate = startDate.toString()
+          ..endDate = now.toString()
           ..coachIds = coachIds),
       );
       final mine = (result.appointments ?? const <WorkoutAppointmentEntity>[])
