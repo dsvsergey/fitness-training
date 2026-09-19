@@ -2,55 +2,100 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import 'contact_actions_menu.dart';
 import 'user_avatar_widget.dart';
 
+/// Contact card used in the tablet grid layout.
 class GridContactsWidget extends StatelessWidget {
   const GridContactsWidget({
     super.key,
     required this.model,
     required this.onTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   final TraineeEntity model;
   final VoidCallback onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
-    final avatarSize = isPortrait ? 72.0 : 96.0;
+    final colors = context.theme.colors;
+    final typography = context.theme.typography;
 
     final initials = model.fullName
         .split(' ')
-        .map((w) => w.isNotEmpty ? w[0] : '')
+        .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '')
         .take(2)
         .join();
 
-    final avatar = UserAvatarWidget(
-      photoUrl: model.photoUrl,
-      initials: initials,
-      size: avatarSize,
-      textStyle: context.theme.typography.lg
-          .copyWith(fontWeight: FontWeight.bold),
-    );
+    final stats = [
+      if (model.weight != null) '${_format(model.weight!)} kg',
+      if (model.height != null) '${_format(model.height!)} cm',
+    ].join(' · ');
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          avatar,
-          const SizedBox(height: 8),
-          Text(
-            model.fullName,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            style: context.theme.typography.sm
-                .copyWith(fontWeight: FontWeight.w500),
-          ),
-        ],
+    return Material(
+      color: colors.background,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: colors.border),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 20, 12, 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  UserAvatarWidget(
+                    photoUrl: model.photoUrl,
+                    initials: initials,
+                    size: 72,
+                    textStyle: typography.lg
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    model.fullName,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: typography.md.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colors.foreground,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    stats.isEmpty ? 'No body metrics' : stats,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: typography.xs.copyWith(
+                      color: colors.mutedForeground,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onEdit != null || onDelete != null)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: ContactActionsMenu(onEdit: onEdit, onDelete: onDelete),
+              ),
+          ],
+        ),
       ),
     );
   }
+
+  static String _format(double v) =>
+      v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(1);
 }

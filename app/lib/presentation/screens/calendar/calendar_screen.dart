@@ -7,8 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
-import '../../widgets/grid_calendar_widget.dart';
-import '../../widgets/list_calendar_widget.dart';
+import '../../widgets/appointment_card_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
 import 'bloc/calendar_bloc.dart';
 
@@ -64,6 +63,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       : DateFormat.EEEE().format(selected);
                   final subtitle = DateFormat.yMMMMd().format(selected);
 
+                  final appointments = state is CalendarFilteredSuccess
+                      ? state.appointmentsFilteredList
+                      : const <WorkoutAppointmentEntity>[];
+                  final done = appointments
+                      .where((a) =>
+                          a.status == AppointmentStatusEnumEntity.completed)
+                      .length;
+                  final summary = state is CalendarFilteredSuccess ||
+                          state is CalendarEmptySuccess
+                      ? '${appointments.length} '
+                          '${appointments.length == 1 ? 'session' : 'sessions'}'
+                          '${appointments.isEmpty ? '' : ' · $done done'}'
+                      : null;
+
                   return Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 16),
                     child: Row(
@@ -71,17 +84,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
                                 headline,
-                                style: context.theme.typography.xl.copyWith(
+                                style: context.theme.typography.xl2.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: context.theme.colors.foreground,
                                 ),
                               ),
                               Text(
-                                subtitle,
+                                summary == null
+                                    ? subtitle
+                                    : '$subtitle  ·  $summary',
                                 style: context.theme.typography.sm.copyWith(
                                   color: context.theme.colors.mutedForeground,
                                 ),
@@ -89,10 +103,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ],
                           ),
                         ),
+                        if (!isToday)
+                          TextButton(
+                            onPressed: () => _selectDay(context, today),
+                            child: Text(
+                              'Today',
+                              style: TextStyle(
+                                color: context.theme.colors.foreground,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         IconButton(
+                          tooltip: 'Previous day',
+                          icon: const Icon(FIcons.chevronLeft),
+                          onPressed: () => _selectDay(
+                            context,
+                            selected.subtract(const Duration(days: 1)),
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Next day',
+                          icon: const Icon(FIcons.chevronRight),
+                          onPressed: () => _selectDay(
+                            context,
+                            selected.add(const Duration(days: 1)),
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Pick a date',
                           icon: Icon(
                             FIcons.calendar,
-                            size: isTablet ? 28 : 22,
+                            size: isTablet ? 26 : 22,
                             color: context.theme.colors.foreground,
                           ),
                           onPressed: () {
@@ -104,12 +146,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   ),
                                 )
                                 .then((value) {
-                                  if (value is DateTime) {
-                                    BlocProvider.of<CalendarBloc>(context).add(
-                                      FilterListAppointments(
-                                        selectedDay: value,
-                                      ),
-                                    );
+                                  if (value is DateTime && context.mounted) {
+                                    _selectDay(context, value);
                                   }
                                 });
                           },
@@ -125,42 +163,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 child: BlocBuilder<CalendarBloc, CalendarState>(
                   builder: (context, state) {
                     if (state is CalendarFilteredSuccess) {
+                      final items = [...state.appointmentsFilteredList]
+                        ..sort((a, b) => a.startAt.compareTo(b.startAt));
+                      Widget card(BuildContext context, int index) =>
+                          AppointmentCardWidget(
+                            appointment: items[index],
+                            onTap: () => _openAppointment(
+                              context,
+                              items[index],
+                              isGrid: isTablet,
+                            ),
+                          );
+
                       return isTablet
                           ? GridView.builder(
-                              keyboardDismissBehavior:
-                                  ScrollViewKeyboardDismissBehavior.onDrag,
-                              itemCount: state.appointmentsFilteredList.length,
+                              padding: const EdgeInsets.only(bottom: 24),
+                              itemCount: items.length,
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: isPortrait ? 3 : 4,
-                                    mainAxisSpacing: 0,
-                                    crossAxisSpacing: 0,
+                                    crossAxisCount: isPortrait ? 2 : 3,
+                                    mainAxisExtent: 104,
+                                    mainAxisSpacing: 12,
+                                    crossAxisSpacing: 12,
                                   ),
-                              itemBuilder: (context, index) =>
-                                  GridCalendarWidget(
-                                    onTap: () => _openAppointment(
-                                      context,
-                                      state.appointmentsFilteredList[index],
-                                      isGrid: true,
-                                    ),
-                                    appointment:
-                                        state.appointmentsFilteredList[index],
-                                  ),
+                              itemBuilder: card,
                             )
-                          : ListView.builder(
-                              keyboardDismissBehavior:
-                                  ScrollViewKeyboardDismissBehavior.onDrag,
-                              itemCount: state.appointmentsFilteredList.length,
-                              itemBuilder: (context, index) =>
-                                  ListCalendarWidget(
-                                    onTap: () => _openAppointment(
-                                      context,
-                                      state.appointmentsFilteredList[index],
-                                      isGrid: false,
-                                    ),
-                                    appointment:
-                                        state.appointmentsFilteredList[index],
-                                  ),
+                          : ListView.separated(
+                              padding: const EdgeInsets.only(bottom: 24),
+                              itemCount: items.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: card,
                             );
                     }
 
@@ -176,7 +209,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No trainings yet',
+                              'No trainings on this day',
                               style: context.theme.typography.lg.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: context.theme.colors.foreground,
@@ -184,7 +217,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              'Completed trainings will appear here',
+                              'Use the arrows or calendar to pick another day',
                               style: context.theme.typography.sm.copyWith(
                                 color: context.theme.colors.mutedForeground,
                               ),
@@ -212,7 +245,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                             const SizedBox(height: 24),
                             FButton(
-                              onPress: () {},
+                              onPress: () => _selectDay(
+                                context,
+                                state.selectedDay ?? DateTime.now(),
+                              ),
                               variant: FButtonVariant.outline,
                               child: const Text('Try again'),
                             ),
@@ -228,6 +264,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _selectDay(BuildContext context, DateTime day) {
+    BlocProvider.of<CalendarBloc>(context).add(
+      FilterListAppointments(
+        selectedDay: DateTime(day.year, day.month, day.day),
       ),
     );
   }

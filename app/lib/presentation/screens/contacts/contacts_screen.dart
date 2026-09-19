@@ -227,14 +227,16 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     if (isTablet) {
                       return GridView.builder(
                         controller: _scrollController,
-                        padding: const EdgeInsets.only(top: 72),
+                        padding: const EdgeInsets.only(top: 80, bottom: 96),
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
-                        shrinkWrap: true,
                         itemCount: itemCount,
                         gridDelegate:
                             SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: isPortrait ? 3 : 4,
+                          mainAxisExtent: 196,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
                         ),
                         itemBuilder: (context, index) {
                           if (index < clients.length) {
@@ -242,6 +244,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
                               model: clients[index],
                               onTap: () =>
                                   _openClient(context, clients[index]),
+                              onEdit: () => _showTraineeForm(context,
+                                  trainee: clients[index]),
+                              onDelete: () =>
+                                  _confirmDelete(context, clients[index]),
                             );
                           }
                           return const Center(child: FCircularProgress());
