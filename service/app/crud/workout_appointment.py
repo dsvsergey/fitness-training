@@ -135,7 +135,14 @@ def get_filter_workout_appointments(
         start_date = parse_datetime(filter.start_date).replace(
             hour=0, minute=0, second=0, microsecond=0
         )
-        end_start_date = start_date + timedelta(days=1)
+        # Without end_date the filter selects the single day of start_date
+        # (calendar view); with it, the inclusive day range start..end.
+        if filter.end_date:
+            end_start_date = parse_datetime(filter.end_date).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            ) + timedelta(days=1)
+        else:
+            end_start_date = start_date + timedelta(days=1)
 
         query = query.filter(
             and_(
