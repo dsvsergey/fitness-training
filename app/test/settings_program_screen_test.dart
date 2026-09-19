@@ -123,41 +123,78 @@ void main() {
     expect(applicationBloc.state.currentAppointment, isNull);
   }
 
-  group('timer / metronome buttons', () {
-  testWidgets(
-    'metronome button is enabled without any calendar appointment',
-    (tester) async {
+  group('timer button', () {
+    testWidgets('metronome button is gone', (tester) async {
       register(_programMachine([_session()]));
       await _pumpScreen(tester);
 
-      // No ApplicationBloc is registered at all, so there is definitively no
-      // current appointment. The metronome must still be tappable.
-      expect(_cardTitled(tester, 'Metronome').onPressed, isNotNull);
-    },
-  );
+      expect(find.text('Metronome'), findsNothing);
+    });
 
-  testWidgets(
-    'timer button is enabled for an unfinished session, no appointment needed',
-    (tester) async {
+    testWidgets(
+      'timer button is enabled for an unfinished session, no appointment needed',
+      (tester) async {
+        register(_programMachine([_session()]));
+        await _pumpScreen(tester);
+
+        expect(_cardTitled(tester, 'Timer').onPressed, isNotNull);
+      },
+    );
+
+    testWidgets(
+      'timer button is disabled when every session is already finished',
+      (tester) async {
+        register(
+            _programMachine([_session(dateSession: DateTime(2026, 5, 1))]));
+        await _pumpScreen(tester);
+
+        expect(_cardTitled(tester, 'Timer').onPressed, isNull);
+      },
+    );
+  });
+
+  group('note', () {
+    // Opening the keyboard changes MediaQuery and rebuilds the whole screen.
+    // The note used to be reset from the saved value on every such rebuild,
+    // wiping what the coach had typed and hiding the Save button.
+    testWidgets('typed text survives a keyboard-driven rebuild',
+        (tester) async {
       register(_programMachine([_session()]));
       await _pumpScreen(tester);
 
-      expect(_cardTitled(tester, 'Timer').onPressed, isNotNull);
-    },
-  );
+      await tester.enterText(find.byType(TextField), 'Slow eccentric');
+      await tester.pump();
+      expect(find.text('Save'), findsOneWidget);
 
-  testWidgets(
-    'timer button is disabled when every session is already finished',
-    (tester) async {
-      register(_programMachine([_session(dateSession: DateTime(2026, 5, 1))]));
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pump();
+
+      expect(find.text('Slow eccentric'), findsOneWidget);
+      expect(find.text('Save'), findsOneWidget);
+    });
+  });
+
+  group('phone settings values', () {
+    testWidgets('each label shows its own field', (tester) async {
+      register(ProgramMachineEntity((b) => b
+        ..id = 5
+        ..machineId = 7
+        ..programId = 3
+        ..handle = '11'
+        ..pin = 12
+        ..knees = '21'
+        ..legs = '22'
+        ..angal = '23'
+        ..chest = '24'
+        ..machine = _machine.toBuilder()
+        ..workouts = ListBuilder<WorkoutSessionEntity>([_session()])));
       await _pumpScreen(tester);
 
-      expect(_cardTitled(tester, 'Timer').onPressed, isNull);
-
-      // The metronome carries no such data dependency.
-      expect(_cardTitled(tester, 'Metronome').onPressed, isNotNull);
-    },
-  );
+      for (final v in ['21', '22', '23', '24']) {
+        expect(find.text(v), findsOneWidget, reason: 'value $v');
+      }
+    });
   });
 
   group('weight row', () {

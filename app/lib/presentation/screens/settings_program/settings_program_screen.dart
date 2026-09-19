@@ -21,17 +21,19 @@ import "../../utils/dialogs_utils.dart";
 import "../../widgets/button_widget.dart";
 import "../../widgets/custom_timer_widget.dart";
 import "../../widgets/history_widget.dart";
-import "../../widgets/machine_feature_widget.dart";
-import "../metronome/metronome_controls.dart";
 import "bloc/settings_program_bloc.dart";
+import "widgets/program_note_card.dart";
 
 @RoutePage()
 class SettingsProgramScreen extends StatefulWidget {
   final ProgramFitnessEntity program;
   final MachineEntity machine;
 
-  const SettingsProgramScreen(
-      {super.key, required this.program, required this.machine});
+  const SettingsProgramScreen({
+    super.key,
+    required this.program,
+    required this.machine,
+  });
 
   @override
   State<SettingsProgramScreen> createState() => _SettingsProgramScreenState();
@@ -39,9 +41,6 @@ class SettingsProgramScreen extends StatefulWidget {
 
 class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
   dynamic currentTime = DateFormat.jm().format(DateTime.now());
-  int _currentTabIndex = 0;
-  final _hasChanges = ValueNotifier<bool>(false);
-  final _noteController = TextEditingController();
 
   HistoryTrainihgEntity historyModel = HistoryTrainihgEntity(
     weight: 20,
@@ -55,16 +54,10 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
   /// The timer writes its result into an unfinished workout session, so it
   /// needs one to exist. It deliberately does not depend on a calendar
   /// appointment: a coach can start training straight from a client.
-  WorkoutSessionEntity? _pendingSession(SettingsProgramState state) =>
-      state.programMachine?.workouts
-          .firstWhereOrNull((w) => w.dateSession == null);
-
-  @override
-  void dispose() {
-    _noteController.dispose();
-    _hasChanges.dispose();
-    super.dispose();
-  }
+  WorkoutSessionEntity? _pendingSession(SettingsProgramState state) => state
+      .programMachine
+      ?.workouts
+      .firstWhereOrNull((w) => w.dateSession == null);
 
   void onsive(double tim) {
     setState(() {
@@ -84,15 +77,20 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
 
     return BlocProvider(
       create: (context) => SettingsProgramBloc()
-        ..add(GetMachineSettingEvent(
-            programFitness: widget.program, machine: widget.machine)),
+        ..add(
+          GetMachineSettingEvent(
+            programFitness: widget.program,
+            machine: widget.machine,
+          ),
+        ),
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
             buildWhen: (_, current) => current is LoadedMachineSetting,
             builder: (context, state) {
-              final isEditAvailable = state.programMachine != null &&
+              final isEditAvailable =
+                  state.programMachine != null &&
                   (state.programMachine?.angal != null ||
                       state.programMachine?.back != null ||
                       state.programMachine?.chest != null ||
@@ -108,28 +106,40 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                 elevation: 0,
                 scrolledUnderElevation: 0,
                 leading: IconButton(
-                  icon: Icon(FIcons.arrowLeft, color: context.theme.colors.foreground),
+                  icon: Icon(
+                    FIcons.arrowLeft,
+                    color: context.theme.colors.foreground,
+                  ),
                   onPressed: () => AutoRouter.of(context).pop(),
                 ),
                 actions: [
                   if (isEditAvailable)
                     TextButton(
-                      onPressed: () => DialogUtils.showSettingsDialog(
-                        context: context,
-                        machine: widget.machine,
-                        programMachine: state.programMachine,
-                      ).then((value) {
-                        if (value != null) {
-                          GetIt.I<ProgramMachineUsecase>()
-                              .updateProgramMachine(
-                                  state.programMachine!.id!, value)
-                              .whenComplete(() =>
-                                  BlocProvider.of<SettingsProgramBloc>(context)
-                                      .add(GetMachineSettingEvent(
-                                          machine: widget.machine,
-                                          programFitness: widget.program)));
-                        }
-                      }),
+                      onPressed: () =>
+                          DialogUtils.showSettingsDialog(
+                            context: context,
+                            machine: widget.machine,
+                            programMachine: state.programMachine,
+                          ).then((value) {
+                            if (value != null) {
+                              GetIt.I<ProgramMachineUsecase>()
+                                  .updateProgramMachine(
+                                    state.programMachine!.id!,
+                                    value,
+                                  )
+                                  .whenComplete(
+                                    () =>
+                                        BlocProvider.of<SettingsProgramBloc>(
+                                          context,
+                                        ).add(
+                                          GetMachineSettingEvent(
+                                            machine: widget.machine,
+                                            programFitness: widget.program,
+                                          ),
+                                        ),
+                                  );
+                            }
+                          }),
                       child: Text(
                         AppLocalizations.of(context)!.edit,
                         style: TextStyle(
@@ -146,14 +156,12 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
         body: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
           buildWhen: (_, current) => current is LoadedMachineSetting,
           builder: (context, state) {
-            _noteController.text = state.programMachine?.note ?? '';
-            _hasChanges.value = false;
-
             final title = Text(
               '${AppLocalizations.of(context)!.settingsFor} ${widget.machine.name}',
               textAlign: TextAlign.center,
-              style: context.theme.typography.xl2
-                  .copyWith(fontWeight: FontWeight.w800),
+              style: context.theme.typography.xl2.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
             );
 
             if (state.programMachine?.workouts.isEmpty ?? true) {
@@ -162,21 +170,28 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                   SizedBox(width: double.infinity, child: title),
                   SizedBox(height: isTablet ? 100 : 20),
                   GestureDetector(
-                    onTap: () => DialogUtils.showSettingsDialog(
-                      context: context,
-                      machine: widget.machine,
-                      programMachine: state.programMachine,
-                    ).then((value) {
-                      if (value != null) {
-                        GetIt.I<ProgramMachineUsecase>()
-                            .updateProgramMachine(value.id!, value)
-                            .whenComplete(() =>
-                                BlocProvider.of<SettingsProgramBloc>(context)
-                                    .add(GetMachineSettingEvent(
-                                        programFitness: widget.program,
-                                        machine: widget.machine)));
-                      }
-                    }),
+                    onTap: () =>
+                        DialogUtils.showSettingsDialog(
+                          context: context,
+                          machine: widget.machine,
+                          programMachine: state.programMachine,
+                        ).then((value) {
+                          if (value != null) {
+                            GetIt.I<ProgramMachineUsecase>()
+                                .updateProgramMachine(value.id!, value)
+                                .whenComplete(
+                                  () =>
+                                      BlocProvider.of<SettingsProgramBloc>(
+                                        context,
+                                      ).add(
+                                        GetMachineSettingEvent(
+                                          programFitness: widget.program,
+                                          machine: widget.machine,
+                                        ),
+                                      ),
+                                );
+                          }
+                        }),
                     child: SvgPicture.asset(
                       'assets/svgs/settings_program.svg',
                       width: isTablet ? 250 : 200,
@@ -198,241 +213,131 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
               );
             }
 
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  title,
-                  isTablet
-                      ? LayoutBuilder(
-                          builder: (context, constraints) => SizedBox(
-                            width: constraints.maxWidth,
-                            child: machineSettingEntityPanelTablet(
-                                state.programMachine!),
+            final programMachine = state.programMachine!;
+            final notes = ProgramNoteCard(
+              savedNote: programMachine.note,
+              onSave: (note) => _saveNote(context, programMachine, note),
+            );
+            final history = _historyCard(context, programMachine, isTablet);
+
+            final hPad = isTablet ? 32.0 : 12.0;
+            final timer =
+                BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
+                  builder: (context, state) => CustomTimerWidget(
+                    title: AppLocalizations.of(context)!.timer,
+                    image: AppSvgs.timer,
+                    onPressed: _pendingSession(state) != null
+                        ? () => onTimerButtonPressed(context, state)
+                        : null,
+                  ),
+                );
+
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        title,
+                        SizedBox(height: isTablet ? 24 : 8),
+                        if (isTablet) ...[
+                          _settingsCard(programMachine),
+                          const SizedBox(height: 16),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              timer,
+                              const SizedBox(width: 16),
+                              Expanded(child: notes),
+                            ],
                           ),
-                        )
-                      : machineSettingEntityPanelMobile(
-                          state.programMachine!),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: isTablet ? 30 : 10),
-                    child: DefaultTabController(
-                      length: 2,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            TabBar(
-                              onTap: (value) =>
-                                  setState(() => _currentTabIndex = value),
-                              tabAlignment: TabAlignment.start,
-                              labelColor:
-                                  context.theme.colors.foreground,
-                              unselectedLabelColor:
-                                  context.theme.colors.mutedForeground,
-                              indicatorColor: Colors.transparent,
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              labelPadding: const EdgeInsets.all(10),
-                              dividerColor: Colors.transparent,
-                              isScrollable: true,
-                              tabs: [
-                                Tab(
-                                  height: 44,
-                                  child: Text(
-                                    AppLocalizations.of(context)!.history,
-                                    style: context.theme.typography.lg
-                                        .copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: _currentTabIndex == 0
-                                          ? context.theme.colors.foreground
-                                          : context.theme.colors
-                                              .mutedForeground,
-                                    ),
-                                  ),
-                                ),
-                                Tab(
-                                  height: 44,
-                                  child: Text(
-                                    AppLocalizations.of(context)!.note,
-                                    style: context.theme.typography.lg
-                                        .copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: _currentTabIndex == 1
-                                          ? context.theme.colors.foreground
-                                          : context.theme.colors
-                                              .mutedForeground,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 340,
-                              child: TabBarView(
-                                children: [
-                                  // ── History tab ──────────────────
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Table(
-                                          columnWidths: const {
-                                            0: FractionColumnWidth(.42),
-                                            1: FractionColumnWidth(.28),
-                                            2: FractionColumnWidth(.30),
-                                          },
-                                          children: [
-                                            TableRow(
-                                              children: [
-                                                _headerCell(context,
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .date,
-                                                    isTablet),
-                                                _headerCell(context,
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .weight,
-                                                    isTablet),
-                                                _headerCell(context,
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .time,
-                                                    isTablet),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: SingleChildScrollView(
-                                          child: HistoryWidget(
-                                              programMachine:
-                                                  state.programMachine),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  // ── Notes tab ────────────────────
-                                  Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Expanded(
-                                          child: TextField(
-                                            controller: _noteController,
-                                            maxLines: null,
-                                            expands: true,
-                                            textAlignVertical:
-                                                TextAlignVertical.top,
-                                            onChanged: (_) =>
-                                                _hasChanges.value = true,
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText: AppLocalizations.of(
-                                                      context)!
-                                                  .noteHint,
-                                              hintStyle: TextStyle(
-                                                  color: context.theme.colors
-                                                      .mutedForeground),
-                                            ),
-                                          ),
-                                        ),
-                                        ValueListenableBuilder<bool>(
-                                          valueListenable: _hasChanges,
-                                          builder: (context, hasChanges, _) {
-                                            if (!hasChanges) {
-                                              return const SizedBox.shrink();
-                                            }
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 8),
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: FButton(
-                                                      onPress: () {
-                                                        _noteController.text =
-                                                            state.programMachine
-                                                                    ?.note ??
-                                                                '';
-                                                        _hasChanges.value =
-                                                            false;
-                                                      },
-                                                      variant: FButtonVariant
-                                                          .outline,
-                                                      child: const Text(
-                                                          'Cancel'),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Expanded(
-                                                    child: FButton(
-                                                      onPress: () {
-                                                        GetIt.I<
-                                                                ProgramMachineUsecase>()
-                                                            .updateProgramMachine(
-                                                              state
-                                                                  .programMachine!
-                                                                  .id!,
-                                                              state
-                                                                  .programMachine!
-                                                                  .rebuild((p0) =>
-                                                                      p0..note =
-                                                                          _noteController
-                                                                              .text),
-                                                            )
-                                                            .then((_) {
-                                                          context
-                                                              .read<
-                                                                  SettingsProgramBloc>()
-                                                              .add(GetMachineSettingEvent(
-                                                                  programFitness:
-                                                                      widget
-                                                                          .program,
-                                                                  machine: widget
-                                                                      .machine));
-                                                          _hasChanges.value =
-                                                              false;
-                                                        });
-                                                      },
-                                                      child: const Text('Save'),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20),
-                              child: ButtonWidget(
-                                onPressed: () =>
-                                    AutoRouter.of(context).pop(),
-                                title: AppLocalizations.of(context)!.next,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
-                      ),
+                          const SizedBox(height: 16),
+                          history,
+                        ] else ...[
+                          machineSettingEntityPanelMobile(programMachine),
+                          const SizedBox(height: 16),
+                          notes,
+                          const SizedBox(height: 16),
+                          history,
+                        ],
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(hPad, 8, hPad, 16),
+                  child: ButtonWidget(
+                    onPressed: () => AutoRouter.of(context).pop(),
+                    title: AppLocalizations.of(context)!.next,
+                  ),
+                ),
+              ],
             );
           },
         ),
+      ),
+    );
+  }
+
+  Future<void> _saveNote(
+    BuildContext context,
+    ProgramMachineEntity programMachine,
+    String note,
+  ) async {
+    await GetIt.I<ProgramMachineUsecase>().updateProgramMachine(
+      programMachine.id!,
+      programMachine.rebuild((b) => b..note = note),
+    );
+    if (!context.mounted) return;
+    context.read<SettingsProgramBloc>().add(
+      GetMachineSettingEvent(
+        programFitness: widget.program,
+        machine: widget.machine,
+      ),
+    );
+  }
+
+  Widget _historyCard(
+    BuildContext context,
+    ProgramMachineEntity programMachine,
+    bool isTablet,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    return FCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.history,
+            style: context.theme.typography.lg.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Table(
+              columnWidths: const {
+                0: FractionColumnWidth(.42),
+                1: FractionColumnWidth(.28),
+                2: FractionColumnWidth(.30),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    _headerCell(context, l10n.date, isTablet),
+                    _headerCell(context, l10n.weight, isTablet),
+                    _headerCell(context, l10n.time, isTablet),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          HistoryWidget(programMachine: programMachine),
+        ],
       ),
     );
   }
@@ -442,20 +347,21 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Text(
           text,
-          style: isTablet
-              ? context.theme.typography.xl2
-                  .copyWith(fontWeight: FontWeight.w500)
-              : context.theme.typography.md
-                  .copyWith(fontWeight: FontWeight.w500),
+          style:
+              (isTablet
+                      ? context.theme.typography.lg
+                      : context.theme.typography.sm)
+                  .copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.theme.colors.mutedForeground,
+                  ),
         ),
       );
 
   Widget machineSettingEntityPanelMobile(ProgramMachineEntity programMachine) {
     final isTablet = MediaQuery.of(context).size.width > 600;
     return Padding(
-      padding: isTablet
-          ? const EdgeInsets.all(20)
-          : const EdgeInsets.all(8),
+      padding: isTablet ? const EdgeInsets.all(20) : const EdgeInsets.all(8),
       child: Column(
         children: [
           const SizedBox(height: 20),
@@ -475,16 +381,16 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
           const SizedBox(height: 10),
           WorkoutSettingsWidget(
             textOne: AppLocalizations.of(context)!.knees,
-            textProgramOne: programMachine.handle?.toString() ?? '',
+            textProgramOne: programMachine.knees ?? '',
             textTwo: AppLocalizations.of(context)!.feet,
-            textProgramTwo: programMachine.pin?.toString() ?? '',
+            textProgramTwo: programMachine.legs ?? '',
           ),
           const SizedBox(height: 10),
           WorkoutSettingsWidget(
             textOne: AppLocalizations.of(context)!.angle,
-            textProgramOne: programMachine.handle?.toString() ?? '',
+            textProgramOne: programMachine.angal ?? '',
             textTwo: AppLocalizations.of(context)!.chest,
-            textProgramTwo: programMachine.pin?.toString() ?? '',
+            textProgramTwo: programMachine.chest ?? '',
           ),
           const SizedBox(height: 10),
           WorkoutSettingsWidget(
@@ -502,11 +408,7 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                   width: 220,
                   child: Row(
                     children: [
-                      SvgPicture.asset(
-                        AppSvgs.weight,
-                        height: 18,
-                        width: 20,
-                      ),
+                      SvgPicture.asset(AppSvgs.weight, height: 18, width: 20),
                       const SizedBox(width: 10),
                       Text(
                         AppLocalizations.of(context)!.weightLb,
@@ -520,9 +422,11 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                         // which does not imply a *planned* session exists, so
                         // this lookup has to tolerate finding nothing.
                         programMachine.workouts
-                                .firstWhereOrNull((w) =>
-                                    w.sessionStatus ==
-                                    SessionStatusEnumEntity.planned)
+                                .firstWhereOrNull(
+                                  (w) =>
+                                      w.sessionStatus ==
+                                      SessionStatusEnumEntity.planned,
+                                )
                                 ?.weight
                                 ?.toString() ??
                             '',
@@ -538,32 +442,14 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Flexible(
-                  child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
-                    builder: (context, state) => CustomTimerWidget(
-                      title: AppLocalizations.of(context)!.timer,
-                      image: AppSvgs.timer,
-                      onPressed: _pendingSession(state) != null
-                          ? () => onTimerButtonPressed(context, state)
-                          : null,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Flexible(
-                  child: CustomTimerWidget(
-                    title: AppLocalizations.of(context)!.metronome,
-                    image: AppSvgs.metronom,
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const MetronomeControl(),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
+              builder: (context, state) => CustomTimerWidget(
+                title: AppLocalizations.of(context)!.timer,
+                image: AppSvgs.timer,
+                onPressed: _pendingSession(state) != null
+                    ? () => onTimerButtonPressed(context, state)
+                    : null,
+              ),
             ),
           ),
         ],
@@ -571,162 +457,70 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
     );
   }
 
-  Widget machineSettingEntityPanelTablet(ProgramMachineEntity programMachine) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 40, top: 15, right: 40),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final gridHeight = MediaQuery.of(context).size.height * 0.43;
-          return ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: constraints.maxWidth,
-              minWidth: constraints.maxWidth,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    height: gridHeight,
-                    child: GridView.count(
-                      primary: false,
-                      padding: const EdgeInsets.all(8),
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      crossAxisCount: 3,
-                      childAspectRatio: 1.4,
-                      children: [
-                        if (programMachine.seats != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.seats,
-                            value: programMachine.seats?.toString(),
-                            icon: SvgPicture.asset(AppSvgs.seats,
-                                height: 60, width: 60),
-                          ),
-                        if (programMachine.back != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.back,
-                            value: programMachine.back?.toString(),
-                            icon: Image.asset(AppPngs.body,
-                                width: 60, height: 60),
-                          ),
-                        if (programMachine.pin != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.pin,
-                            value: programMachine.pin?.toString(),
-                            icon: Image.asset(AppPngs.pin,
-                                width: 60, height: 60),
-                          ),
-                        if (programMachine.handle != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.handle,
-                            value: programMachine.handle ?? '',
-                            icon: Image.asset(AppPngs.handle,
-                                width: 60, height: 60),
-                          ),
-                        if (programMachine.knees != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.knees,
-                            value: programMachine.knees ?? '',
-                            icon: SvgPicture.asset(
-                              AppSvgs.knees,
-                              height: 60,
-                              width: 60,
-                              color: context.theme.colors.mutedForeground,
-                            ),
-                          ),
-                        if (programMachine.chest != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.chest,
-                            value: programMachine.chest ?? '',
-                            icon: SvgPicture.asset(
-                              AppSvgs.chest,
-                              height: 60,
-                              width: 60,
-                              color: context.theme.colors.mutedForeground,
-                            ),
-                          ),
-                        if (programMachine.legs != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.feet,
-                            value: programMachine.legs ?? '',
-                            icon: SvgPicture.asset(
-                              AppSvgs.legs,
-                              height: 60,
-                              width: 60,
-                              color: context.theme.colors.mutedForeground,
-                            ),
-                            additionalText: programMachine.forTwoLegs ?? false
-                                ? AppLocalizations.of(context)!.bi
-                                : AppLocalizations.of(context)!.uni,
-                          ),
-                        if (programMachine.thighs != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.thighs,
-                            value: programMachine.thighs ?? '',
-                            icon: SvgPicture.asset(
-                              AppSvgs.thighs,
-                              height: 60,
-                              width: 60,
-                              color: context.theme.colors.mutedForeground,
-                            ),
-                          ),
-                        if (programMachine.grip != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.grip,
-                            value: programMachine.grip?.toString(),
-                            icon: SvgPicture.asset(
-                              AppSvgs.grip,
-                              height: 60,
-                              width: 60,
-                              color: context.theme.colors.mutedForeground,
-                            ),
-                          ),
-                        if (programMachine.angal != null)
-                          MachineFeatureWidget(
-                            label: AppLocalizations.of(context)!.angle,
-                            value: programMachine.angal?.toString(),
-                            icon: SvgPicture.asset(
-                              AppSvgs.angle,
-                              height: 60,
-                              width: 60,
-                              color: context.theme.colors.mutedForeground,
-                            ),
-                          ),
-                      ],
+  Widget _settingsCard(ProgramMachineEntity pm) {
+    final l10n = AppLocalizations.of(context)!;
+    final muted = context.theme.colors.mutedForeground;
+    Widget svg(String asset, {bool tint = true}) => SvgPicture.asset(
+      asset,
+      height: 44,
+      width: 44,
+      colorFilter: tint ? ColorFilter.mode(muted, BlendMode.srcIn) : null,
+    );
+    Widget png(String asset) => Image.asset(asset, height: 44, width: 44);
+
+    final items = <(String, String?, Widget)>[
+      if (pm.seats != null)
+        (l10n.seats, pm.seats?.toString(), svg(AppSvgs.seats, tint: false)),
+      if (pm.back != null) (l10n.back, pm.back?.toString(), png(AppPngs.body)),
+      if (pm.pin != null) (l10n.pin, pm.pin?.toString(), png(AppPngs.pin)),
+      if (pm.handle != null) (l10n.handle, pm.handle, png(AppPngs.handle)),
+      if (pm.knees != null) (l10n.knees, pm.knees, svg(AppSvgs.knees)),
+      if (pm.chest != null) (l10n.chest, pm.chest, svg(AppSvgs.chest)),
+      if (pm.legs != null)
+        (
+          '${l10n.feet} · ${(pm.forTwoLegs ?? false) ? l10n.bi : l10n.uni}',
+          pm.legs,
+          svg(AppSvgs.legs),
+        ),
+      if (pm.thighs != null) (l10n.thighs, pm.thighs, svg(AppSvgs.thighs)),
+      if (pm.grip != null) (l10n.grip, pm.grip, svg(AppSvgs.grip)),
+      if (pm.angal != null) (l10n.angle, pm.angal, svg(AppSvgs.angle)),
+    ];
+
+    return FCard(
+      child: SizedBox(
+        width: double.infinity,
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            for (final (label, value, icon) in items)
+              SizedBox(
+                width: 112,
+                child: Column(
+                  children: [
+                    icon,
+                    const SizedBox(height: 8),
+                    Text(
+                      value ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.theme.typography.xl2.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.theme.typography.sm.copyWith(color: muted),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
-                        builder: (context, state) => CustomTimerWidget(
-                          title: AppLocalizations.of(context)!.timer,
-                          image: AppSvgs.timer,
-                          onPressed: _pendingSession(state) != null
-                              ? () => onTimerButtonPressed(context, state)
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(height: 60),
-                      CustomTimerWidget(
-                        title: AppLocalizations.of(context)!.metronome,
-                        image: AppSvgs.metronom,
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const MetronomeControl(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -741,18 +535,21 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
     if (workoutSession == null || trainerName == null || weight == null) return;
 
     double? value = await context.router.push<double>(
-        StopwatchTimerRoutes(trainerName: trainerName, weight: weight));
+      StopwatchTimerRoutes(trainerName: trainerName, weight: weight),
+    );
 
     if (value != null) {
       final workoutSessionUsecase = GetIt.I<WorkoutSessionUsecase>();
-      final updatedWorkoutSession =
-          await workoutSessionUsecase.updateWorkoutSession(
-        workoutSession.id!,
-        workoutSession.rebuild((p0) => p0
-          ..sessionStatus = SessionStatusEnumEntity.completed
-          ..sessionTime = value.toInt()
-          ..dateSession = _dateWithZeroTime(DateTime.now())),
-      );
+      final updatedWorkoutSession = await workoutSessionUsecase
+          .updateWorkoutSession(
+            workoutSession.id!,
+            workoutSession.rebuild(
+              (p0) => p0
+                ..sessionStatus = SessionStatusEnumEntity.completed
+                ..sessionTime = value.toInt()
+                ..dateSession = _dateWithZeroTime(DateTime.now()),
+            ),
+          );
 
       if (mounted) {
         final nextWeight = await DialogUtils.showNextWeightDialog(
@@ -763,18 +560,24 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
         );
 
         await workoutSessionUsecase.createWorkoutSession(
-          updatedWorkoutSession.rebuild((p0) => p0
-            ..id = null
-            ..dateSession = null
-            ..sessionTime = null
-            ..sessionStatus = SessionStatusEnumEntity.planned
-            ..createdAt = null
-            ..weight = nextWeight ?? updatedWorkoutSession.weight!),
+          updatedWorkoutSession.rebuild(
+            (p0) => p0
+              ..id = null
+              ..dateSession = null
+              ..sessionTime = null
+              ..sessionStatus = SessionStatusEnumEntity.planned
+              ..createdAt = null
+              ..weight = nextWeight ?? updatedWorkoutSession.weight!,
+          ),
         );
 
         // ignore: use_build_context_synchronously
-        context.read<SettingsProgramBloc>().add(GetMachineSettingEvent(
-            machine: widget.machine, programFitness: widget.program));
+        context.read<SettingsProgramBloc>().add(
+          GetMachineSettingEvent(
+            machine: widget.machine,
+            programFitness: widget.program,
+          ),
+        );
       }
     }
   }
