@@ -25,7 +25,7 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/extension_discovery/devtools.json": {
-    "mtime": 1789415268.0890107,
+    "mtime": 1789836696.5086493,
     "ast_hash": "f249001430e01093814680c7fcb5668d",
     "semantic_hash": ""
   },
@@ -50,7 +50,7 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/flutter_build/60b41075d1a72c3c272f4d1befbc8892/outputs.json": {
-    "mtime": 1789828904.0600178,
+    "mtime": 1789837301.3391566,
     "ast_hash": "86f68f157d948f34bfab59ec9c01857d",
     "semantic_hash": ""
   },
@@ -245,13 +245,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/package_config.json": {
-    "mtime": 1789830699.452167,
-    "ast_hash": "c897ab55b26057d2e28652bba14fdd72",
+    "mtime": 1789836596.7653747,
+    "ast_hash": "153b6c0dca486f1021ac1af7a812baf7",
     "semantic_hash": ""
   },
   "app/.dart_tool/package_graph.json": {
-    "mtime": 1789830699.4535358,
-    "ast_hash": "869e4d5a7cbb78b8a90246f10c91cbce",
+    "mtime": 1789836596.7668633,
+    "ast_hash": "4f2afaf95062adb8e8acb7d924a50b38",
     "semantic_hash": ""
   },
   "app/.fvm/fvm_config.json": {
@@ -395,12 +395,12 @@
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations.dart": {
-    "mtime": 1789831231.0613167,
+    "mtime": 1789837287.7823002,
     "ast_hash": "99abe1ecbe97a99c3d2870a3bddeb670",
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations_en.dart": {
-    "mtime": 1789831231.0577312,
+    "mtime": 1789837287.7797654,
     "ast_hash": "0abb73361a1a96126a3fe41ed7fdbe93",
     "semantic_hash": ""
   },
@@ -1375,7 +1375,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/calendar/calendar_screen.dart": {
-    "mtime": 1789831119.1151445,
+    "mtime": 1789836353.6824062,
     "ast_hash": "6d2372044c48046e3e84cf60f01a13ad",
     "semantic_hash": ""
   },
@@ -1400,12 +1400,12 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contact_detail_screen.dart": {
-    "mtime": 1789829639.7355115,
+    "mtime": 1789836353.6829689,
     "ast_hash": "2cf6af86bbceb4168cf4deed891c0cd7",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contacts_screen.dart": {
-    "mtime": 1789830620.4282227,
+    "mtime": 1789836353.683888,
     "ast_hash": "a97548304f6c06cd7a6431e302497cad",
     "semantic_hash": ""
   },
@@ -1470,8 +1470,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/programs/create_program/create_program_screen.dart": {
-    "mtime": 1789063835.5472004,
-    "ast_hash": "84e2a75776130cb50cc3878b5b23e2dd",
+    "mtime": 1789836896.6386626,
+    "ast_hash": "3210306c41b888aca6cf454a40bbff91",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/programs/program_screen/bloc/program_screen_bloc.dart": {
@@ -1545,8 +1545,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/utils/dialogs_utils.dart": {
-    "mtime": 1789063835.5493336,
-    "ast_hash": "b6d700aedb26312d0b03a3579d1babf7",
+    "mtime": 1789837893.672592,
+    "ast_hash": "dd3049e8be24eb317c7491d1483be587",
     "semantic_hash": ""
   },
   "app/lib/presentation/utils/inverted_clipper.dart": {
@@ -1590,7 +1590,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/grid_contacts_widget.dart": {
-    "mtime": 1789831053.8422496,
+    "mtime": 1789836353.6857338,
     "ast_hash": "03c56a1c8b3a6b148402e75044bb4874",
     "semantic_hash": ""
   },
@@ -1605,7 +1605,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/list_contacts_widget.dart": {
-    "mtime": 1789830606.5156338,
+    "mtime": 1789836353.6866302,
     "ast_hash": "a745b155aeff809b2fe401c48b25227b",
     "semantic_hash": ""
   },
@@ -2385,7 +2385,7 @@
     "semantic_hash": ""
   },
   "service/app/crud/workout_appointment.py": {
-    "mtime": 1789829637.156526,
+    "mtime": 1789836353.7279167,
     "ast_hash": "7a804ca057810238f99024d9b83d1c47",
     "semantic_hash": ""
   },
@@ -3445,7 +3445,7 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/flutter_build/4d03a4540965f393413c54d2f196a20b/outputs.json": {
-    "mtime": 1789830100.9064696,
+    "mtime": 1789837909.8056602,
     "ast_hash": "86f68f157d948f34bfab59ec9c01857d",
     "semantic_hash": ""
   },
@@ -3530,12 +3530,12 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/appointment_card_widget.dart": {
-    "mtime": 1789831229.2849429,
+    "mtime": 1789836353.6848183,
     "ast_hash": "b167e80461601cb73e9dd8f578d03f35",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/contact_actions_menu.dart": {
-    "mtime": 1789830604.0299764,
+    "mtime": 1789836353.6853063,
     "ast_hash": "d35f87b9fbe34914fb79254e29c79020",
     "semantic_hash": ""
   },

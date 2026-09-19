@@ -205,23 +205,23 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/dependencies.dependencies_hash_file.json": {
-    "mtime": 1789828898.8241131,
-    "ast_hash": "9dd7c61bb9d57a733c3d7e9f86af738b",
+    "mtime": 1789830816.8238735,
+    "ast_hash": "71edf3d071c8a89e26575e97adb098b1",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/hook.dependencies_hash_file.json": {
-    "mtime": 1789414425.2912736,
-    "ast_hash": "247f4bf95b662b0393f4e108ddb0ec89",
+    "mtime": 1789830816.6738887,
+    "ast_hash": "18b55dbcff57fc87a28d5b357cb8857e",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/input.json": {
-    "mtime": 1789828898.583084,
+    "mtime": 1789830816.675392,
     "ast_hash": "58c60664c3b1ffa81796c4df176ba9b0",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/output.json": {
-    "mtime": 1789828898.777676,
-    "ast_hash": "57fb7cda7a4186e2f74248cee6e6cefd",
+    "mtime": 1789830816.7892706,
+    "ast_hash": "61351916bd3139f5bcec12ea84d0974d",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/ea0071a574/dependencies.dependencies_hash_file.json": {
@@ -245,13 +245,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/package_config.json": {
-    "mtime": 1789828471.966,
-    "ast_hash": "153b6c0dca486f1021ac1af7a812baf7",
+    "mtime": 1789830699.452167,
+    "ast_hash": "c897ab55b26057d2e28652bba14fdd72",
     "semantic_hash": ""
   },
   "app/.dart_tool/package_graph.json": {
-    "mtime": 1789828471.2454264,
-    "ast_hash": "4f2afaf95062adb8e8acb7d924a50b38",
+    "mtime": 1789830699.4535358,
+    "ast_hash": "869e4d5a7cbb78b8a90246f10c91cbce",
     "semantic_hash": ""
   },
   "app/.fvm/fvm_config.json": {
@@ -295,13 +295,13 @@
     "semantic_hash": ""
   },
   "app/ios/Flutter/ephemeral/flutter_lldb_helper.py": {
-    "mtime": 1789068684.3894312,
+    "mtime": 1789830699.9333034,
     "ast_hash": "98fc75412162af387e2e3461e4e58094",
     "semantic_hash": ""
   },
   "app/ios/Flutter/flutter_export_environment.sh": {
-    "mtime": 1789068684.6773672,
-    "ast_hash": "f9f231903d821c66da880f02e526ae8e",
+    "mtime": 1789830699.936667,
+    "ast_hash": "846a39342024390760993c107b65ad0c",
     "semantic_hash": ""
   },
   "app/ios/Runner/AppDelegate.swift": {
@@ -395,12 +395,12 @@
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations.dart": {
-    "mtime": 1789828873.1713893,
+    "mtime": 1789831231.0613167,
     "ast_hash": "99abe1ecbe97a99c3d2870a3bddeb670",
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations_en.dart": {
-    "mtime": 1789828873.167661,
+    "mtime": 1789831231.0577312,
     "ast_hash": "0abb73361a1a96126a3fe41ed7fdbe93",
     "semantic_hash": ""
   },
@@ -1375,8 +1375,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/calendar/calendar_screen.dart": {
-    "mtime": 1789064614.3097537,
-    "ast_hash": "f69fe275aefac8228e7ca1ebd37c6000",
+    "mtime": 1789831119.1151445,
+    "ast_hash": "6d2372044c48046e3e84cf60f01a13ad",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/calendar/table_calendar_screen.dart": {
@@ -1405,8 +1405,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contacts_screen.dart": {
-    "mtime": 1789064614.3104496,
-    "ast_hash": "2a3564261813bb463308fdb03017d26e",
+    "mtime": 1789830620.4282227,
+    "ast_hash": "a97548304f6c06cd7a6431e302497cad",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/home_screen.dart": {
@@ -1589,14 +1589,9 @@
     "ast_hash": "092c56c96755a5da45e5047c19e15a10",
     "semantic_hash": ""
   },
-  "app/lib/presentation/widgets/grid_calendar_widget.dart": {
-    "mtime": 1789063835.550318,
-    "ast_hash": "f5ab733d15455e6a274b76ac1c64b149",
-    "semantic_hash": ""
-  },
   "app/lib/presentation/widgets/grid_contacts_widget.dart": {
-    "mtime": 1789063835.5504282,
-    "ast_hash": "b66f2b1881c50d49811f76f70d7192b2",
+    "mtime": 1789831053.8422496,
+    "ast_hash": "03c56a1c8b3a6b148402e75044bb4874",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/history_widget.dart": {
@@ -1609,14 +1604,9 @@
     "ast_hash": "553ea792277bfeaf1154cc234a2f1a6d",
     "semantic_hash": ""
   },
-  "app/lib/presentation/widgets/list_calendar_widget.dart": {
-    "mtime": 1789063835.5507016,
-    "ast_hash": "95d0e0a9555499e3c08dad091bc2e59d",
-    "semantic_hash": ""
-  },
   "app/lib/presentation/widgets/list_contacts_widget.dart": {
-    "mtime": 1789063835.5507758,
-    "ast_hash": "78c630f5bbfac2656c9d428cc2cb2a84",
+    "mtime": 1789830606.5156338,
+    "ast_hash": "a745b155aeff809b2fe401c48b25227b",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/loading_button_widget.dart": {
@@ -1740,8 +1730,8 @@
     "semantic_hash": ""
   },
   "app/macos/Flutter/ephemeral/flutter_export_environment.sh": {
-    "mtime": 1789407108.8739307,
-    "ast_hash": "1782a108f17ec88fc31181bc23f73c71",
+    "mtime": 1789830699.9437299,
+    "ast_hash": "4c34a523fcbbaf15667940548fe54c08",
     "semantic_hash": ""
   },
   "app/macos/Pods/Local Podspecs/FlutterMacOS.podspec.json": {
@@ -2745,13 +2735,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/stderr.txt": {
-    "mtime": 1789828898.5849254,
+    "mtime": 1789830816.676211,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/stdout.txt": {
-    "mtime": 1789828898.5863495,
-    "ast_hash": "94fdfe5b87c8a797c17c0c5112cc7205",
+    "mtime": 1789830816.6769423,
+    "ast_hash": "32dc936a5cca53c46c0797531c03a861",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/ea0071a574/stderr.txt": {
@@ -3412,6 +3402,191 @@
   "app/android/app/src/main/kotlin/com/repforge/app/MainActivity.kt": {
     "mtime": 1789828595.6014388,
     "ast_hash": "3bc6161254795373eed1aa4c21f2be29",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/08d64a5e39bc88f3d96ac4164d777247/build_hooks_result.json": {
+    "mtime": 1789830816.826123,
+    "ast_hash": "3bdbcfa51a6abca2405c4a53a1f7eb0c",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/08d64a5e39bc88f3d96ac4164d777247/gen_l10n_inputs_and_outputs.json": {
+    "mtime": 1789830815.7356489,
+    "ast_hash": "d370f195e79e80d2f2de1de24d2a54c3",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/08d64a5e39bc88f3d96ac4164d777247/link_hooks_result.json": {
+    "mtime": 1789830816.8378348,
+    "ast_hash": "fc3b431616921e7e79da0cf46038ab7c",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/08d64a5e39bc88f3d96ac4164d777247/native_assets.json": {
+    "mtime": 1789830816.8453138,
+    "ast_hash": "f3a664e105b4f792c6c7fe4e4d22c398",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/08d64a5e39bc88f3d96ac4164d777247/outputs.json": {
+    "mtime": 1789831245.5479941,
+    "ast_hash": "86f68f157d948f34bfab59ec9c01857d",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/4d03a4540965f393413c54d2f196a20b/dart_build_result.json": {
+    "mtime": 1789830086.9791734,
+    "ast_hash": "89ed3012993e9acd27adfdd4dcad08d8",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/4d03a4540965f393413c54d2f196a20b/gen_l10n_inputs_and_outputs.json": {
+    "mtime": 1789830084.1818864,
+    "ast_hash": "d370f195e79e80d2f2de1de24d2a54c3",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/4d03a4540965f393413c54d2f196a20b/native_assets.json": {
+    "mtime": 1789830086.9862995,
+    "ast_hash": "f3a664e105b4f792c6c7fe4e4d22c398",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/flutter_build/4d03a4540965f393413c54d2f196a20b/outputs.json": {
+    "mtime": 1789830100.9064696,
+    "ast_hash": "86f68f157d948f34bfab59ec9c01857d",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/337ce265dc/dependencies.dependencies_hash_file.json": {
+    "mtime": 1789831012.735746,
+    "ast_hash": "2dac10d3c448805da30dd47f9a679459",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/337ce265dc/hook.dependencies_hash_file.json": {
+    "mtime": 1789831012.6042323,
+    "ast_hash": "18b55dbcff57fc87a28d5b357cb8857e",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/337ce265dc/input.json": {
+    "mtime": 1789831012.6059306,
+    "ast_hash": "bffbb355757a94fdd7b44bc8d085cc70",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/337ce265dc/output.json": {
+    "mtime": 1789831012.7072046,
+    "ast_hash": "b05d5a91be0ac8505139ac7ead291bb4",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/cab78bc566/dependencies.dependencies_hash_file.json": {
+    "mtime": 1789830086.9773548,
+    "ast_hash": "7120946b664ebddcdb6a7185f957d1ec",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/cab78bc566/hook.dependencies_hash_file.json": {
+    "mtime": 1789830086.8497572,
+    "ast_hash": "247f4bf95b662b0393f4e108ddb0ec89",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/cab78bc566/input.json": {
+    "mtime": 1789830086.8504856,
+    "ast_hash": "daa56419ffb836cfaa0d83e598aca605",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/cab78bc566/output.json": {
+    "mtime": 1789830086.964126,
+    "ast_hash": "58cd3143453af75217ec249242fecdcd",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/e97d381311/dependencies.dependencies_hash_file.json": {
+    "mtime": 1789830086.071918,
+    "ast_hash": "7120946b664ebddcdb6a7185f957d1ec",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/e97d381311/hook.dependencies_hash_file.json": {
+    "mtime": 1789830085.8597274,
+    "ast_hash": "247f4bf95b662b0393f4e108ddb0ec89",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/e97d381311/input.json": {
+    "mtime": 1789830085.8634188,
+    "ast_hash": "826208d17828bbecf766290c158e7aeb",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/e97d381311/output.json": {
+    "mtime": 1789830085.9904854,
+    "ast_hash": "44b06611a62323c9e7f5d71b4091d842",
+    "semantic_hash": ""
+  },
+  "app/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework/Package.swift": {
+    "mtime": 1789831230.8225582,
+    "ast_hash": "0be97e7c440958734803cc9f1f14cd7f",
+    "semantic_hash": ""
+  },
+  "app/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework/Sources/FlutterFramework/FlutterFramework.swift": {
+    "mtime": 1789831230.821346,
+    "ast_hash": "e6366d8685ad56268730656aa0a6e00c",
+    "semantic_hash": ""
+  },
+  "app/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift": {
+    "mtime": 1789831230.8236253,
+    "ast_hash": "89969cf9f51c85e1e80ce18eece1ff4a",
+    "semantic_hash": ""
+  },
+  "app/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Sources/FlutterGeneratedPluginSwiftPackage/FlutterGeneratedPluginSwiftPackage.swift": {
+    "mtime": 1789830700.076676,
+    "ast_hash": "e6366d8685ad56268730656aa0a6e00c",
+    "semantic_hash": ""
+  },
+  "app/lib/presentation/widgets/appointment_card_widget.dart": {
+    "mtime": 1789831229.2849429,
+    "ast_hash": "b167e80461601cb73e9dd8f578d03f35",
+    "semantic_hash": ""
+  },
+  "app/lib/presentation/widgets/contact_actions_menu.dart": {
+    "mtime": 1789830604.0299764,
+    "ast_hash": "d35f87b9fbe34914fb79254e29c79020",
+    "semantic_hash": ""
+  },
+  "app/macos/Flutter/ephemeral/Packages/.packages/FlutterFramework/Package.swift": {
+    "mtime": 1789831230.8679917,
+    "ast_hash": "0be97e7c440958734803cc9f1f14cd7f",
+    "semantic_hash": ""
+  },
+  "app/macos/Flutter/ephemeral/Packages/.packages/FlutterFramework/Sources/FlutterFramework/FlutterFramework.swift": {
+    "mtime": 1789831230.8672752,
+    "ast_hash": "e6366d8685ad56268730656aa0a6e00c",
+    "semantic_hash": ""
+  },
+  "app/macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift": {
+    "mtime": 1789831230.868845,
+    "ast_hash": "caa85562fa459cae514b22934e9e5132",
+    "semantic_hash": ""
+  },
+  "app/macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Sources/FlutterGeneratedPluginSwiftPackage/FlutterGeneratedPluginSwiftPackage.swift": {
+    "mtime": 1789830700.1625059,
+    "ast_hash": "e6366d8685ad56268730656aa0a6e00c",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/337ce265dc/stderr.txt": {
+    "mtime": 1789831012.6066303,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/337ce265dc/stdout.txt": {
+    "mtime": 1789831012.6074636,
+    "ast_hash": "cc45332ee01f5a374e1f2d0c90b7d823",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/cab78bc566/stderr.txt": {
+    "mtime": 1789830086.850894,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/cab78bc566/stdout.txt": {
+    "mtime": 1789830086.8513265,
+    "ast_hash": "d19787adb4b2af649d9f1e8e5cc46cf3",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/e97d381311/stderr.txt": {
+    "mtime": 1789830085.8785536,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "app/.dart_tool/hooks_runner/objective_c/e97d381311/stdout.txt": {
+    "mtime": 1789830085.8800843,
+    "ast_hash": "636ab1cc0135d6d2b4ab11b0be94d673",
     "semantic_hash": ""
   }
 }

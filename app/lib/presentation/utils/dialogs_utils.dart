@@ -14,12 +14,14 @@ class _LabeledField extends StatelessWidget {
     required this.controller,
     this.hint = '',
     this.keyboardType,
+    this.large = false,
   });
 
   final String label;
   final String hint;
   final TextEditingController controller;
   final TextInputType? keyboardType;
+  final bool large;
 
   @override
   Widget build(BuildContext context) {
@@ -29,23 +31,27 @@ class _LabeledField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
+          style: TextStyle(
+            fontSize: large ? 14 : 12,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF9E9E9E),
+            color: const Color(0xFF757575),
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: large ? 8 : 6),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
-          style: const TextStyle(fontSize: 15, color: Color(0xFF1E1E1E)),
+          style: TextStyle(
+            fontSize: large ? 18 : 15,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1E1E1E),
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: const TextStyle(color: Color(0xFFBDBDBD)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 12,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: large ? 16 : 14,
+              vertical: large ? 16 : 12,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -72,9 +78,10 @@ class _LabeledField extends StatelessWidget {
 }
 
 class _Pair extends StatelessWidget {
-  const _Pair({required this.left, required this.right});
+  const _Pair({required this.left, required this.right, this.gap = 12});
   final Widget left;
   final Widget right;
+  final double gap;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +89,7 @@ class _Pair extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(child: left),
-        const SizedBox(width: 12),
+        SizedBox(width: gap),
         Expanded(child: right),
       ],
     );
@@ -96,6 +103,7 @@ class _FeetRow extends StatelessWidget {
     required this.modeNotifier,
     required this.uniLabel,
     required this.biLabel,
+    this.large = false,
   });
 
   final String label;
@@ -103,11 +111,20 @@ class _FeetRow extends StatelessWidget {
   final ValueNotifier<int?> modeNotifier;
   final String uniLabel;
   final String biLabel;
+  final bool large;
 
   @override
   Widget build(BuildContext context) {
+    final gap = large ? 20.0 : 12.0;
+    final segmentTextStyle = TextStyle(
+      fontSize: large ? 16 : 14,
+      fontWeight: FontWeight.w600,
+    );
     final inputDecoration = InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: large ? 16 : 14,
+        vertical: large ? 16 : 12,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
@@ -128,24 +145,28 @@ class _FeetRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
+          style: TextStyle(
+            fontSize: large ? 14 : 12,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF9E9E9E),
+            color: const Color(0xFF757575),
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: large ? 8 : 6),
         Row(
           children: [
             Expanded(
               child: TextField(
                 controller: controller,
                 keyboardType: TextInputType.number,
-                style: const TextStyle(fontSize: 15, color: Color(0xFF1E1E1E)),
+                style: TextStyle(
+                  fontSize: large ? 18 : 15,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF1E1E1E),
+                ),
                 decoration: inputDecoration,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: gap),
             Expanded(
               child: ValueListenableBuilder<int?>(
                 valueListenable: modeNotifier,
@@ -155,24 +176,16 @@ class _FeetRow extends StatelessWidget {
                       onValueChanged: (v) => modeNotifier.value = v,
                       children: {
                         0: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Text(
-                            uniLabel,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: large ? 12 : 6,
                           ),
+                          child: Text(uniLabel, style: segmentTextStyle),
                         ),
                         1: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: Text(
-                            biLabel,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: large ? 12 : 6,
                           ),
+                          child: Text(biLabel, style: segmentTextStyle),
                         ),
                       },
                     ),
@@ -228,6 +241,8 @@ class DialogUtils {
 
     final isTablet = MediaQuery.of(context).size.width > 600;
     final buttonEnabledNotifier = ValueNotifier<bool>(false);
+    final rowGap = isTablet ? 18.0 : 12.0;
+    final colGap = isTablet ? 20.0 : 12.0;
 
     void checkButtonState() {
       buttonEnabledNotifier.value =
@@ -259,6 +274,7 @@ class DialogUtils {
     ]) {
       c.addListener(checkButtonState);
     }
+    checkButtonState();
 
     return showDialog<ProgramMachineEntity>(
       context: context,
@@ -271,15 +287,21 @@ class DialogUtils {
           horizontal: isTablet ? 80 : 16,
           vertical: 24,
         ),
-        titlePadding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
-        contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-        actionsPadding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
+        titlePadding: isTablet
+            ? const EdgeInsets.fromLTRB(32, 28, 32, 8)
+            : const EdgeInsets.fromLTRB(20, 18, 20, 4),
+        contentPadding: isTablet
+            ? const EdgeInsets.fromLTRB(32, 12, 32, 0)
+            : const EdgeInsets.fromLTRB(20, 8, 20, 0),
+        actionsPadding: isTablet
+            ? const EdgeInsets.fromLTRB(32, 24, 32, 28)
+            : const EdgeInsets.fromLTRB(20, 14, 20, 16),
         title: Column(
           children: [
             Text(
               AppLocalizations.of(context)!.settingsFor,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: isTablet ? 14 : 12,
                 fontWeight: FontWeight.w500,
                 color: context.theme.colors.mutedForeground,
               ),
@@ -287,82 +309,100 @@ class DialogUtils {
             const SizedBox(height: 2),
             Text(
               machine.name,
-              style: context.theme.typography.xl.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+              style:
+                  (isTablet
+                          ? context.theme.typography.xl2
+                          : context.theme.typography.xl)
+                      .copyWith(fontWeight: FontWeight.w700),
             ),
           ],
         ),
         content: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: isTablet ? 540 : double.infinity,
-            ),
+          // AlertDialog sizes to its content's intrinsic width, which collapses
+          // to the 280dp minimum; give tablets an explicit width instead.
+          child: SizedBox(
+            width: isTablet ? 560 : null,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _Pair(
+                  gap: colGap,
                   left: _LabeledField(
                     label: AppLocalizations.of(context)!.seats,
+                    large: isTablet,
                     controller: controllerSeats,
                     keyboardType: TextInputType.number,
                   ),
                   right: _LabeledField(
                     label: AppLocalizations.of(context)!.back,
+                    large: isTablet,
                     controller: controllerBack,
                     keyboardType: TextInputType.number,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: rowGap),
                 _Pair(
+                  gap: colGap,
                   left: _LabeledField(
                     label: AppLocalizations.of(context)!.pin,
+                    large: isTablet,
                     controller: controllerPin,
                     keyboardType: TextInputType.number,
                   ),
                   right: _LabeledField(
                     label: AppLocalizations.of(context)!.handle,
+                    large: isTablet,
                     controller: controllerHandle,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: rowGap),
                 _Pair(
+                  gap: colGap,
                   left: _LabeledField(
                     label: AppLocalizations.of(context)!.knees,
+                    large: isTablet,
                     controller: controllerKnees,
                   ),
                   right: _LabeledField(
                     label: AppLocalizations.of(context)!.chest,
+                    large: isTablet,
                     controller: controllerChest,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: rowGap),
                 _FeetRow(
                   label: AppLocalizations.of(context)!.feet,
                   controller: controllerLegs,
                   modeNotifier: sliderValueNotifier,
                   uniLabel: AppLocalizations.of(context)!.uni,
                   biLabel: AppLocalizations.of(context)!.bi,
+                  large: isTablet,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: rowGap),
                 _Pair(
+                  gap: colGap,
                   left: _LabeledField(
                     label: AppLocalizations.of(context)!.thighs,
+                    large: isTablet,
                     controller: controllerThighs,
                   ),
                   right: _LabeledField(
                     label: AppLocalizations.of(context)!.grip,
+                    large: isTablet,
                     controller: controllerGrip,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: rowGap),
                 _Pair(
+                  gap: colGap,
                   left: _LabeledField(
                     label: AppLocalizations.of(context)!.angle,
+                    large: isTablet,
                     controller: controllerAndel,
                   ),
                   right: _LabeledField(
                     label: AppLocalizations.of(context)!.weightLb,
+                    large: isTablet,
                     controller: controllerWeight,
                     keyboardType: TextInputType.number,
                   ),
@@ -374,7 +414,7 @@ class DialogUtils {
                     AppLocalizations.of(context)!.weightCurrentDescription,
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: isTablet ? 13 : 11,
                       color: context.theme.colors.mutedForeground,
                     ),
                   ),
@@ -393,7 +433,7 @@ class DialogUtils {
                   child: Text(AppLocalizations.of(context)!.cancel),
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: isTablet ? 16 : 10),
               Expanded(
                 child: ValueListenableBuilder<bool>(
                   valueListenable: buttonEnabledNotifier,
@@ -524,25 +564,29 @@ class DialogUtils {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _LabeledField(
-              label: AppLocalizations.of(context)!.weightLb,
-              controller: controllerWeight,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.weightNextDescription,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                color: context.theme.colors.mutedForeground,
+        content: SizedBox(
+          width: isTablet ? 400 : null,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _LabeledField(
+                label: AppLocalizations.of(context)!.weightLb,
+                controller: controllerWeight,
+                keyboardType: TextInputType.number,
+                large: isTablet,
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                AppLocalizations.of(context)!.weightNextDescription,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: isTablet ? 13 : 11,
+                  color: context.theme.colors.mutedForeground,
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           Row(
@@ -758,10 +802,7 @@ class DialogUtils {
       builder: (dialogCtx) => FDialog(
         style: FDialogStyleDelta.delta(
           insetPadding: EdgeInsetsGeometryDelta.value(
-            EdgeInsets.symmetric(
-              horizontal: isTablet ? 32 : 12,
-              vertical: 24,
-            ),
+            EdgeInsets.symmetric(horizontal: isTablet ? 32 : 12, vertical: 24),
           ),
         ),
         constraints: BoxConstraints(
