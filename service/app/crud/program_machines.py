@@ -80,6 +80,7 @@ def update_program_machine(
                                 "date_session",
                                 "session_time",
                                 "weight",
+                                "weight_2",
                                 "session_status",
                             ]:
                                 setattr(db_workout, workout_key, workout_value)

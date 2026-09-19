@@ -33,6 +33,9 @@ abstract class WorkoutSessionModel
   @BuiltValueField(wireName: 'weight')
   int? get weight;
 
+  @BuiltValueField(wireName: 'weight_2')
+  int? get weight2;
+
   @BuiltValueField(wireName: 'session_status')
   SessionStatusEnum get sessionStatus;
 
@@ -66,6 +69,7 @@ extension WorkoutSessionModelExtension on WorkoutSessionModel {
       ..dateSession = dateSession
       ..sessionTime = sessionTime
       ..weight = weight
+      ..weight2 = weight2
       ..sessionStatus = sessionStatus.entity
       ..createdAt = createdAt);
   }
@@ -81,6 +85,7 @@ extension WorkoutSessionEntityExtension on WorkoutSessionEntity {
       ..dateSession = dateSession
       ..sessionTime = sessionTime
       ..weight = weight
+      ..weight2 = weight2
       ..sessionStatus = sessionStatus.model
       ..createdAt = createdAt);
   }

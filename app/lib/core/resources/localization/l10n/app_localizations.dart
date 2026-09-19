@@ -310,6 +310,12 @@ abstract class AppLocalizations {
   /// **'* Weight for next workout'**
   String get weightNextDescription;
 
+  /// No description provided for @secondWeightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'2nd (optional)'**
+  String get secondWeightHint;
+
   /// No description provided for @ok.
   ///
   /// In en, this message translates to:

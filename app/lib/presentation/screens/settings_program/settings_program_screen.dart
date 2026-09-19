@@ -320,9 +320,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Table(
               columnWidths: const {
-                0: FractionColumnWidth(.42),
-                1: FractionColumnWidth(.28),
-                2: FractionColumnWidth(.30),
+                0: FractionColumnWidth(.34),
+                1: FractionColumnWidth(.42),
+                2: FractionColumnWidth(.24),
               },
               children: [
                 TableRow(
@@ -336,7 +336,10 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
             ),
           ),
           const Divider(),
-          HistoryWidget(programMachine: programMachine),
+          HistoryWidget(
+            programMachine: programMachine,
+            onEditWeight: (session) => _editUpcomingWeight(context, session),
+          ),
         ],
       ),
     );
@@ -404,9 +407,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 220,
+                Flexible(
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       SvgPicture.asset(AppSvgs.weight, height: 18, width: 20),
                       const SizedBox(width: 10),
@@ -427,9 +430,10 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
                                       w.sessionStatus ==
                                       SessionStatusEnumEntity.planned,
                                 )
-                                ?.weight
-                                ?.toString() ??
+                                ?.weightLabel ??
                             '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: context.theme.typography.xl2.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -531,11 +535,17 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
   ) async {
     final WorkoutSessionEntity? workoutSession = _pendingSession(state);
     final String? trainerName = state.programMachine?.machine?.name;
-    final int? weight = workoutSession?.weight;
-    if (workoutSession == null || trainerName == null || weight == null) return;
+    if (workoutSession == null ||
+        trainerName == null ||
+        workoutSession.weight == null) {
+      return;
+    }
 
     double? value = await context.router.push<double>(
-      StopwatchTimerRoutes(trainerName: trainerName, weight: weight),
+      StopwatchTimerRoutes(
+        trainerName: trainerName,
+        weight: workoutSession.weightLabel,
+      ),
     );
 
     if (value != null) {
@@ -557,6 +567,7 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
           context: context,
           machine: widget.machine,
           weight: updatedWorkoutSession.weight!,
+          weight2: updatedWorkoutSession.weight2,
         );
 
         await workoutSessionUsecase.createWorkoutSession(
@@ -567,7 +578,10 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
               ..sessionTime = null
               ..sessionStatus = SessionStatusEnumEntity.planned
               ..createdAt = null
-              ..weight = nextWeight ?? updatedWorkoutSession.weight!,
+              ..weight = nextWeight?.$1 ?? updatedWorkoutSession.weight!
+              ..weight2 = nextWeight != null
+                  ? nextWeight.$2
+                  : updatedWorkoutSession.weight2,
           ),
         );
 
@@ -580,6 +594,36 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
         );
       }
     }
+  }
+
+  /// Changes the upcoming session's weight straight from the history table.
+  Future<void> _editUpcomingWeight(
+    BuildContext context,
+    WorkoutSessionEntity session,
+  ) async {
+    final bloc = context.read<SettingsProgramBloc>();
+    final weights = await DialogUtils.showNextWeightDialog(
+      context: context,
+      machine: widget.machine,
+      weight: session.weight ?? 0,
+      weight2: session.weight2,
+    );
+    if (weights == null || session.id == null) return;
+
+    await GetIt.I<WorkoutSessionUsecase>().updateWorkoutSession(
+      session.id!,
+      session.rebuild(
+        (b) => b
+          ..weight = weights.$1
+          ..weight2 = weights.$2,
+      ),
+    );
+    bloc.add(
+      GetMachineSettingEvent(
+        machine: widget.machine,
+        programFitness: widget.program,
+      ),
+    );
   }
 
   DateTime _dateWithZeroTime(DateTime dt) =>

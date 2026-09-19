@@ -24,6 +24,8 @@ class WorkoutSession(Base):
     date_session = Column(Date, nullable=True)
     session_time = Column(Integer, nullable=True)
     weight = Column(Integer, nullable=True)
+    # Optional second weight for a drop/raise within one exercise ("280 / 380").
+    weight_2 = Column(Integer, nullable=True)
     session_status = Column(Enum(SessionStatus), default=SessionStatus.Planned)
     created_at = Column(Date, default=datetime.utcnow().date)
     program_machine = relationship(
