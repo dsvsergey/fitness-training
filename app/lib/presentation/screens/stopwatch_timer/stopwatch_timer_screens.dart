@@ -12,7 +12,9 @@ import '../../widgets/fixed_width_text.dart';
 @RoutePage()
 class StopwatchTimerScreens extends StatefulWidget {
   final String trainerName;
-  final int weight;
+
+  /// Preformatted weight, e.g. "280" or "280 / 380".
+  final String weight;
   const StopwatchTimerScreens(
       {super.key, required this.trainerName, required this.weight});
 
@@ -265,7 +267,7 @@ class _SessionHeaderCard extends StatelessWidget {
 
   final String traineeName;
   final String trainerName;
-  final int weight;
+  final String weight;
 
   @override
   Widget build(BuildContext context) {

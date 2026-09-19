@@ -35,6 +35,7 @@
     "height": "Height",
     "weightCurrentDescription": "* Weight for\n current workout",
     "weightNextDescription": "* Weight for next workout",
+    "secondWeightHint": "2nd (optional)",
     "ok": "OK",
     "yes": "Yes",
     "no": "No",

@@ -118,6 +118,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weightNextDescription => '* Weight for next workout';
 
   @override
+  String get secondWeightHint => '2nd (optional)';
+
+  @override
   String get ok => 'OK';
 
   @override

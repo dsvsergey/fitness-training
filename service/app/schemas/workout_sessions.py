@@ -18,6 +18,7 @@ class WorkoutSessionSchema(BaseModel):
     date_session: Optional[date] = None
     session_time: Optional[int] = None
     weight: Optional[int] = None
+    weight_2: Optional[int] = None
     session_status: SessionStatusEnum = SessionStatusEnum.Planned
     create_at: Optional[date] = None
 

@@ -5,6 +5,7 @@ import 'package:fitness_training/core/bloc/bloc_application/application_bloc.dar
 import 'package:fitness_training/core/resources/localization/l10n/app_localizations.dart';
 import 'package:fitness_training/domain/entities/fitness/fitness.dart';
 import 'package:fitness_training/domain/usecases/fitness/fitness.dart';
+import 'package:fitness_training/domain/usecases/fitness/workout_session_usecase.dart';
 import 'package:fitness_training/presentation/screens/settings_program/settings_program_screen.dart';
 import 'package:fitness_training/presentation/widgets/custom_timer_widget.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,22 @@ class _FakeProgramMachineUsecase implements ProgramMachineUsecase {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+class _FakeWorkoutSessionUsecase implements WorkoutSessionUsecase {
+  final updates = <(int, WorkoutSessionEntity)>[];
+
+  @override
+  Future<WorkoutSessionEntity> updateWorkoutSession(
+    int sessionId,
+    WorkoutSessionEntity session,
+  ) async {
+    updates.add((sessionId, session));
+    return session;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 final _machine = MachineEntity((b) => b
   ..id = 7
   ..name = 'Leg Press');
@@ -41,6 +58,7 @@ WorkoutSessionEntity _session({
   DateTime? dateSession,
   SessionStatusEnumEntity status = SessionStatusEnumEntity.planned,
   int? weight = 40,
+  int? weight2,
 }) =>
     WorkoutSessionEntity((b) => b
       ..id = 11
@@ -48,6 +66,7 @@ WorkoutSessionEntity _session({
       ..traineeId = 2
       ..coachId = 1
       ..weight = weight
+      ..weight2 = weight2
       ..dateSession = dateSession
       ..sessionStatus = status);
 
@@ -225,5 +244,66 @@ void main() {
         expect(find.text('55'), findsOneWidget);
       },
     );
+  });
+
+  group('second weight', () {
+    test('formats one or two weights', () {
+      expect(formatWeights(280, null), '280');
+      expect(formatWeights(280, 380), '280 / 380');
+      expect(formatWeights(null, null), '');
+    });
+
+    testWidgets('weight row and history show both weights', (tester) async {
+      register(_programMachine([_session(weight: 280, weight2: 380)]));
+      await _pumpScreen(tester);
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('280 / 380'), findsOneWidget);
+      expect(find.text('280 / 380 lb'), findsOneWidget);
+    });
+
+    testWidgets('a single weight still renders as before', (tester) async {
+      register(_programMachine([_session(weight: 280)]));
+      await _pumpScreen(tester);
+
+      expect(find.text('280'), findsOneWidget);
+      expect(find.text('280 lb'), findsOneWidget);
+    });
+  });
+
+  group('edit upcoming weight', () {
+    testWidgets('"+" in history updates the planned session in place',
+        (tester) async {
+      register(_programMachine([_session(weight: 280)]));
+      final sessions = _FakeWorkoutSessionUsecase();
+      GetIt.I.registerSingleton<WorkoutSessionUsecase>(sessions);
+      await _pumpScreen(tester);
+
+      await tester.tap(find.byKey(const ValueKey('edit-upcoming-weight')));
+      await tester.pumpAndSettle();
+
+      final fields = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(fields.first, '300');
+      await tester.enterText(fields.last, '400');
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(sessions.updates, hasLength(1));
+      final (id, updated) = sessions.updates.single;
+      expect(id, 11);
+      expect((updated.weight, updated.weight2), (300, 400));
+    });
+
+    testWidgets('no "+" for finished sessions', (tester) async {
+      register(_programMachine(
+        [_session(dateSession: DateTime(2026, 5, 1))],
+      ));
+      await _pumpScreen(tester);
+
+      expect(find.byKey(const ValueKey('edit-upcoming-weight')), findsNothing);
+    });
   });
 }

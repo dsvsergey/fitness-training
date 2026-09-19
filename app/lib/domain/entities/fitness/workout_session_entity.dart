@@ -18,8 +18,15 @@ abstract class WorkoutSessionEntity
   DateTime? get dateSession;
   int? get sessionTime;
   int? get weight;
+
+  /// Optional second weight, used when the load changes mid-exercise
+  /// (e.g. a minute at 280, then 30 seconds at 380).
+  int? get weight2;
   SessionStatusEnumEntity get sessionStatus;
   DateTime? get createdAt;
+
+  /// "280" or "280 / 380"; empty when no weight is set.
+  String get weightLabel => formatWeights(weight, weight2);
 
   WorkoutSessionEntity._();
 
@@ -37,3 +44,7 @@ abstract class WorkoutSessionEntity
         WorkoutSessionEntity.serializer, this) as Map<String, dynamic>;
   }
 }
+
+/// Formats one or two weights the way coaches write them: "280 / 380".
+String formatWeights(int? weight, int? weight2) =>
+    [weight, weight2].whereType<int>().join(' / ');

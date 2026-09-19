@@ -7,7 +7,15 @@ import '../../domain/entities/fitness/fitness.dart';
 class HistoryWidget extends StatelessWidget {
   final ProgramMachineEntity? programMachine;
 
-  const HistoryWidget({super.key, required this.programMachine});
+  /// Called from the "+" next to the upcoming session's weight, so the coach
+  /// can change it without opening the full settings editor.
+  final void Function(WorkoutSessionEntity session)? onEditWeight;
+
+  const HistoryWidget({
+    super.key,
+    required this.programMachine,
+    this.onEditWeight,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +50,9 @@ class HistoryWidget extends StatelessWidget {
       child: Table(
         columnWidths: const {
           // Date label needs more room than weight/time (e.g. "4/28/2026").
-          0: FractionColumnWidth(.42),
-          1: FractionColumnWidth(.28),
-          2: FractionColumnWidth(.30),
+          0: FractionColumnWidth(.34),
+          1: FractionColumnWidth(.42),
+          2: FractionColumnWidth(.24),
         },
         children: List.generate(
           history?.length ?? 0,
@@ -71,11 +79,28 @@ class HistoryWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text(
-                  '${history?[index].weight ?? ''} lb',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: cellStyle,
+                child: Row(
+                  children: [
+                    Flexible(
+                      // "280 / 380 lb" plus the "+" is too wide for a phone
+                      // column; shrink it slightly rather than cut it off.
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '${history?[index].weightLabel ?? ''} lb',
+                          maxLines: 1,
+                          style: cellStyle,
+                        ),
+                      ),
+                    ),
+                    if (onEditWeight != null &&
+                        history?[index].dateSession == null)
+                      _EditWeightButton(
+                        large: isTablet,
+                        onTap: () => onEditWeight!(history![index]),
+                      ),
+                  ],
                 ),
               ),
               Padding(
@@ -91,6 +116,41 @@ class HistoryWidget extends StatelessWidget {
                       ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EditWeightButton extends StatelessWidget {
+  const _EditWeightButton({required this.onTap, this.large = false});
+
+  final VoidCallback onTap;
+  final bool large;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = large ? 28.0 : 24.0;
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Material(
+        color: context.theme.colors.secondary,
+        shape: CircleBorder(
+          side: BorderSide(color: context.theme.colors.border),
+        ),
+        child: InkWell(
+          key: const ValueKey('edit-upcoming-weight'),
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: Icon(
+              FIcons.plus,
+              size: large ? 18 : 16,
+              color: context.theme.colors.foreground,
+            ),
           ),
         ),
       ),

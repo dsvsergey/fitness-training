@@ -77,6 +77,64 @@ class _LabeledField extends StatelessWidget {
   }
 }
 
+/// "Weight, lb" input made of two boxes: the main weight and an optional
+/// second one the coach switches to mid-exercise ("280 / 380").
+class _WeightPairField extends StatelessWidget {
+  const _WeightPairField({
+    required this.label,
+    required this.controller,
+    required this.controller2,
+    required this.hint2,
+    this.large = false,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final TextEditingController controller2;
+  final String hint2;
+  final bool large;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: _LabeledField(
+            label: label,
+            controller: controller,
+            keyboardType: TextInputType.number,
+            large: large,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: large ? 12 : 8,
+            vertical: large ? 14 : 10,
+          ),
+          child: Text(
+            '/',
+            style: TextStyle(
+              fontSize: large ? 22 : 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF757575),
+            ),
+          ),
+        ),
+        Expanded(
+          child: _LabeledField(
+            label: '',
+            hint: hint2,
+            controller: controller2,
+            keyboardType: TextInputType.number,
+            large: large,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _Pair extends StatelessWidget {
   const _Pair({required this.left, required this.right, this.gap = 12});
   final Widget left;
@@ -214,6 +272,7 @@ class DialogUtils {
     final controllerHandle = TextEditingController();
     final controllerPin = TextEditingController();
     final controllerWeight = TextEditingController();
+    final controllerWeight2 = TextEditingController();
     final controllerKnees = TextEditingController();
     final controllerLegs = TextEditingController();
     final controllerAndel = TextEditingController();
@@ -229,6 +288,9 @@ class DialogUtils {
       controllerPin.text = programMachine.pin?.toString() ?? '';
       controllerWeight.text = programMachine.workouts.isNotEmpty
           ? programMachine.workouts.last.weight?.toString() ?? ''
+          : '';
+      controllerWeight2.text = programMachine.workouts.isNotEmpty
+          ? programMachine.workouts.last.weight2?.toString() ?? ''
           : '';
       controllerKnees.text = programMachine.knees?.toString() ?? '';
       controllerAndel.text = programMachine.angal?.toString() ?? '';
@@ -400,12 +462,15 @@ class DialogUtils {
                     large: isTablet,
                     controller: controllerAndel,
                   ),
-                  right: _LabeledField(
-                    label: AppLocalizations.of(context)!.weightLb,
-                    large: isTablet,
-                    controller: controllerWeight,
-                    keyboardType: TextInputType.number,
-                  ),
+                  right: const SizedBox.shrink(),
+                ),
+                SizedBox(height: rowGap),
+                _WeightPairField(
+                  label: AppLocalizations.of(context)!.weightLb,
+                  hint2: AppLocalizations.of(context)!.secondWeightHint,
+                  large: isTablet,
+                  controller: controllerWeight,
+                  controller2: controllerWeight2,
                 ),
                 const SizedBox(height: 6),
                 Align(
@@ -478,11 +543,15 @@ class DialogUtils {
                                             (wb) => wb.map(
                                               (w) => w.dateSession == null
                                                   ? w.rebuild(
-                                                      (p) => p.weight =
-                                                          int.tryParse(
-                                                            controllerWeight
-                                                                .text,
-                                                          ),
+                                                      (p) => p
+                                                        ..weight = int.tryParse(
+                                                          controllerWeight.text,
+                                                        )
+                                                        ..weight2 =
+                                                            int.tryParse(
+                                                              controllerWeight2
+                                                                  .text,
+                                                            ),
                                                     )
                                                   : w,
                                             ),
@@ -500,6 +569,9 @@ class DialogUtils {
                                                 SessionStatusEnumEntity.planned
                                             ..weight = int.tryParse(
                                               controllerWeight.text,
+                                            )
+                                            ..weight2 = int.tryParse(
+                                              controllerWeight2.text,
                                             ),
                                         ),
                                       ]),
@@ -518,12 +590,18 @@ class DialogUtils {
     );
   }
 
-  static Future<int?> showNextWeightDialog({
+  /// Returns the next workout's weights as `(weight, weight2)`; `weight2`
+  /// is null when the coach leaves the second box empty.
+  static Future<(int, int?)?> showNextWeightDialog({
     required BuildContext context,
     required int weight,
+    int? weight2,
     required MachineEntity machine,
   }) {
     final controllerWeight = TextEditingController(text: weight.toString());
+    final controllerWeight2 = TextEditingController(
+      text: weight2?.toString() ?? '',
+    );
     final isTablet = MediaQuery.of(context).size.width > 600;
     final buttonEnabledNotifier = ValueNotifier<bool>(true);
 
@@ -531,7 +609,7 @@ class DialogUtils {
       buttonEnabledNotifier.value = controllerWeight.text.isNotEmpty;
     });
 
-    return showDialog<int?>(
+    return showDialog<(int, int?)?>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
         backgroundColor: context.theme.colors.background,
@@ -570,10 +648,11 @@ class DialogUtils {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _LabeledField(
+              _WeightPairField(
                 label: AppLocalizations.of(context)!.weightLb,
+                hint2: AppLocalizations.of(context)!.secondWeightHint,
                 controller: controllerWeight,
-                keyboardType: TextInputType.number,
+                controller2: controllerWeight2,
                 large: isTablet,
               ),
               const SizedBox(height: 8),
@@ -604,9 +683,14 @@ class DialogUtils {
                   valueListenable: buttonEnabledNotifier,
                   builder: (context, isEnabled, _) => FButton(
                     onPress: isEnabled
-                        ? () => Navigator.of(
-                            dialogCtx,
-                          ).pop(int.tryParse(controllerWeight.text))
+                        ? () {
+                            final w = int.tryParse(controllerWeight.text);
+                            Navigator.of(dialogCtx).pop(
+                              w == null
+                                  ? null
+                                  : (w, int.tryParse(controllerWeight2.text)),
+                            );
+                          }
                         : null,
                     child: Text(AppLocalizations.of(context)!.ok),
                   ),
