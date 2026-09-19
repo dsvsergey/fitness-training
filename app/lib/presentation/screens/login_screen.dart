@@ -331,7 +331,7 @@ class _HeroSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'New Element\nTraining',
+                  'Rep\nForge',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,

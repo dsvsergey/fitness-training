@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                         ...FLocalizations.localizationsDelegates,
                       ],
                       supportedLocales: AppLocalizations.supportedLocales,
-                      title: 'Fitness Training',
+                      title: 'Rep Forge',
                       theme: _forUiLightTheme.toApproximateMaterialTheme(),
                       darkTheme: _forUiDarkTheme.toApproximateMaterialTheme(),
                       themeMode: themeMode,

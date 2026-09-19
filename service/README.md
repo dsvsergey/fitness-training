@@ -1,4 +1,4 @@
-# Fitness Training Service
+# Rep Forge Service
 
 Backend API for managing the full gym training lifecycle — coach and trainee accounts, training programs with per-machine settings, workout scheduling, and session execution tracking.
 

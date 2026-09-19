@@ -1,6 +1,6 @@
 {
-    "name": "fitness_training",
-    "short_name": "fitness_training",
+    "name": "Rep Forge",
+    "short_name": "Rep Forge",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

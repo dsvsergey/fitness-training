@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'NEW ELEMENT',
+              'REP',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w900,
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             Text(
-              'TRAINING',
+              'FORGE',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w900,
