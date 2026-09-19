@@ -94,7 +94,8 @@ class _CreateProgramScreenState extends State<CreateProgramScreen> {
       body: BlocBuilder<CreateProgramBloc, CreateProgramState>(
         buildWhen: (_, current) => current is LoadedMachines,
         builder: (context, state) {
-          final machines = state.machines ?? [];
+          final machines = [...?state.machines]..sort((a, b) =>
+              a.name.toLowerCase().compareTo(b.name.toLowerCase()));
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
