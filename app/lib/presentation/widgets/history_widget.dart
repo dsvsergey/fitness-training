@@ -24,11 +24,11 @@ class HistoryWidget extends StatelessWidget {
     history?.sort((a, b) => b.id!.compareTo(a.id!));
 
     final cellStyle = isTablet
-        ? context.theme.typography.xl2.copyWith(fontWeight: FontWeight.w500)
+        ? context.theme.typography.lg.copyWith(fontWeight: FontWeight.w500)
         : context.theme.typography.md.copyWith(fontWeight: FontWeight.w500);
 
     final mutedStyle = isTablet
-        ? context.theme.typography.xl2.copyWith(
+        ? context.theme.typography.lg.copyWith(
             color: context.theme.colors.mutedForeground,
             fontWeight: FontWeight.w500,
           )
@@ -51,7 +51,7 @@ class HistoryWidget extends StatelessWidget {
           (index) => TableRow(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: history?[index].dateSession == null
                     ? Text(
                         'Upcoming',
@@ -70,7 +70,7 @@ class HistoryWidget extends StatelessWidget {
                       ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
                   '${history?[index].weight ?? ''} lb',
                   maxLines: 1,
@@ -79,7 +79,7 @@ class HistoryWidget extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: history?[index].sessionTime == null
                     ? const Text('')
                     : Text(
