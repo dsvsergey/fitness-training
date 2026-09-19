@@ -1,16 +1,16 @@
 # Graph Report - fitness-training  (2026-09-19)
 
 ## Corpus Check
-- 556 files · ~762,472 words
+- 556 files · ~762,530 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6358 nodes · 8548 edges · 883 communities (328 shown, 555 thin omitted)
+- 6358 nodes · 8548 edges · 885 communities (330 shown, 555 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 284 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1cea16cb`
+- Built from commit: `8f75069e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -841,6 +841,8 @@
 - [[_COMMUNITY_DateTime|DateTime]]
 - [[_COMMUNITY_Path|Path]]
 - [[_COMMUNITY_String|String?]]
+- [[_COMMUNITY_auth_usecase.dart|auth_usecase.dart]]
+- [[_COMMUNITY_Customizing Widget Styles|Customizing Widget Styles]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApplicationBloc` - 64 edges
@@ -869,7 +871,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (883 total, 555 thin omitted)
+## Communities (885 total, 555 thin omitted)
 
 ### Community 0 - "router.dart"
 Cohesion: 0.04
@@ -884,8 +886,8 @@ Cohesion: 0.06
 Nodes (57): ContactsBloc, props, searchQuery, ContactDetailScreen, _ContactDetailScreenState, _publishToContactsList, build, _clients (+49 more)
 
 ### Community 3 - "fitness.dart"
-Cohesion: 0.06
-Nodes (42): @singleton, DioSettingsBackend, setup, EmailHistoryStorage, CoachRepository, CoachRepositoryImpl, createCoach, deleteAvatar (+34 more)
+Cohesion: 0.09
+Nodes (23): CoachRepository, CoachRepositoryImpl, createCoach, deleteAvatar, deleteCoach, fitness, getCoach, getCoaches (+15 more)
 
 ### Community 4 - "metronome_controls.dart"
 Cohesion: 0.04
@@ -973,7 +975,7 @@ Nodes (41): ClientsModel, clients, paginationResponse, fromJson, serializer, toJ
 
 ### Community 25 - "program_machine_usecase.dart"
 Cohesion: 0.06
-Nodes (38): @LazySingleton, _api, AuthUsecase, AuthUsecaseImpl, getGoogleAuthUrl, login, loginWithToken, register (+30 more)
+Nodes (34): @LazySingleton, _api, createMachine, deleteMachine, getMachine, getMachines, MachineUsecase, MachineUsecaseImpl (+26 more)
 
 ### Community 26 - "program_screen_bloc.dart"
 Cohesion: 0.07
@@ -1340,8 +1342,8 @@ Cohesion: 0.10
 Nodes (20): workoutDate, fromJson, serializer, toJson, UpdateWorkoutDateEntity, class UpdateWorkoutDateEntityBuilder, _, build (+12 more)
 
 ### Community 117 - "main.config.dart"
-Cohesion: 0.10
-Nodes (20): GetItInjectableX, init, _i174, package:fitness_training/core/bloc/bloc_theme/theme_cubit.dart, package:fitness_training/core/dio_settings/dio_settings_auth.dart, package:fitness_training/data/repositories/fitness/auth.dart, package:fitness_training/data/repositories/fitness/machine.dart, package:fitness_training/data/repositories/fitness/program_fitness.dart (+12 more)
+Cohesion: 0.08
+Nodes (26): @singleton, DioSettingsBackend, setup, EmailHistoryStorage, TokenStorage, GetItInjectableX, init, _i174 (+18 more)
 
 ### Community 118 - "desktop_webview_window.podspec.json"
 Cohesion: 0.10
@@ -1524,8 +1526,8 @@ Cohesion: 0.14
 Nodes (14): Appearance, Behavior, CLI, Examples, `FTileGroup(...)`, `FTileGroup.builder(...)`, `FTileGroup.merge(...)`, Full Divider (+6 more)
 
 ### Community 163 - "program_fitness_usecase.dart"
-Cohesion: 0.15
-Nodes (13): _api, createProgram, createProgramWithMachines, deleteProgram, getArchives, getProgram, getPrograms, ProgramFitnessUsecase (+5 more)
+Cohesion: 0.17
+Nodes (12): WorkoutAppointmentRepository, WorkoutAppointmentRepositoryImpl, _api, createWorkoutAppointment, deleteWorkoutAppointment, getAllWorkoutAppointments, getWorkoutAppointment, setWorkoutCompleted (+4 more)
 
 ### Community 164 - "MyAuthProvider"
 Cohesion: 0.21
@@ -1936,8 +1938,8 @@ Cohesion: 0.50
 Nodes (4): CLI, `FLineCalendar(...)`, Line Calendar, Usage
 
 ### Community 266 - "Determinate Progress"
-Cohesion: 0.50
-Nodes (4): CLI, Determinate Progress, `FDeterminateProgress(...)`, Usage
+Cohesion: 0.20
+Nodes (10): createMachine, deleteMachine, fitness, FitnessRepository, getMachine, getMachines, MachineRepository, MachineRepositoryImpl (+2 more)
 
 ### Community 267 - "Divider"
 Cohesion: 0.50
@@ -1954,6 +1956,14 @@ Nodes (4): Determine role from token, Flutter Tips, Pagination example, Show/hid
 ### Community 271 - "AppRouter"
 Cohesion: 0.67
 Nodes (3): @AutoRouterConfig, AppRouter, RootStackRouter
+
+### Community 883 - "auth_usecase.dart"
+Cohesion: 0.25
+Nodes (8): _api, AuthUsecase, AuthUsecaseImpl, getGoogleAuthUrl, login, loginWithToken, register, package:fitness_training/data/models/fitness/fitness.dart
+
+### Community 884 - "Customizing Widget Styles"
+Cohesion: 0.50
+Nodes (4): CLI, Customizing Widget Styles, Deltas, Variants
 
 ## Knowledge Gaps
 - **3888 isolated node(s):** `registrar`, `registerPlugins`, `build_start`, `build_end`, `dependencies` (+3883 more)
