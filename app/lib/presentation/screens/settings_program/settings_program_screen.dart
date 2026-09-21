@@ -470,7 +470,17 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
       width: 44,
       colorFilter: tint ? ColorFilter.mode(muted, BlendMode.srcIn) : null,
     );
-    Widget png(String asset) => Image.asset(asset, height: 44, width: 44);
+    // PNG assets are black at 30% alpha: recolor to `muted` and restore
+    // full opacity so they match the tinted SVGs in both themes.
+    Widget png(String asset) => ColorFiltered(
+      colorFilter: ColorFilter.matrix([
+        0, 0, 0, 0, muted.r * 255, //
+        0, 0, 0, 0, muted.g * 255,
+        0, 0, 0, 0, muted.b * 255,
+        0, 0, 0, 255 / 77, 0,
+      ]),
+      child: Image.asset(asset, height: 44, width: 44),
+    );
 
     final items = <(String, String?, Widget)>[
       if (pm.seats != null)
