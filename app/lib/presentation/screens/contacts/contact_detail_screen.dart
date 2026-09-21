@@ -12,6 +12,7 @@ import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/fitness.dart';
 import '../../../domain/usecases/fitness/fitness.dart';
 import '../../utils/dialogs_utils.dart';
+import '../../utils/string_utils.dart';
 import '../../widgets/image_user_widget.dart';
 import '../../widgets/user_avatar_widget.dart';
 import '../programs/program_screen/bloc/program_screen_bloc.dart';
@@ -353,7 +354,10 @@ class _InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rows = <_InfoRow>[
       if (trainee.mobilePhone != null && trainee.mobilePhone!.isNotEmpty)
-        _InfoRow(icon: FIcons.phone, label: 'Phone', value: trainee.mobilePhone!),
+        _InfoRow(
+            icon: FIcons.phone,
+            label: 'Phone',
+            value: trainee.mobilePhone!.formatPhone()),
       if (trainee.weight != null)
         _InfoRow(
             icon: FIcons.dumbbell,

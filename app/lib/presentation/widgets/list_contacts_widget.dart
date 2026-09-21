@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import '../utils/string_utils.dart';
 import 'contact_actions_menu.dart';
 import 'user_avatar_widget.dart';
 
@@ -27,6 +28,9 @@ class ListContactsWidget extends StatelessWidget {
         .take(2)
         .join();
 
+    final email = client.email?.trim() ?? '';
+    final phone = client.mobilePhone?.trim() ?? '';
+
     final avatar = UserAvatarWidget(
       photoUrl: client.photoUrl,
       initials: initials,
@@ -43,12 +47,25 @@ class ListContactsWidget extends StatelessWidget {
           client.fullName,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(
-          'Weight: ${client.weight != null ? '${client.weight} kg' : 'N/A'}'
-          '   Height: ${client.height?.toString() ?? 'N/A'}',
-          style: context.theme.typography.xs.copyWith(
-            color: context.theme.colors.mutedForeground,
-          ),
+        subtitle: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final line in [
+              'Weight: ${client.weight != null ? '${client.weight} kg' : 'N/A'}'
+                  '   Height: ${client.height?.toString() ?? 'N/A'}',
+              if (email.isNotEmpty) email,
+              if (phone.isNotEmpty) phone.formatPhone(),
+            ])
+              Text(
+                line,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.theme.typography.xs.copyWith(
+                  color: context.theme.colors.mutedForeground,
+                ),
+              ),
+          ],
         ),
         suffix: (onEdit != null || onDelete != null)
             ? ContactActionsMenu(onEdit: onEdit, onDelete: onDelete)

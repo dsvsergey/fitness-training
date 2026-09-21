@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import '../utils/string_utils.dart';
 
 class UserCardWidget extends StatelessWidget {
   const UserCardWidget({super.key, required this.model, this.onNotesEdited});
@@ -37,7 +38,7 @@ class UserCardWidget extends StatelessWidget {
           ),
           if (model.mobilePhone?.isNotEmpty == true) ...[
             const SizedBox(height: 10),
-            _InfoRow(icon: FIcons.phone, text: model.mobilePhone!),
+            _InfoRow(icon: FIcons.phone, text: model.mobilePhone!.formatPhone()),
           ],
           if (model.notes?.trim().isNotEmpty == true) ...[
             const SizedBox(height: 8),

@@ -28,7 +28,13 @@ class HistoryWidget extends StatelessWidget {
           '${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
     }
 
-    final history = programMachine?.workouts.toList();
+    // Only the last month is shown; the upcoming (undated) session always stays.
+    final now = DateTime.now();
+    final monthAgo = DateTime(now.year, now.month - 1, now.day);
+    final history = programMachine?.workouts
+        .where((w) =>
+            w.dateSession == null || !w.dateSession!.isBefore(monthAgo))
+        .toList();
     history?.sort((a, b) => b.id!.compareTo(a.id!));
 
     final cellStyle = isTablet

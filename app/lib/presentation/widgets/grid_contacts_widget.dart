@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/fitness.dart';
+import '../utils/string_utils.dart';
 import 'contact_actions_menu.dart';
 import 'user_avatar_widget.dart';
 
@@ -35,6 +36,8 @@ class GridContactsWidget extends StatelessWidget {
       if (model.weight != null) '${_format(model.weight!)} kg',
       if (model.height != null) '${_format(model.height!)} cm',
     ].join(' · ');
+    final email = model.email?.trim() ?? '';
+    final phone = model.mobilePhone?.trim() ?? '';
 
     return Material(
       color: colors.background,
@@ -81,6 +84,21 @@ class GridContactsWidget extends StatelessWidget {
                       color: colors.mutedForeground,
                     ),
                   ),
+                  for (final line in [
+                    if (email.isNotEmpty) email,
+                    if (phone.isNotEmpty) phone.formatPhone(),
+                  ]) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      line,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: typography.xs.copyWith(
+                        color: colors.mutedForeground,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
