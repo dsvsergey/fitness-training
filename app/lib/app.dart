@@ -20,6 +20,8 @@ import 'presentation/screens/contacts/bloc/contacts_bloc.dart';
 import 'presentation/screens/machines_program/bloc/machines_program_screen_bloc.dart';
 import 'presentation/screens/programs/create_program/bloc/create_program_bloc.dart';
 import 'presentation/screens/programs/program_screen/bloc/program_screen_bloc.dart';
+import 'presentation/screens/stopwatch_timer/active_stopwatch.dart';
+import 'presentation/widgets/active_stopwatch_bar.dart';
 import 'presentation/widgets/shared_prefs_widget.dart';
 
 class MyApp extends StatefulWidget {
@@ -80,6 +82,7 @@ class _MyAppState extends State<MyApp> {
           child: BlocListener<ApplicationBloc, ApplicationState>(
             listenWhen: (prev, curr) => prev.isAuth && curr is AuthLogout,
             listener: (context, state) {
+              GetIt.I<ActiveStopwatch>().clear();
               _appRouter.replaceAll([const LoginRoute()]);
             },
             child: ScreenUtilInit(
@@ -123,7 +126,10 @@ class _MyAppState extends State<MyApp> {
                           data: activeForUiTheme,
                           child: FToaster(
                             child: FTooltipGroup(
-                              child: easyLoadingBuilder(context, child),
+                              child: ActiveStopwatchBar(
+                                router: _appRouter,
+                                child: easyLoadingBuilder(context, child),
+                              ),
                             ),
                           ),
                         );

@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import "dart:async";
+
 import "package:auto_route/auto_route.dart";
 import "package:collection/collection.dart";
 import "package:fitness_training/core/resources/localization/l10n/app_localizations.dart";
@@ -11,12 +13,14 @@ import "package:forui/forui.dart";
 import "package:get_it/get_it.dart";
 import "package:intl/intl.dart";
 
+import "../../../core/bloc/bloc_application/application_bloc.dart";
 import "../../../core/resources/resources.dart";
 import "../../../core/router/router.dart";
 import "../../../domain/entities/fitness/fitness.dart";
 import "../../../domain/entities/history_training_entity.dart";
 import "../../../domain/usecases/fitness/fitness.dart";
 import "../../../domain/usecases/fitness/workout_session_usecase.dart";
+import "../stopwatch_timer/active_stopwatch.dart";
 import "../../utils/dialogs_utils.dart";
 import "../../widgets/button_widget.dart";
 import "../../widgets/custom_timer_widget.dart";
@@ -59,6 +63,32 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
       ?.workouts
       .firstWhereOrNull((w) => w.dateSession == null);
 
+  late final SettingsProgramBloc _bloc = SettingsProgramBloc()..add(_reload());
+
+  /// The stopwatch may be saved from a screen opened later, via the
+  /// stopwatch bar, so the history is refreshed on every save.
+  late final StreamSubscription<StopwatchTarget> _completions = GetIt.I<
+    ActiveStopwatch
+  >().completed.listen((_) => _bloc.add(_reload()));
+
+  GetMachineSettingEvent _reload() => GetMachineSettingEvent(
+    programFitness: widget.program,
+    machine: widget.machine,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _completions;
+  }
+
+  @override
+  void dispose() {
+    _completions.cancel();
+    _bloc.close();
+    super.dispose();
+  }
+
   void onsive(double tim) {
     setState(() {
       timer = tim;
@@ -75,14 +105,8 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
 
-    return BlocProvider(
-      create: (context) => SettingsProgramBloc()
-        ..add(
-          GetMachineSettingEvent(
-            programFitness: widget.program,
-            machine: widget.machine,
-          ),
-        ),
+    return BlocProvider.value(
+      value: _bloc,
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -539,71 +563,36 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
     );
   }
 
-  void onTimerButtonPressed(
+  /// Opens the app-wide stopwatch for the pending session. Only one set can
+  /// be timed at a time, so a stopwatch already running for another set is
+  /// offered instead.
+  Future<void> onTimerButtonPressed(
     BuildContext context,
     SettingsProgramState state,
   ) async {
     final WorkoutSessionEntity? workoutSession = _pendingSession(state);
-    final String? trainerName = state.programMachine?.machine?.name;
-    if (workoutSession == null ||
-        trainerName == null ||
-        workoutSession.weight == null) {
-      return;
+    if (workoutSession == null || workoutSession.weight == null) return;
+
+    final stopwatch = GetIt.I<ActiveStopwatch>();
+    if (stopwatch.isActive && !stopwatch.isTiming(workoutSession)) {
+      final open = await DialogUtils.showConfirmationDialog(
+        context,
+        'Stopwatch is running',
+        'A stopwatch is already running for '
+            '${stopwatch.target!.machine.name}. Open it?',
+      );
+      if (open != true) return;
+    } else {
+      stopwatch.open(
+        StopwatchTarget(
+          workoutSession: workoutSession,
+          machine: state.programMachine?.machine ?? widget.machine,
+          traineeName:
+              GetIt.I<ApplicationBloc>().state.currentTrainee?.fullName ?? '',
+        ),
+      );
     }
-
-    double? value = await context.router.push<double>(
-      StopwatchTimerRoutes(
-        trainerName: trainerName,
-        weight: workoutSession.weightLabel,
-      ),
-    );
-
-    if (value != null) {
-      final workoutSessionUsecase = GetIt.I<WorkoutSessionUsecase>();
-      final updatedWorkoutSession = await workoutSessionUsecase
-          .updateWorkoutSession(
-            workoutSession.id!,
-            workoutSession.rebuild(
-              (p0) => p0
-                ..sessionStatus = SessionStatusEnumEntity.completed
-                ..sessionTime = value.toInt()
-                ..dateSession = _dateWithZeroTime(DateTime.now()),
-            ),
-          );
-
-      if (mounted) {
-        final nextWeight = await DialogUtils.showNextWeightDialog(
-          // ignore: use_build_context_synchronously
-          context: context,
-          machine: widget.machine,
-          weight: updatedWorkoutSession.weight!,
-          weight2: updatedWorkoutSession.weight2,
-        );
-
-        await workoutSessionUsecase.createWorkoutSession(
-          updatedWorkoutSession.rebuild(
-            (p0) => p0
-              ..id = null
-              ..dateSession = null
-              ..sessionTime = null
-              ..sessionStatus = SessionStatusEnumEntity.planned
-              ..createdAt = null
-              ..weight = nextWeight?.$1 ?? updatedWorkoutSession.weight!
-              ..weight2 = nextWeight != null
-                  ? nextWeight.$2
-                  : updatedWorkoutSession.weight2,
-          ),
-        );
-
-        // ignore: use_build_context_synchronously
-        context.read<SettingsProgramBloc>().add(
-          GetMachineSettingEvent(
-            machine: widget.machine,
-            programFitness: widget.program,
-          ),
-        );
-      }
-    }
+    if (context.mounted) await context.router.push(const StopwatchTimerRoutes());
   }
 
   /// Changes the upcoming session's weight straight from the history table.
@@ -635,7 +624,4 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
       ),
     );
   }
-
-  DateTime _dateWithZeroTime(DateTime dt) =>
-      DateTime(dt.year, dt.month, dt.day);
 }

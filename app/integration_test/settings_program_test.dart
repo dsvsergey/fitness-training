@@ -15,6 +15,7 @@ import 'package:fitness_training/domain/entities/fitness/fitness.dart';
 import 'package:fitness_training/domain/usecases/fitness/fitness.dart';
 import 'package:fitness_training/presentation/screens/metronome/metronome_controls.dart';
 import 'package:fitness_training/presentation/screens/settings_program/settings_program_screen.dart';
+import 'package:fitness_training/presentation/screens/stopwatch_timer/active_stopwatch.dart';
 import 'package:fitness_training/presentation/widgets/custom_timer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -119,6 +120,7 @@ void main() {
     final applicationBloc = ApplicationBloc();
     addTearDown(applicationBloc.close);
     GetIt.I.registerSingleton<ApplicationBloc>(applicationBloc);
+    GetIt.I.registerSingleton<ActiveStopwatch>(ActiveStopwatch());
     // No calendar appointment anywhere — the condition that used to disable
     // both buttons.
     expect(applicationBloc.state.currentAppointment, isNull);
