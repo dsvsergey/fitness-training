@@ -3,7 +3,7 @@ description: Rep Forge — trainer app.
 
 publish_to: 'none' 
 
-version: 2.0.4+7
+version: 2.0.5+8
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
