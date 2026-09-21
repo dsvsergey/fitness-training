@@ -185,23 +185,23 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/dependencies.dependencies_hash_file.json": {
-    "mtime": 1790020749.367961,
+    "mtime": 1790021217.8756528,
     "ast_hash": "7c4ce3d080c5f246333d05c11cb27227",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/hook.dependencies_hash_file.json": {
-    "mtime": 1790020747.357996,
-    "ast_hash": "fa8424a598de6b69bc5309d2af1ace01",
+    "mtime": 1790021216.728144,
+    "ast_hash": "247f4bf95b662b0393f4e108ddb0ec89",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/input.json": {
-    "mtime": 1790020747.3596044,
+    "mtime": 1790021216.7300625,
     "ast_hash": "a46c100f00f99804221806e807ecc38c",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/output.json": {
-    "mtime": 1790020749.3206837,
-    "ast_hash": "1ab5fa49fb19ab2f91adc35bb1bbc199",
+    "mtime": 1790021217.8181975,
+    "ast_hash": "2a8aaa587b827e0978f649ec415fba07",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/dependencies.dependencies_hash_file.json": {
@@ -245,8 +245,8 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/package_config.json": {
-    "mtime": 1790020744.0207033,
-    "ast_hash": "96b0bfe2e7d59b10b825e5b474674aa1",
+    "mtime": 1790021188.5692747,
+    "ast_hash": "153b6c0dca486f1021ac1af7a812baf7",
     "semantic_hash": ""
   },
   "app/.dart_tool/package_graph.json": {
@@ -1405,8 +1405,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contacts_screen.dart": {
-    "mtime": 1789836353.683888,
-    "ast_hash": "a97548304f6c06cd7a6431e302497cad",
+    "mtime": 1790021187.5042152,
+    "ast_hash": "6f0032a34e4e319e4c8b0e15b5cf3a63",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/home_screen.dart": {
@@ -1590,8 +1590,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/grid_contacts_widget.dart": {
-    "mtime": 1789836353.6857338,
-    "ast_hash": "03c56a1c8b3a6b148402e75044bb4874",
+    "mtime": 1790021187.5036454,
+    "ast_hash": "97ad14d5664dc8e151b65cf732573594",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/history_widget.dart": {
@@ -1605,8 +1605,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/list_contacts_widget.dart": {
-    "mtime": 1789836353.6866302,
-    "ast_hash": "a745b155aeff809b2fe401c48b25227b",
+    "mtime": 1790021187.5038104,
+    "ast_hash": "9ca3ea52551055b7709715812b857ae8",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/loading_button_widget.dart": {
@@ -2725,13 +2725,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/stderr.txt": {
-    "mtime": 1790020747.360601,
+    "mtime": 1790021216.7316277,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/stdout.txt": {
-    "mtime": 1790020749.3108072,
-    "ast_hash": "2ceb8799de0adb9b8ebecf9cbded8e34",
+    "mtime": 1790021217.805541,
+    "ast_hash": "4c581c63fe6a05cb8e90a8ceed76f085",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/stderr.txt": {
@@ -3612,6 +3612,11 @@
   "service/app/core/admin_views.py": {
     "mtime": 1790020647.392898,
     "ast_hash": "d837a944efb221605af24cd86c79a445",
+    "semantic_hash": ""
+  },
+  "app/test/grid_contacts_widget_test.dart": {
+    "mtime": 1790021215.3534243,
+    "ast_hash": "22908d6f4d2153ecab36aead57828f76",
     "semantic_hash": ""
   }
 }

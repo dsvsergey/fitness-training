@@ -1,129 +1,140 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:fitness_training/core/bloc/bloc_application/application_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../../domain/entities/fitness/fitness.dart';
+import '../../../domain/usecases/fitness/workout_session_usecase.dart';
 import '../../utils/dialogs_utils.dart';
 import '../../widgets/fixed_width_text.dart';
+import 'active_stopwatch.dart';
 
+/// "05:07", or "1:05:07" past the hour.
+String formatStopwatch(Duration d) {
+  String two(int n) => n.toString().padLeft(2, '0');
+  final mmss = '${two(d.inMinutes % 60)}:${two(d.inSeconds % 60)}';
+  return d.inHours > 0 ? '${d.inHours}:$mmss' : mmss;
+}
+
+/// Shows and drives [ActiveStopwatch]. Leaving the screen does not stop it.
 @RoutePage()
 class StopwatchTimerScreens extends StatefulWidget {
-  final String trainerName;
-
-  /// Preformatted weight, e.g. "280" or "280 / 380".
-  final String weight;
-  const StopwatchTimerScreens(
-      {super.key, required this.trainerName, required this.weight});
+  const StopwatchTimerScreens({super.key});
 
   @override
   State<StopwatchTimerScreens> createState() => _StopwatchTimerScreensState();
 }
 
-class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
-  int seconds = 0;
-  int minutes = 0;
-  int hours = 0;
-  int milliseconds = 0;
-  String digitSeconds = '00';
-  String digitMinutes = '00';
-  String digitHours = '00';
-  String digitMilliseconds = '00';
-  Timer? timer;
-  bool started = false;
-  List laps = [];
+class _StopwatchTimerScreensState extends State<StopwatchTimerScreens>
+    with SingleTickerProviderStateMixin {
+  final _stopwatch = GetIt.I<ActiveStopwatch>();
+  late final Ticker _ticker;
+  bool _saving = false;
 
   final ValueNotifier<String> timeNotifier = ValueNotifier<String>('00:00');
   final ValueNotifier<String> millisecondsNotifier =
       ValueNotifier<String>('00');
 
+  bool get started => _stopwatch.isRunning;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopwatch
+      ..isScreenOpen = true
+      ..addListener(_onStopwatchChanged);
+    _ticker = createTicker((_) => _showElapsed());
+    _syncTicker();
+  }
+
   @override
   void dispose() {
-    timer?.cancel();
+    _ticker.dispose();
+    _stopwatch
+      ..removeListener(_onStopwatchChanged)
+      ..isScreenOpen = false
+      ..release();
     timeNotifier.dispose();
     millisecondsNotifier.dispose();
     super.dispose();
   }
 
-  void onSaveButtonPressed() {
-    timer?.cancel();
-    final value = Duration(
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds,
-    ).inSeconds.toDouble();
-    context.router.pop<double>(value);
+  void _onStopwatchChanged() {
+    _syncTicker();
+    setState(() {});
   }
 
-  void stop() {
-    timer?.cancel();
-    setState(() => started = false);
+  /// Ticks only while running, so a paused screen stays idle.
+  void _syncTicker() {
+    if (_stopwatch.isRunning && !_ticker.isActive) _ticker.start();
+    if (!_stopwatch.isRunning && _ticker.isActive) _ticker.stop();
+    _showElapsed();
   }
 
-  void reset() {
-    timer?.cancel();
-    setState(() {
-      seconds = 0;
-      minutes = 0;
-      hours = 0;
-      digitSeconds = '00';
-      digitMinutes = '00';
-      digitHours = '00';
-      digitMilliseconds = '00';
-      started = false;
-    });
-    timeNotifier.value = '$digitMinutes:$digitSeconds';
-    millisecondsNotifier.value = digitMilliseconds;
+  void _showElapsed() {
+    final elapsed = _stopwatch.elapsed;
+    timeNotifier.value = formatStopwatch(elapsed);
+    millisecondsNotifier.value =
+        ((elapsed.inMilliseconds % 1000) ~/ 10).toString().padLeft(2, '0');
   }
 
-  void addLaps() {
-    setState(() => laps.add('$digitHours:$digitMinutes:$digitSeconds'));
+  Future<void> _saveAndEnd() async {
+    final target = _stopwatch.target;
+    final session = target?.workoutSession;
+    if (target == null || session?.id == null || _saving) return;
+    setState(() => _saving = true);
+    try {
+      final usecase = GetIt.I<WorkoutSessionUsecase>();
+      final updated = await usecase.updateWorkoutSession(
+        session!.id!,
+        session.rebuild(
+          (b) => b
+            ..sessionStatus = SessionStatusEnumEntity.completed
+            ..sessionTime = _stopwatch.elapsed.inSeconds
+            ..dateSession = _dateWithZeroTime(DateTime.now()),
+        ),
+      );
+
+      final nextWeight = mounted
+          ? await DialogUtils.showNextWeightDialog(
+              // ignore: use_build_context_synchronously
+              context: context,
+              machine: target.machine,
+              weight: updated.weight!,
+              weight2: updated.weight2,
+            )
+          : null;
+
+      await usecase.createWorkoutSession(
+        updated.rebuild(
+          (b) => b
+            ..id = null
+            ..dateSession = null
+            ..sessionTime = null
+            ..sessionStatus = SessionStatusEnumEntity.planned
+            ..createdAt = null
+            ..weight = nextWeight?.$1 ?? updated.weight!
+            ..weight2 =
+                nextWeight != null ? nextWeight.$2 : updated.weight2,
+        ),
+      );
+
+      _stopwatch.complete();
+      if (mounted) await context.router.maybePop();
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
-  void start() {
-    setState(() => started = true);
-    int localMilliseconds = 0;
-    timer = Timer.periodic(const Duration(milliseconds: 10), (t) {
-      localMilliseconds += 100;
-      int s = seconds, m = minutes, h = hours;
-
-      if (localMilliseconds >= 10000) {
-        localMilliseconds = 0;
-        s++;
-      }
-      if (s > 59) {
-        if (m > 59) {
-          h++;
-          m = 0;
-        } else {
-          m++;
-          s = 0;
-        }
-      }
-
-      milliseconds = localMilliseconds;
-      seconds = s;
-      minutes = m;
-      hours = h;
-      digitMilliseconds = (milliseconds ~/ 100 >= 10)
-          ? '${milliseconds ~/ 100}'
-          : '0${milliseconds ~/ 100}';
-      digitSeconds = s >= 10 ? '$s' : '0$s';
-      digitHours = h >= 10 ? '$h' : '0$h';
-      digitMinutes = m >= 10 ? '$m' : '0$m';
-
-      timeNotifier.value = '$digitMinutes:$digitSeconds';
-      millisecondsNotifier.value = digitMilliseconds;
-    });
-  }
+  DateTime _dateWithZeroTime(DateTime dt) =>
+      DateTime(dt.year, dt.month, dt.day);
 
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width > 600;
-    final traineeNameStr =
-        GetIt.I<ApplicationBloc>().state.currentTrainee?.fullName ?? '';
+    final target = _stopwatch.target;
+    final hasTime = _stopwatch.elapsed > Duration.zero;
 
     return Scaffold(
       backgroundColor: context.theme.colors.background,
@@ -153,9 +164,9 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
             children: [
               const SizedBox(height: 8),
               _SessionHeaderCard(
-                traineeName: traineeNameStr,
-                trainerName: widget.trainerName,
-                weight: widget.weight,
+                traineeName: target?.traineeName ?? '',
+                trainerName: target?.machine.name ?? '',
+                weight: target?.workoutSession.weightLabel ?? '',
               ),
               const Spacer(flex: 2),
               // ── Timer display ───────────────────────────────────────────
@@ -198,7 +209,7 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
               SizedBox(
                 width: double.infinity,
                 child: FButton(
-                  onPress: () => started ? stop() : start(),
+                  onPress: () => started ? _stopwatch.pause() : _stopwatch.start(),
                   variant: started
                       ? FButtonVariant.outline
                       : FButtonVariant.primary,
@@ -218,14 +229,14 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
                 children: [
                   Expanded(
                     child: FButton(
-                      onPress: started || seconds == 0
+                      onPress: started || !hasTime || _saving
                           ? null
                           : () => DialogUtils.showConfirmationDialog(
                                 context,
                                 'Reset stopwatch',
                                 'Do you want to reset the timer?',
                               ).then((v) {
-                                if (v == true) reset();
+                                if (v == true) _stopwatch.reset();
                               }),
                       variant: FButtonVariant.outline,
                       child: const Text('Reset'),
@@ -234,14 +245,14 @@ class _StopwatchTimerScreensState extends State<StopwatchTimerScreens> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: FButton(
-                      onPress: started || seconds == 0
+                      onPress: started || !hasTime || _saving
                           ? null
                           : () => DialogUtils.showConfirmationDialog(
                                 context,
                                 'Save session',
                                 'End the exercise with the customer?',
                               ).then((v) {
-                                if (v == true) onSaveButtonPressed();
+                                if (v == true) _saveAndEnd();
                               }),
                       variant: FButtonVariant.destructive,
                       child: const Text('Save & end'),

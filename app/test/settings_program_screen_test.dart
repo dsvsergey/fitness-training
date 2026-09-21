@@ -7,6 +7,7 @@ import 'package:fitness_training/domain/entities/fitness/fitness.dart';
 import 'package:fitness_training/domain/usecases/fitness/fitness.dart';
 import 'package:fitness_training/domain/usecases/fitness/workout_session_usecase.dart';
 import 'package:fitness_training/presentation/screens/settings_program/settings_program_screen.dart';
+import 'package:fitness_training/presentation/screens/stopwatch_timer/active_stopwatch.dart';
 import 'package:fitness_training/presentation/widgets/custom_timer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -18,13 +19,16 @@ class _FakeProgramMachineUsecase implements ProgramMachineUsecase {
   _FakeProgramMachineUsecase(this.programMachine);
 
   final ProgramMachineEntity? programMachine;
+  int calls = 0;
 
   @override
   Future<ProgramMachineEntity?> getProgramMachineByProgramAndMachine(
     int programId,
     int machineId,
-  ) async =>
-      programMachine;
+  ) async {
+    calls++;
+    return programMachine;
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -139,6 +143,7 @@ void main() {
     final applicationBloc = ApplicationBloc();
     addTearDown(applicationBloc.close);
     GetIt.I.registerSingleton<ApplicationBloc>(applicationBloc);
+    GetIt.I.registerSingleton<ActiveStopwatch>(ActiveStopwatch());
     expect(applicationBloc.state.currentAppointment, isNull);
   }
 
@@ -170,6 +175,54 @@ void main() {
         expect(_cardTitled(tester, 'Timer').onPressed, isNull);
       },
     );
+  });
+
+  group('background stopwatch', () {
+    testWidgets(
+      'a stopwatch running for another set is offered, not replaced',
+      (tester) async {
+        register(_programMachine([_session()]));
+        final stopwatch = GetIt.I<ActiveStopwatch>()
+          ..open(StopwatchTarget(
+            workoutSession: _session().rebuild((b) => b..id = 99),
+            machine: MachineEntity((b) => b
+              ..id = 8
+              ..name = 'H2'),
+            traineeName: 'Bob',
+          ))
+          ..start();
+        addTearDown(stopwatch.clear);
+        await _pumpScreen(tester);
+
+        await tester.tap(find.text('Timer').first);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Stopwatch is running'), findsOneWidget);
+        expect(stopwatch.target!.workoutSession.id, 99);
+      },
+    );
+
+    testWidgets('saving the stopwatch reloads the history', (tester) async {
+      final usecase = _FakeProgramMachineUsecase(_programMachine([_session()]));
+      register(null);
+      GetIt.I.unregister<ProgramMachineUsecase>();
+      GetIt.I.registerSingleton<ProgramMachineUsecase>(usecase);
+      await _pumpScreen(tester);
+      final loadsBefore = usecase.calls;
+
+      final stopwatch = GetIt.I<ActiveStopwatch>()
+        ..open(StopwatchTarget(
+          workoutSession: _session(),
+          machine: _machine,
+          traineeName: '',
+        ))
+        ..start();
+      stopwatch.complete();
+      await tester.pump();
+      await tester.pump();
+
+      expect(usecase.calls, loadsBefore + 1);
+    });
   });
 
   group('note', () {
