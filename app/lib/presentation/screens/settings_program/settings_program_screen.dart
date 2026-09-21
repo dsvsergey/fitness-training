@@ -474,7 +474,7 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
 
     final items = <(String, String?, Widget)>[
       if (pm.seats != null)
-        (l10n.seats, pm.seats?.toString(), svg(AppSvgs.seats, tint: false)),
+        (l10n.seats, pm.seats?.toString(), svg(AppSvgs.seats)),
       if (pm.back != null) (l10n.back, pm.back?.toString(), png(AppPngs.body)),
       if (pm.pin != null) (l10n.pin, pm.pin?.toString(), png(AppPngs.pin)),
       if (pm.handle != null) (l10n.handle, pm.handle, png(AppPngs.handle)),

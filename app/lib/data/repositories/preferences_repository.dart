@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:fitness_training/core/const.dart';
+import 'package:fitness_training/core/resources/themes/theme.dart';
 import 'package:fitness_training/data/models/mindbody/token_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,4 +39,19 @@ class PreferencesRepository {
           );
         },
       ).catchError((_) => ThemeMode.system);
+
+  Future<void> saveAccent(AppAccent accent) =>
+      SharedPreferences.getInstance().then(
+        (value) => value.setString(AppConsts.themeAccent, accent.name),
+      );
+
+  Future<AppAccent> getAccent() => SharedPreferences.getInstance().then(
+        (value) {
+          final stored = value.getString(AppConsts.themeAccent);
+          return AppAccent.values.firstWhere(
+            (a) => a.name == stored,
+            orElse: () => AppAccent.fallback,
+          );
+        },
+      ).catchError((_) => AppAccent.fallback);
 }

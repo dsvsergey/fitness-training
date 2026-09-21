@@ -90,6 +90,8 @@ class _ProgramNoteCardState extends State<ProgramNoteCard> {
             decoration: InputDecoration(
               hintText: l10n.noteHint,
               hintStyle: TextStyle(color: colors.mutedForeground),
+              filled: true,
+              fillColor: colors.muted,
               contentPadding: const EdgeInsets.all(12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
