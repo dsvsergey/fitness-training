@@ -349,13 +349,13 @@ abstract class AppLocalizations {
   /// No description provided for @uni.
   ///
   /// In en, this message translates to:
-  /// **'Uni'**
+  /// **'Single'**
   String get uni;
 
   /// No description provided for @bi.
   ///
   /// In en, this message translates to:
-  /// **'Bi'**
+  /// **'Both'**
   String get bi;
 
   /// No description provided for @timer.
