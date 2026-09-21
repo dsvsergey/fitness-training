@@ -22,6 +22,7 @@ from app.models.users import User
 from app.models.workout_appointment import WorkoutAppointment
 from app.models.workout_sessions import WorkoutSession
 from app.core.provider import MyAuthProvider
+from app.core.admin_views import MachineView
 from app.models.tasks import Task
 from app.models.log import Log
 from app.core.database_log_handler import DatabaseLogHandler
@@ -55,7 +56,7 @@ def include_starlette(app: FastAPI, engine):
         middlewares=[Middleware(SessionMiddleware, secret_key=settings.SECRET)],
     )
     admin.add_view(ModelView(Coach))
-    admin.add_view(ModelView(Machine))
+    admin.add_view(MachineView(Machine))
     admin.add_view(ModelView(ProgramMachine))
     admin.add_view(ModelView(Program))
     admin.add_view(ModelView(Trainee))
