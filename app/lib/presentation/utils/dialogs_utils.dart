@@ -711,8 +711,15 @@ class DialogUtils {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title, style: const TextStyle(color: Colors.black54)),
-        content: Text(question, style: const TextStyle(color: Colors.black)),
+        backgroundColor: context.theme.colors.background,
+        title: Text(
+          title,
+          style: TextStyle(color: context.theme.colors.mutedForeground),
+        ),
+        content: Text(
+          question,
+          style: TextStyle(color: context.theme.colors.foreground),
+        ),
         actions: [
           OverflowBar(
             alignment: MainAxisAlignment.spaceAround,
@@ -770,10 +777,10 @@ class DialogUtils {
         actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1E1E1E),
+            color: context.theme.colors.foreground,
           ),
         ),
         content: Row(
@@ -1050,10 +1057,10 @@ class DialogUtils {
           actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
           title: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF1E1E1E),
+              color: context.theme.colors.foreground,
             ),
           ),
           content: _LabeledField(

@@ -388,6 +388,18 @@ abstract class AppLocalizations {
   /// **'History'**
   String get history;
 
+  /// No description provided for @historyPeriodDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String historyPeriodDays(int count);
+
+  /// No description provided for @historyPeriodAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get historyPeriodAll;
+
   /// No description provided for @date.
   ///
   /// In en, this message translates to:

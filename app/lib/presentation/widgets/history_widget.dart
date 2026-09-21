@@ -11,10 +11,14 @@ class HistoryWidget extends StatelessWidget {
   /// can change it without opening the full settings editor.
   final void Function(WorkoutSessionEntity session)? onEditWeight;
 
+  /// How many days back to show; null shows the whole history.
+  final int? periodDays;
+
   const HistoryWidget({
     super.key,
     required this.programMachine,
     this.onEditWeight,
+    this.periodDays = 30,
   });
 
   @override
@@ -28,12 +32,16 @@ class HistoryWidget extends StatelessWidget {
           '${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
     }
 
-    // Only the last month is shown; the upcoming (undated) session always stays.
+    // The upcoming (undated) session always stays, whatever the period.
     final now = DateTime.now();
-    final monthAgo = DateTime(now.year, now.month - 1, now.day);
+    final from = periodDays == null
+        ? null
+        : DateTime(now.year, now.month, now.day - periodDays!);
     final history = programMachine?.workouts
         .where((w) =>
-            w.dateSession == null || !w.dateSession!.isBefore(monthAgo))
+            from == null ||
+            w.dateSession == null ||
+            !w.dateSession!.isBefore(from))
         .toList();
     history?.sort((a, b) => b.id!.compareTo(a.id!));
 

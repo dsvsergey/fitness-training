@@ -25,7 +25,7 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/extension_discovery/devtools.json": {
-    "mtime": 1790019498.72907,
+    "mtime": 1790021283.1958206,
     "ast_hash": "f249001430e01093814680c7fcb5668d",
     "semantic_hash": ""
   },
@@ -185,8 +185,8 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/dependencies.dependencies_hash_file.json": {
-    "mtime": 1790021217.8756528,
-    "ast_hash": "7c4ce3d080c5f246333d05c11cb27227",
+    "mtime": 1790022646.4570231,
+    "ast_hash": "bec98dbafb521766aacbc078d465a9fa",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/hook.dependencies_hash_file.json": {
@@ -195,13 +195,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/input.json": {
-    "mtime": 1790021216.7300625,
+    "mtime": 1790022645.450835,
     "ast_hash": "a46c100f00f99804221806e807ecc38c",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/output.json": {
-    "mtime": 1790021217.8181975,
-    "ast_hash": "2a8aaa587b827e0978f649ec415fba07",
+    "mtime": 1790022646.4135787,
+    "ast_hash": "2d114be65b428ce65ad8d27337963371",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/dependencies.dependencies_hash_file.json": {
@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "app/integration_test/settings_program_test.dart": {
-    "mtime": 1789414940.083544,
-    "ast_hash": "7a6a9a4616b513d6aec4716379def29a",
+    "mtime": 1790022770.0267699,
+    "ast_hash": "1c51e6839ce7d0ee81d9dea7709d88d7",
     "semantic_hash": ""
   },
   "app/ios/Flutter/ephemeral/flutter_lldb_helper.py": {
@@ -340,8 +340,8 @@
     "semantic_hash": ""
   },
   "app/lib/app.dart": {
-    "mtime": 1790015759.8658001,
-    "ast_hash": "075c8ddc17f800330fda719df466aee2",
+    "mtime": 1790022535.0946047,
+    "ast_hash": "784e84d27df4add3644f766ca1069424",
     "semantic_hash": ""
   },
   "app/lib/core/bloc/bloc_application/application_bloc.dart": {
@@ -395,13 +395,13 @@
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations.dart": {
-    "mtime": 1790015249.3135314,
-    "ast_hash": "4216269fc62a7ca1689d62ac8198fbd3",
+    "mtime": 1790022080.0199564,
+    "ast_hash": "a2acb54e765daa5bfd544c3cf56ed7fa",
     "semantic_hash": ""
   },
   "app/lib/core/resources/localization/l10n/app_localizations_en.dart": {
-    "mtime": 1790015249.3114655,
-    "ast_hash": "9b04164862060da85eaf1153eccce541",
+    "mtime": 1790022080.020289,
+    "ast_hash": "22a27f0d83a41aab7a48d33407998394",
     "semantic_hash": ""
   },
   "app/lib/core/resources/resources.dart": {
@@ -430,8 +430,8 @@
     "semantic_hash": ""
   },
   "app/lib/core/router/router.gr.dart": {
-    "mtime": 1789840684.2735786,
-    "ast_hash": "ddd47bf658e812f8f4a8af2450ffb305",
+    "mtime": 1790022557.913165,
+    "ast_hash": "a802060d5665c3371e3a3120bcfccd41",
     "semantic_hash": ""
   },
   "app/lib/core/utils/device_info.dart": {
@@ -1340,8 +1340,8 @@
     "semantic_hash": ""
   },
   "app/lib/main.config.dart": {
-    "mtime": 1789068741.4797115,
-    "ast_hash": "f0991f127e2b918b2f88e504e97f7faf",
+    "mtime": 1790022557.9089518,
+    "ast_hash": "9d0cc81d6683cc3615ec37f79dd97765",
     "semantic_hash": ""
   },
   "app/lib/main.dart": {
@@ -1400,12 +1400,12 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contact_detail_screen.dart": {
-    "mtime": 1790020716.3808534,
+    "mtime": 1790022080.0208905,
     "ast_hash": "f9a21eb0743b3fe5bc060adc976b6096",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/contacts/contacts_screen.dart": {
-    "mtime": 1790021187.5042152,
+    "mtime": 1790022080.0214279,
     "ast_hash": "6f0032a34e4e319e4c8b0e15b5cf3a63",
     "semantic_hash": ""
   },
@@ -1530,8 +1530,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/settings_program/settings_program_screen.dart": {
-    "mtime": 1790015759.8676522,
-    "ast_hash": "a8e8849eff60d069e7c0efe37f4aadb7",
+    "mtime": 1790022516.6159632,
+    "ast_hash": "da7348a0420667831bdfe6daade3497a",
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/splash_screen.dart": {
@@ -1540,8 +1540,8 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/screens/stopwatch_timer/stopwatch_timer_screens.dart": {
-    "mtime": 1789842188.0950358,
-    "ast_hash": "00f5d465e64f3a2c7097ec15c13d198c",
+    "mtime": 1790022706.082877,
+    "ast_hash": "65c9af12849a42b7a88831ebbb2f050e",
     "semantic_hash": ""
   },
   "app/lib/presentation/utils/dialogs_utils.dart": {
@@ -1560,7 +1560,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/utils/string_utils.dart": {
-    "mtime": 1790020716.362273,
+    "mtime": 1790022080.021863,
     "ast_hash": "5b1112e5c1640c8f1262629e9241ac08",
     "semantic_hash": ""
   },
@@ -1590,13 +1590,13 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/grid_contacts_widget.dart": {
-    "mtime": 1790021187.5036454,
+    "mtime": 1790022080.022257,
     "ast_hash": "97ad14d5664dc8e151b65cf732573594",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/history_widget.dart": {
-    "mtime": 1790015759.8682632,
-    "ast_hash": "07f38c24c646978dbb969fa0ea4decad",
+    "mtime": 1790022080.0225682,
+    "ast_hash": "8863743242a0f983f36bb857c384d0c9",
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/image_user_widget.dart": {
@@ -1605,7 +1605,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/list_contacts_widget.dart": {
-    "mtime": 1790021187.5038104,
+    "mtime": 1790022080.0228007,
     "ast_hash": "9ca3ea52551055b7709715812b857ae8",
     "semantic_hash": ""
   },
@@ -1675,7 +1675,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/user_cart_widget.dart": {
-    "mtime": 1790020716.3832603,
+    "mtime": 1790022080.0230503,
     "ast_hash": "66ca27ec6b21116d29cca20d52349a75",
     "semantic_hash": ""
   },
@@ -1685,7 +1685,7 @@
     "semantic_hash": ""
   },
   "app/lib/presentation/widgets/user_info_widget.dart": {
-    "mtime": 1790020720.715606,
+    "mtime": 1790022080.0233076,
     "ast_hash": "76e519da9245fafbf81cdd5539781538",
     "semantic_hash": ""
   },
@@ -1975,8 +1975,8 @@
     "semantic_hash": ""
   },
   "app/test/settings_program_screen_test.dart": {
-    "mtime": 1789842188.0966399,
-    "ast_hash": "bfa9b547ee8af83f9b9ac194e1195f70",
+    "mtime": 1790022644.3965912,
+    "ast_hash": "07cdb1c69c6c1c895600093be726d13f",
     "semantic_hash": ""
   },
   "app/test/trainee_repository_avatar_test.dart": {
@@ -2725,13 +2725,13 @@
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/stderr.txt": {
-    "mtime": 1790021216.7316277,
+    "mtime": 1790022645.4518576,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7ad245dadc/stdout.txt": {
-    "mtime": 1790021217.805541,
-    "ast_hash": "4c581c63fe6a05cb8e90a8ceed76f085",
+    "mtime": 1790022646.4032125,
+    "ast_hash": "22795f723d18c16f8cbf56e65cdfbde2",
     "semantic_hash": ""
   },
   "app/.dart_tool/hooks_runner/objective_c/7afbf03751/stderr.txt": {
@@ -3600,7 +3600,7 @@
     "semantic_hash": ""
   },
   "app/test/phone_format_test.dart": {
-    "mtime": 1790020716.3706403,
+    "mtime": 1790022080.0237076,
     "ast_hash": "5ed2e9bd20a0b0b74e59b1f27dc74cd5",
     "semantic_hash": ""
   },
@@ -3615,8 +3615,28 @@
     "semantic_hash": ""
   },
   "app/test/grid_contacts_widget_test.dart": {
-    "mtime": 1790021215.3534243,
+    "mtime": 1790022080.0235128,
     "ast_hash": "22908d6f4d2153ecab36aead57828f76",
+    "semantic_hash": ""
+  },
+  "app/lib/presentation/screens/stopwatch_timer/active_stopwatch.dart": {
+    "mtime": 1790022706.0782936,
+    "ast_hash": "d223347d1a7ec4cf56c55eb89ee5e2f0",
+    "semantic_hash": ""
+  },
+  "app/lib/presentation/widgets/active_stopwatch_bar.dart": {
+    "mtime": 1790022715.1205037,
+    "ast_hash": "53525d803b528fdf646d55d137dafd90",
+    "semantic_hash": ""
+  },
+  "app/test/active_stopwatch_test.dart": {
+    "mtime": 1790022740.892481,
+    "ast_hash": "d00d58e76be656cd37b455336b6e7d9b",
+    "semantic_hash": ""
+  },
+  "app/test/stopwatch_background_test.dart": {
+    "mtime": 1790022715.1279745,
+    "ast_hash": "782ac25f305851d755a4b0bc6345192a",
     "semantic_hash": ""
   }
 }

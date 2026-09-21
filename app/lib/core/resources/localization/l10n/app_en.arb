@@ -48,6 +48,13 @@
     "noteHint": "Enter your note here",
     "note": "Note",
     "history": "History",
+    "historyPeriodDays": "{count} days",
+    "@historyPeriodDays": {
+        "placeholders": {
+            "count": {"type": "int"}
+        }
+    },
+    "historyPeriodAll": "All time",
     "date": "Date",
     "time": "Time",
     "traineeIdIsNull": "Cannot create program: trainee ID is missing"

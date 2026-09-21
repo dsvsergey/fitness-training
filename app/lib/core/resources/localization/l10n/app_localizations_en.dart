@@ -157,6 +157,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history => 'History';
 
   @override
+  String historyPeriodDays(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get historyPeriodAll => 'All time';
+
+  @override
   String get date => 'Date';
 
   @override

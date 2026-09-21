@@ -14,6 +14,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 
 class _FakeProgramMachineUsecase implements ProgramMachineUsecase {
   _FakeProgramMachineUsecase(this.programMachine);
@@ -357,6 +358,40 @@ void main() {
       await _pumpScreen(tester);
 
       expect(find.byKey(const ValueKey('edit-upcoming-weight')), findsNothing);
+    });
+  });
+
+  group('history period', () {
+    final now = DateTime.now();
+    final recent = _session(dateSession: now.subtract(const Duration(days: 5)))
+        .rebuild((b) => b..id = 21);
+    final old = _session(dateSession: now.subtract(const Duration(days: 60)))
+        .rebuild((b) => b..id = 22);
+    String dateOf(WorkoutSessionEntity s) =>
+        DateFormat.yMd().format(s.dateSession!);
+
+    testWidgets('shows the last 30 days by default, upcoming included',
+        (tester) async {
+      register(_programMachine([_session(), recent, old]));
+      await _pumpScreen(tester);
+
+      expect(find.text('30 days'), findsOneWidget);
+      expect(find.text('Upcoming'), findsOneWidget);
+      expect(find.text(dateOf(recent)), findsOneWidget);
+      expect(find.text(dateOf(old)), findsNothing);
+    });
+
+    testWidgets('a longer period brings older sessions back', (tester) async {
+      register(_programMachine([_session(), recent, old]));
+      await _pumpScreen(tester);
+
+      await tester.tap(find.byKey(const ValueKey('history-period')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('All time').last);
+      await tester.pumpAndSettle();
+
+      expect(find.text(dateOf(old)), findsOneWidget);
+      expect(find.text(dateOf(recent)), findsOneWidget);
     });
   });
 }

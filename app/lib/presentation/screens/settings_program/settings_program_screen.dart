@@ -55,6 +55,9 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
   bool isGridView = true;
   double timer = 0;
 
+  /// History period in days; null shows everything.
+  int? _historyDays = 30;
+
   /// The timer writes its result into an unfinished workout session, so it
   /// needs one to exist. It deliberately does not depend on a calendar
   /// appointment: a coach can start training straight from a client.
@@ -333,11 +336,18 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            l10n.history,
-            style: context.theme.typography.lg.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.history,
+                  style: context.theme.typography.lg.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              _historyPeriodMenu(context),
+            ],
           ),
           const SizedBox(height: 12),
           Padding(
@@ -363,7 +373,41 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
           HistoryWidget(
             programMachine: programMachine,
             onEditWeight: (session) => _editUpcomingWeight(context, session),
+            periodDays: _historyDays,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _historyPeriodMenu(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    String label(int? days) =>
+        days == null ? l10n.historyPeriodAll : l10n.historyPeriodDays(days);
+    // 0 stands for "all time": PopupMenuButton treats a null value as dismiss.
+    return PopupMenuButton<int>(
+      key: const ValueKey('history-period'),
+      initialValue: _historyDays ?? 0,
+      onSelected: (days) =>
+          setState(() => _historyDays = days == 0 ? null : days),
+      itemBuilder: (_) => [
+        for (final days in const [30, 90, 180, 365, 0])
+          PopupMenuItem(
+            value: days,
+            child: Text(label(days == 0 ? null : days)),
+          ),
+      ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label(_historyDays),
+            style: context.theme.typography.md.copyWith(
+              color: context.theme.colors.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Icon(Icons.arrow_drop_down, color: context.theme.colors.primary),
         ],
       ),
     );
