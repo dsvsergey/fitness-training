@@ -136,10 +136,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get grip => 'Grip';
 
   @override
-  String get uni => 'Uni';
+  String get uni => 'Single';
 
   @override
-  String get bi => 'Bi';
+  String get bi => 'Both';
 
   @override
   String get timer => 'Timer';
