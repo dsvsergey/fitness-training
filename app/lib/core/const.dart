@@ -12,4 +12,5 @@ class AppConsts {
   static const int apiVersion = 6;
   static const String siteId = '43043';
   static const String themeMode = 'themeMode';
+  static const String themeAccent = 'themeAccent';
 }

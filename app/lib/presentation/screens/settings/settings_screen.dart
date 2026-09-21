@@ -5,6 +5,7 @@ import 'package:forui/forui.dart';
 
 import '../../../core/bloc/bloc_application/application_bloc.dart';
 import '../../../core/bloc/bloc_theme/theme_cubit.dart';
+import '../../../core/resources/themes/theme.dart';
 import '../../../core/router/router.dart';
 import '../../../domain/entities/fitness/coach_entity.dart';
 import '../../widgets/button_widget.dart';
@@ -124,9 +125,10 @@ class _ThemeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, mode) {
+    return BlocBuilder<ThemeCubit, AppThemeState>(
+      builder: (context, themeState) {
         final cubit = context.read<ThemeCubit>();
+        final mode = themeState.mode;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -164,6 +166,29 @@ class _ThemeSelector extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            Text(
+              'Accent color',
+              style: context.theme.typography.md.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                for (final accent in AppAccent.values) ...[
+                  if (accent != AppAccent.values.first)
+                    const SizedBox(width: 8),
+                  Expanded(
+                    child: _AccentOption(
+                      accent: accent,
+                      selected: themeState.accent == accent,
+                      onTap: () => cubit.setAccent(accent),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ],
         );
       },
@@ -188,6 +213,59 @@ class _ThemeOption extends StatelessWidget {
       onPress: onTap,
       variant: selected ? FButtonVariant.primary : FButtonVariant.outline,
       child: Text(label),
+    );
+  }
+}
+
+class _AccentOption extends StatelessWidget {
+  const _AccentOption({
+    required this.accent,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final AppAccent accent;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.theme.colors;
+    final swatch = colors.brightness == Brightness.dark
+        ? accent.dark
+        : accent.light;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: accent.label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: colors.card,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: selected ? swatch : colors.border,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 14,
+                backgroundColor: swatch,
+                child: selected
+                    ? const Icon(FIcons.check, size: 16, color: Colors.white)
+                    : null,
+              ),
+              const SizedBox(height: 6),
+              Text(accent.label, style: context.theme.typography.sm),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

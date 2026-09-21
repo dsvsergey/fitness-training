@@ -65,9 +65,7 @@ class HistoryWidget extends StatelessWidget {
                         'Upcoming',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: cellStyle.copyWith(
-                          color: context.theme.colors.primary,
-                        ),
+                        style: cellStyle,
                       )
                     : Text(
                         DateFormat.yMd()
@@ -135,10 +133,8 @@ class _EditWeightButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 8),
       child: Material(
-        color: context.theme.colors.secondary,
-        shape: CircleBorder(
-          side: BorderSide(color: context.theme.colors.border),
-        ),
+        color: context.theme.colors.primary,
+        shape: const CircleBorder(),
         child: InkWell(
           key: const ValueKey('edit-upcoming-weight'),
           customBorder: const CircleBorder(),
@@ -149,7 +145,7 @@ class _EditWeightButton extends StatelessWidget {
             child: Icon(
               FIcons.plus,
               size: large ? 18 : 16,
-              color: context.theme.colors.foreground,
+              color: context.theme.colors.primaryForeground,
             ),
           ),
         ),
