@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.machines import Machine
+from app.models.program_machines import ProgramMachine
 from app.schemas.machines import MachineSchema
 
 
@@ -8,7 +9,14 @@ def get_machine(db: Session, machine_id: int) -> Machine:
 
 
 def get_machines(db: Session, skip: int = 0, limit: int = 100) -> list[Machine]:
-    return db.query(Machine).order_by(Machine.id).offset(skip).limit(limit).all()
+    return (
+        db.query(Machine)
+        .filter(Machine.is_hidden.is_(False))
+        .order_by(Machine.id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 
 def create_machine(db: Session, machine: MachineSchema) -> Machine:
@@ -33,7 +41,20 @@ def update_machine(db: Session, machine_id: int, machine: MachineSchema) -> Mach
 def delete_machine(db: Session, machine_id: int):
     db_machine = db.query(Machine).filter(Machine.id == machine_id).first()
     if db_machine:
-        db.delete(db_machine)
+        remove_machine(db, db_machine)
         db.commit()
         return True
     return False
+
+
+def remove_machine(db: Session, db_machine: Machine) -> None:
+    """Delete a machine, or hide it if programs still reference it."""
+    is_referenced = db.query(
+        db.query(ProgramMachine)
+        .filter(ProgramMachine.machine_id == db_machine.id)
+        .exists()
+    ).scalar()
+    if is_referenced:
+        db_machine.is_hidden = True
+    else:
+        db.delete(db_machine)
