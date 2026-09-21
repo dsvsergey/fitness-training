@@ -234,7 +234,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                         gridDelegate:
                             SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: isPortrait ? 3 : 4,
-                          mainAxisExtent: 196,
+                          mainAxisExtent: 232,
                           mainAxisSpacing: 16,
                           crossAxisSpacing: 16,
                         ),

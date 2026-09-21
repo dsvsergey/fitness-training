@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
 import '../../domain/entities/fitness/coach_entity.dart';
+import '../utils/string_utils.dart';
 
 class UserInfoWidget extends StatelessWidget {
   final CoachEntity? coach;
@@ -30,7 +31,7 @@ class UserInfoWidget extends StatelessWidget {
           FTile(
             prefix: const Icon(FIcons.phone),
             title: const Text('Phone number'),
-            details: Text(coach?.mobilePhone ?? 'N/A'),
+            details: Text(coach?.mobilePhone?.formatPhone() ?? 'N/A'),
           ),
           FTile(
             prefix: const Icon(FIcons.mail),
