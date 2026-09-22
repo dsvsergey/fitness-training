@@ -6,6 +6,7 @@ import 'package:fitness_training/core/resources/localization/l10n/app_localizati
 import 'package:fitness_training/core/router/router.dart';
 import 'package:fitness_training/domain/entities/fitness/fitness.dart';
 import 'package:fitness_training/domain/usecases/fitness/workout_session_usecase.dart';
+import 'package:fitness_training/presentation/screens/settings_program/widgets/timer_card.dart';
 import 'package:fitness_training/presentation/screens/stopwatch_timer/active_stopwatch.dart';
 import 'package:fitness_training/presentation/widgets/active_stopwatch_bar.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,15 @@ class _TestRouter extends RootStackRouter {
           page: PageInfo('TestHome', builder: (_) => const Text('home')),
           path: '/',
           initial: true,
+        ),
+        AutoRoute(
+          page: PageInfo(
+            'TestMachine',
+            builder: (_) => Scaffold(
+              body: TimerCard(session: _target.workoutSession, onPressed: null),
+            ),
+          ),
+          path: '/machine',
         ),
         AutoRoute(page: StopwatchTimerRoutes.page, path: '/stopwatch'),
       ];
@@ -152,6 +162,36 @@ void main() {
     expect(bar(), findsNothing);
     expect(find.text('Pause'), findsOneWidget);
     expect(find.text('01:05'), findsOneWidget);
+
+    stopwatch.pause();
+    await tester.pumpAndSettle();
+  });
+
+  // Returning from the stopwatch to the timed machine: the Timer card reports
+  // itself while building, and the stopwatch screen, still mounted during the
+  // pop, must not be told mid-build.
+  testWidgets('popping back to the timed machine\'s Timer card is safe',
+      (tester) async {
+    await pumpApp(tester);
+    router.push(const PageRouteInfo<void>('TestMachine'));
+    await tester.pumpAndSettle();
+    await openStopwatch(tester);
+    await tester.tap(find.text('Start'));
+    await tester.pump();
+    now = now.add(const Duration(seconds: 34));
+    await tester.pump(const Duration(milliseconds: 20));
+
+    router.maybePop();
+    for (var i = 0; i < 30; i++) {
+      now = now.add(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(tester.takeException(), isNull);
+    }
+
+    expect(router.topRoute.name, 'TestMachine');
+    expect(stopwatch.isShownInline, isTrue);
+    expect(bar(), findsNothing);
+    expect(find.byKey(const ValueKey('timer-card')), findsOneWidget);
 
     stopwatch.pause();
     await tester.pumpAndSettle();

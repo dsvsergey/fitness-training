@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:forui/forui.dart';
 import 'package:get_it/get_it.dart';
 
@@ -55,21 +54,13 @@ class _ActiveStopwatchBarState extends State<ActiveStopwatchBar> {
       _tick?.cancel();
       _tick = null;
     }
-    _rebuild();
-  }
-
-  /// The stopwatch screen reports itself from initState and dispose, which
-  /// run while the tree is locked: rebuild after that frame instead.
-  void _rebuild() {
-    if (SchedulerBinding.instance.schedulerPhase ==
-        SchedulerPhase.persistentCallbacks) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => _rebuild());
-      return;
-    }
     if (mounted) setState(() {});
   }
 
-  bool get _visible => _stopwatch.isActive && !_stopwatch.isScreenOpen;
+  bool get _visible =>
+      _stopwatch.isActive &&
+      !_stopwatch.isScreenOpen &&
+      !_stopwatch.isShownInline;
 
   @override
   Widget build(BuildContext context) {

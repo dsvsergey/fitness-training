@@ -23,10 +23,10 @@ import "../../../domain/usecases/fitness/workout_session_usecase.dart";
 import "../stopwatch_timer/active_stopwatch.dart";
 import "../../utils/dialogs_utils.dart";
 import "../../widgets/button_widget.dart";
-import "../../widgets/custom_timer_widget.dart";
 import "../../widgets/history_widget.dart";
 import "bloc/settings_program_bloc.dart";
 import "widgets/program_note_card.dart";
+import "widgets/timer_card.dart";
 
 @RoutePage()
 class SettingsProgramScreen extends StatefulWidget {
@@ -250,9 +250,8 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
             final hPad = isTablet ? 32.0 : 12.0;
             final timer =
                 BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
-                  builder: (context, state) => CustomTimerWidget(
-                    title: AppLocalizations.of(context)!.timer,
-                    image: AppSvgs.timer,
+                  builder: (context, state) => TimerCard(
+                    session: _pendingSession(state),
                     onPressed: _pendingSession(state) != null
                         ? () => onTimerButtonPressed(context, state)
                         : null,
@@ -515,9 +514,8 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
-              builder: (context, state) => CustomTimerWidget(
-                title: AppLocalizations.of(context)!.timer,
-                image: AppSvgs.timer,
+              builder: (context, state) => TimerCard(
+                session: _pendingSession(state),
                 onPressed: _pendingSession(state) != null
                     ? () => onTimerButtonPressed(context, state)
                     : null,

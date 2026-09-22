@@ -203,6 +203,56 @@ void main() {
       },
     );
 
+    testWidgets(
+      'the Timer card of the timed set shows the time and hides the bar',
+      (tester) async {
+        register(_programMachine([_session()]));
+        var now = DateTime(2026, 9, 22, 10);
+        await GetIt.I.unregister<ActiveStopwatch>();
+        final stopwatch = ActiveStopwatch(now: () => now);
+        GetIt.I.registerSingleton<ActiveStopwatch>(stopwatch);
+        stopwatch
+          ..open(StopwatchTarget(
+            workoutSession: _session(),
+            machine: _machine,
+            traineeName: '',
+          ))
+          ..start();
+        now = now.add(const Duration(seconds: 34));
+        await _pumpScreen(tester);
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.text('00:34'), findsOneWidget);
+        expect(find.text('Timer'), findsNothing);
+        expect(stopwatch.isShownInline, isTrue);
+
+        now = now.add(const Duration(seconds: 1));
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(find.text('00:35'), findsOneWidget);
+
+        stopwatch.pause();
+        await tester.pumpWidget(const SizedBox());
+        expect(stopwatch.isShownInline, isFalse);
+      },
+    );
+
+    testWidgets('a set that is not timed keeps the plain Timer card',
+        (tester) async {
+      register(_programMachine([_session()]));
+      final stopwatch = GetIt.I<ActiveStopwatch>()
+        ..open(StopwatchTarget(
+          workoutSession: _session().rebuild((b) => b..id = 99),
+          machine: _machine,
+          traineeName: '',
+        ))
+        ..start();
+      addTearDown(stopwatch.clear);
+      await _pumpScreen(tester);
+
+      expect(find.text('Timer'), findsWidgets);
+      expect(stopwatch.isShownInline, isFalse);
+    });
+
     testWidgets('saving the stopwatch reloads the history', (tester) async {
       final usecase = _FakeProgramMachineUsecase(_programMachine([_session()]));
       register(null);

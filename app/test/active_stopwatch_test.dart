@@ -18,6 +18,8 @@ StopwatchTarget _target(int sessionId) => StopwatchTarget(
     );
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late DateTime now;
   late ActiveStopwatch stopwatch;
 

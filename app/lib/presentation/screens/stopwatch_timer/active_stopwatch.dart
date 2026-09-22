@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../domain/entities/fitness/fitness.dart';
@@ -36,6 +37,8 @@ class ActiveStopwatch extends ChangeNotifier {
   DateTime? _startedAt;
   Duration _accumulated = Duration.zero;
   bool _screenOpen = false;
+  bool _notifyScheduled = false;
+  final _inlineViews = <Object>{};
 
   StopwatchTarget? get target => _target;
 
@@ -47,7 +50,16 @@ class ActiveStopwatch extends ChangeNotifier {
   set isScreenOpen(bool open) {
     if (_screenOpen == open) return;
     _screenOpen = open;
-    notifyListeners();
+    _notify();
+  }
+
+  /// Whether a widget on the visible screen already shows the time, e.g. the
+  /// Timer card of the machine being timed, which also hides the bar.
+  bool get isShownInline => _inlineViews.isNotEmpty;
+
+  void showInline(Object owner, bool shown) {
+    final changed = shown ? _inlineViews.add(owner) : _inlineViews.remove(owner);
+    if (changed) _notify();
   }
 
   /// Has time on it, so it must survive the screen being closed.
@@ -75,20 +87,20 @@ class ActiveStopwatch extends ChangeNotifier {
   void start() {
     if (_target == null || isRunning) return;
     _startedAt = _now();
-    notifyListeners();
+    _notify();
   }
 
   void pause() {
     if (!isRunning) return;
     _accumulated = elapsed;
     _startedAt = null;
-    notifyListeners();
+    _notify();
   }
 
   void reset() {
     _startedAt = null;
     _accumulated = Duration.zero;
-    notifyListeners();
+    _notify();
   }
 
   /// Forgets a stopwatch that was opened but never started.
@@ -106,5 +118,22 @@ class ActiveStopwatch extends ChangeNotifier {
     final target = _target;
     clear();
     if (target != null) _completed.add(target);
+  }
+
+  /// Widgets report themselves from initState, didChangeDependencies and
+  /// dispose, while the tree is being built. Listeners react with setState,
+  /// which is illegal then, so the notification waits for the frame to end.
+  void _notify() {
+    if (SchedulerBinding.instance.schedulerPhase !=
+        SchedulerPhase.persistentCallbacks) {
+      notifyListeners();
+      return;
+    }
+    if (_notifyScheduled) return;
+    _notifyScheduled = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _notifyScheduled = false;
+      notifyListeners();
+    });
   }
 }

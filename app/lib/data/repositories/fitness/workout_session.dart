@@ -65,7 +65,10 @@ class WorkoutSessionRepositoryImpl
   Future<WorkoutSessionModel> updateWorkoutSession(
           int sessionId, WorkoutSessionModel session) =>
       fitness.dio
-          .put("/workout-sessions/$sessionId", data: session.toJson())
+          // built_value drops null fields and the backend only updates the
+          // keys it receives, so send weight_2 explicitly to allow clearing it.
+          .put("/workout-sessions/$sessionId",
+              data: {...session.toJson(), 'weight_2': session.weight2})
           .then((value) => WorkoutSessionModel.fromJson(value.data))
           .catchError(onException);
 
