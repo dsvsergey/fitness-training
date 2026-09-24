@@ -1,16 +1,16 @@
-# Graph Report - fitness-training  (2026-09-24)
+# Graph Report - fitness-training  (2026-09-22)
 
 ## Corpus Check
-- 599 files · ~769,820 words
+- 596 files · ~768,632 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6628 nodes · 8930 edges · 901 communities (338 shown, 563 thin omitted)
+- 6579 nodes · 8862 edges · 904 communities (341 shown, 563 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 288 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `dba95ef8`
+- Built from commit: `e2916460`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -158,6 +158,7 @@
 - [[_COMMUNITY_WorkoutSession|WorkoutSession]]
 - [[_COMMUNITY_Behavior|Behavior]]
 - [[_COMMUNITY_const.dart|const.dart]]
+- [[_COMMUNITY_packagediodio.dart|package:dio/dio.dart]]
 - [[_COMMUNITY_fitness.dart|fitness.dart]]
 - [[_COMMUNITY_program_fitness.dart|program_fitness.dart]]
 - [[_COMMUNITY_mindbody_repository.dart|mindbody_repository.dart]]
@@ -245,6 +246,7 @@
 - [[_COMMUNITY_Usage|Usage]]
 - [[_COMMUNITY_Trainee Endpoints|Trainee Endpoints]]
 - [[_COMMUNITY_program_usecase.dart|program_usecase.dart]]
+- [[_COMMUNITY_WorkoutAppointmentFilterEntity|WorkoutAppointmentFilterEntity]]
 - [[_COMMUNITY_dart_build_result.json|dart_build_result.json]]
 - [[_COMMUNITY_dart_build_result.json|dart_build_result.json]]
 - [[_COMMUNITY_dart_build_result.json|dart_build_result.json]]
@@ -279,6 +281,7 @@
 - [[_COMMUNITY_MetronomeWandPainter|MetronomeWandPainter]]
 - [[_COMMUNITY_Line Calendar|Line Calendar]]
 - [[_COMMUNITY_create_user|create_user]]
+- [[_COMMUNITY_workout_session.dart|workout_session.dart]]
 - [[_COMMUNITY_Portal|Portal]]
 - [[_COMMUNITY_Flutter Tips|Flutter Tips]]
 - [[_COMMUNITY_RegisterPlugins|RegisterPlugins]]
@@ -850,6 +853,7 @@
 - [[_COMMUNITY_ContactDetailRoute|ContactDetailRoute]]
 - [[_COMMUNITY_About Forui|About Forui]]
 - [[_COMMUNITY_MetronomeWandPainter|MetronomeWandPainter]]
+- [[_COMMUNITY_Scaffold|Scaffold]]
 - [[_COMMUNITY_ChangeInfoRoute|ChangeInfoRoute]]
 - [[_COMMUNITY_SelectTrainingRoute|SelectTrainingRoute]]
 
@@ -870,17 +874,17 @@
   app/lib/presentation/screens/contacts/contact_detail_screen.dart → app/lib/core/bloc/bloc_application/application_bloc.dart
 - `build` --references--> `ApplicationBloc`  [EXTRACTED]
   app/lib/presentation/screens/settings/change_info_screen.dart → app/lib/core/bloc/bloc_application/application_bloc.dart
-- `setup` --calls--> `LogoutEvent`  [EXTRACTED]
-  app/lib/core/dio_settings/dio_settings_backend.dart → app/lib/core/bloc/bloc_application/application_event.dart
 - `create_user()` --references--> `UserModel`  [EXTRACTED]
   service/app/crud/users.py → app/lib/data/models/mindbody/user_model.dart
 - `get_user_by_coach_id()` --references--> `UserModel`  [EXTRACTED]
+  service/app/crud/users.py → app/lib/data/models/mindbody/user_model.dart
+- `update_user()` --references--> `UserModel`  [EXTRACTED]
   service/app/crud/users.py → app/lib/data/models/mindbody/user_model.dart
 
 ## Import Cycles
 - None detected.
 
-## Communities (901 total, 563 thin omitted)
+## Communities (904 total, 563 thin omitted)
 
 ### Community 0 - "router.dart"
 Cohesion: 0.05
@@ -888,11 +892,11 @@ Nodes (38): routes, Key?, ../../presentation/screens/calendar/calendar_info_scre
 
 ### Community 1 - "app_localizations.dart"
 Cohesion: 0.03
-Nodes (67): addMachine, angle, archive, back, bi, cancel, chest, confirmation (+59 more)
+Nodes (64): addMachine, angle, archive, back, bi, cancel, chest, confirmation (+56 more)
 
 ### Community 2 - "contacts_screen.dart"
-Cohesion: 0.04
-Nodes (53): WorkoutAppointmentEntityExtension, WorkoutAppointmentEntity, appointment, build, CalendarInfoScreens, appointment, _appointments, build (+45 more)
+Cohesion: 0.06
+Nodes (31): WorkoutAppointmentEntityExtension, WorkoutAppointmentEntity, appointment, build, CalendarInfoScreens, appointment, _appointments, build (+23 more)
 
 ### Community 3 - "fitness.dart"
 Cohesion: 0.13
@@ -900,19 +904,19 @@ Nodes (14): buildForUiTheme, dark, darkBackground, darkBorder, darkCard, _darkCo
 
 ### Community 4 - "metronome_controls.dart"
 Cohesion: 0.04
-Nodes (51): _animationLoop, bobCenter, _bobDragTo, _bobHitTest, bobMaxY, bobMinY, _bobPanning, bobTextColor (+43 more)
+Nodes (52): _animationLoop, bobCenter, _bobDragTo, _bobHitTest, bobMaxY, bobMinY, _bobPanning, bobTextColor (+44 more)
 
 ### Community 5 - "app_localizations_en.dart"
-Cohesion: 0.03
-Nodes (58): addMachine, angle, archive, back, bi, cancel, chest, confirmation (+50 more)
+Cohesion: 0.04
+Nodes (55): addMachine, angle, archive, back, bi, cancel, chest, confirmation (+47 more)
 
 ### Community 6 - "package:forui/forui.dart"
 Cohesion: 0.07
-Nodes (30): active_stopwatch.dart, build, createState, _dateWithZeroTime, dispose, formatStopwatch, initState, millisecondsNotifier (+22 more)
+Nodes (26): active_stopwatch.dart, build, createState, _dateWithZeroTime, dispose, formatStopwatch, initState, millisecondsNotifier (+18 more)
 
 ### Community 7 - "create_appointment_sheet.dart"
 Cohesion: 0.04
-Nodes (50): _availableTrainees, build, _buildDateTimeRow, _buildDurationChips, _buildProgramRow, _buildTraineeRow, _busy, _CreateAppointmentSheet (+42 more)
+Nodes (50): _availableTrainees, build, _buildDateTimeRow, _buildDurationChips, _buildProgramRow, _buildTraineeRow, _busy, createState (+42 more)
 
 ### Community 8 - "class_model.dart"
 Cohesion: 0.04
@@ -924,7 +928,7 @@ Nodes (49): address, alwaysAllowDoubleBooking, appointmentInstructor, appointmen
 
 ### Community 10 - "contact_detail_screen.dart"
 Cohesion: 0.03
-Nodes (76): DeviceInfo, isTablet, TraineeEntityExtension, TraineeEntity, appointment, AppointmentCardWidget, AppointmentStatusStyle, build (+68 more)
+Nodes (87): _AppointmentRow, _InfoCard, _InfoRow, _ProfileHeader, _Field, _SessionHeaderCard, _FeetRow, _LabeledField (+79 more)
 
 ### Community 11 - "resources.dart"
 Cohesion: 0.04
@@ -932,23 +936,23 @@ Nodes (48): calendar, contacts, photo, seats, settings, aleksandr, angle, anna (
 
 ### Community 12 - "Coach"
 Cohesion: 0.08
-Nodes (25): create_coach(), delete_coach(), get_coach_service(), Session, Sync coaches with external service (deprecated), Create new coach (legacy endpoint - requires manual password setting), read_coach(), read_coaches() (+17 more)
+Nodes (23): create_coach(), delete_coach(), get_coach_service(), Session, Sync coaches with external service (deprecated), Create new coach (legacy endpoint - requires manual password setting), read_coach(), read_coaches() (+15 more)
 
 ### Community 13 - "machines_program_screen.dart"
-Cohesion: 0.20
-Nodes (9): ProgramSettingsEntity, build, programSettings, WorkoutSetupWidget, ../../core/const.dart, ../../core/resources/resources.dart, ../../domain/entities/program_settings_entity.dart, program_information_widget.dart (+1 more)
+Cohesion: 0.04
+Nodes (47): DeviceInfo, isTablet, ProgramSettingsEntity, _Action, build, ContactActionsMenu, onDelete, onEdit (+39 more)
 
 ### Community 14 - "availability_model.dart"
-Cohesion: 0.03
-Nodes (73): bookableEndDateTime, endDateTime, finishTime, id, isMasked, location, prepTime, programs (+65 more)
+Cohesion: 0.05
+Nodes (46): bookableEndDateTime, endDateTime, finishTime, id, isMasked, location, prepTime, programs (+38 more)
 
 ### Community 15 - "static Serializer"
-Cohesion: 0.18
-Nodes (24): read_all_workout_appointments(), create_coach(), delete_coach(), get_coach(), get_coach_by_email(), get_coaches(), Session, update_coach() (+16 more)
+Cohesion: 0.07
+Nodes (27): description, endDate, id, imageUrl, location, name, notes, organizer (+19 more)
 
 ### Community 16 - "TraineeService"
-Cohesion: 0.10
-Nodes (41): OAuth2PasswordRequestForm, delete_current_coach_avatar(), get_coaches(), get_current_coach(), get_me_via_deprecated_endpoint(), google_authorize(), google_callback(), login_access_token() (+33 more)
+Cohesion: 0.09
+Nodes (43): OAuth2PasswordRequestForm, delete_current_coach_avatar(), get_coaches(), get_current_coach(), get_me_via_deprecated_endpoint(), google_authorize(), google_callback(), login_access_token() (+35 more)
 
 ### Community 17 - "Документація з розгортання Fitness API"
 Cohesion: 0.04
@@ -959,56 +963,56 @@ Cohesion: 0.07
 Nodes (29): _accumulated, clear, complete, _completed, elapsed, _inlineViews, isActive, isRunning (+21 more)
 
 ### Community 19 - "application_bloc.dart"
-Cohesion: 0.03
-Nodes (87): ApplicationBloc, _errorMessage, _fetchCoaches, _onGoogleLogin, _onLogin, _onLogout, _onRegister, _onRestoreSession (+79 more)
+Cohesion: 0.07
+Nodes (51): ApplicationBloc, _errorMessage, _fetchCoaches, _onGoogleLogin, _onLogin, _onLogout, _onRegister, _onRestoreSession (+43 more)
 
 ### Community 20 - "visit_model.dart"
 Cohesion: 0.04
 Nodes (45): action, appointmentGenderPreference, appointmentId, appointmentStatus, classId, clientId, clientPhotoUrl, clientUniqueId (+37 more)
 
 ### Community 21 - "settings_program_screen.dart"
-Cohesion: 0.07
-Nodes (28): _bloc, _completions, createState, currentTime, dispose, _headerCell, _historyCard, _historyDays (+20 more)
+Cohesion: 0.06
+Nodes (46): SettingsProgramBloc, props, _bloc, build, _completions, createState, currentTime, dispose (+38 more)
 
 ### Community 22 - "CoachService"
 Cohesion: 0.10
 Nodes (20): LocationModel, locations, paginationResponse, fromJson, serializer, toJson, package:fitness_training/data/models/mindbody/mindbody.dart, _ (+12 more)
 
 ### Community 23 - "class_schedule_model.dart"
-Cohesion: 0.03
-Nodes (72): UpdateWorkoutDateModel, AppointmentModel, AvailabilityModel, ClassDescriptionModel, ClassModel, ClassScheduleModel, allowDateForwardEnrollment, allowOpenEnrollment (+64 more)
+Cohesion: 0.04
+Nodes (44): allowDateForwardEnrollment, allowOpenEnrollment, classDescription, classes, clients, course, dayFriday, dayMonday (+36 more)
 
 ### Community 24 - "clients_model.dart"
-Cohesion: 0.05
-Nodes (40): AppointmentsModel, appointments, paginationResponse, fromJson, serializer, toJson, clients, paginationResponse (+32 more)
+Cohesion: 0.04
+Nodes (52): AppointmentsModel, appointments, paginationResponse, fromJson, serializer, toJson, ClientsModel, clients (+44 more)
 
 ### Community 25 - "program_machine_usecase.dart"
-Cohesion: 0.18
-Nodes (11): _api, createTrainee, deleteAvatar, deleteTrainee, getTrainee, getTrainees, TraineeUsecase, TraineeUsecaseImpl (+3 more)
+Cohesion: 0.09
+Nodes (21): createTrainee, deleteAvatar, deleteTrainee, fitness, FitnessRepository, getTrainee, getTrainees, TraineeRepository (+13 more)
 
 ### Community 26 - "program_screen_bloc.dart"
-Cohesion: 0.10
-Nodes (29): ProgramFitnessUsecase, ProgramScreenBloc, props, trainee, _onEditPressed, _onNotesEdited, ProgramScreen, createState (+21 more)
+Cohesion: 0.16
+Nodes (21): ProgramScreenBloc, props, trainee, _onEditPressed, _onNotesEdited, ProgramScreen, bloc/program_screen_bloc.dart, TraineeEntity? get (+13 more)
 
 ### Community 27 - "llms-full.md"
 Cohesion: 0.05
-Nodes (41): Accessing the Properties, Adding Theme Properties, CLI, Collapsible, Create a Theme Extension, Creating Custom Controllers, Creating Custom Deltas, Customizing Themes (+33 more)
+Nodes (38): About Forui, Accessing the Properties, Adding Theme Properties, Collapsible, Core Principles, Create a Theme Extension, Creating Custom Controllers, Creating Custom Deltas (+30 more)
 
 ### Community 28 - "trainee_model.dart"
 Cohesion: 0.05
 Nodes (41): address1, address2, birthDate, city, country, createdAt, email, firstName (+33 more)
 
 ### Community 29 - "dialogs_utils.dart"
-Cohesion: 0.03
-Nodes (69): _AppointmentRow, _InfoCard, _InfoRow, _ProfileHeader, _Field, biLabel, build, buttonHeight (+61 more)
+Cohesion: 0.05
+Nodes (40): biLabel, build, buttonHeight, buttonWidth, contentPaddingHorizontal, contentPaddingVertical, controller, controller2 (+32 more)
 
 ### Community 30 - "location_model.dart"
 Cohesion: 0.05
 Nodes (40): additionalImageURLs, address, address2, amenities, averageRating, businessDescription, city, description (+32 more)
 
 ### Community 31 - "app.dart"
-Cohesion: 0.07
-Nodes (34): _appRouter, build, child, createState, MyApp, _MyAppState, TextFieldUnfocus, ThemeCubit (+26 more)
+Cohesion: 0.06
+Nodes (35): _appRouter, build, child, createState, MyApp, _MyAppState, TextFieldUnfocus, ThemeCubit (+27 more)
 
 ### Community 32 - "coach_model.dart"
 Cohesion: 0.05
@@ -1016,35 +1020,35 @@ Nodes (39): CoachModel, CoachModelExtension, address1, address2, biography, city
 
 ### Community 33 - "program_machine_model.dart"
 Cohesion: 0.05
-Nodes (40): angal, back, chest, forTwoLegs, grip, handle, id, index (+32 more)
+Nodes (39): angal, back, chest, forTwoLegs, grip, handle, id, index (+31 more)
 
 ### Community 34 - "appointment_model.dart"
 Cohesion: 0.05
 Nodes (39): addOns, clientId, clientServiceId, duration, endDateTime, firstAppointment, genderPreference, id (+31 more)
 
 ### Community 35 - "int?"
-Cohesion: 0.05
-Nodes (37): pageSize, requestedLimit, requestedOffset, totalResults, fromJson, PaginationModel, serializer, toJson (+29 more)
+Cohesion: 0.10
+Nodes (20): pageSize, requestedLimit, requestedOffset, totalResults, fromJson, serializer, toJson, _ (+12 more)
 
 ### Community 36 - "trainee_entity.dart"
 Cohesion: 0.05
 Nodes (39): address1, address2, birthDate, city, country, createdAt, email, firstName (+31 more)
 
 ### Community 37 - "State"
-Cohesion: 0.09
-Nodes (17): Enum, PyEnum, TaskStatus, upgrade(), Base, GenderEnum, Task, TaskStatus (+9 more)
+Cohesion: 0.08
+Nodes (38): Enum, PyEnum, TaskStatus, upgrade(), create_coach(), delete_coach(), get_coach(), get_coach_by_email() (+30 more)
 
 ### Community 38 - "time_slot_picker.dart"
-Cohesion: 0.06
-Nodes (33): blockingBusy, build, _buildSlots, busy, BusyRange, color, createState, date (+25 more)
+Cohesion: 0.05
+Nodes (38): blockingBusy, build, _buildSlots, busy, BusyRange, color, createState, date (+30 more)
 
 ### Community 39 - "trainees.py"
 Cohesion: 0.14
 Nodes (19): create_trainee(), delete_trainee(), get_trainee(), get_trainees(), Session, Trainee, update_trainee(), Config (+11 more)
 
 ### Community 40 - "workout_appointment.py"
-Cohesion: 0.10
-Nodes (38): _conflict_payload(), create_workout_appointment_endpoint(), delete_workout_appointment_endpoint(), get_workout_appointment_stats(), datetime, Session, WorkoutAppointment, Simple test endpoint to debug local appointments (+30 more)
+Cohesion: 0.07
+Nodes (56): _conflict_payload(), create_workout_appointment_endpoint(), delete_workout_appointment_endpoint(), get_workout_appointment_stats(), datetime, Session, WorkoutAppointment, Simple test endpoint to debug local appointments (+48 more)
 
 ### Community 41 - "mindbody.dart"
 Cohesion: 0.06
@@ -1064,7 +1068,7 @@ Nodes (33): AppFonts, w400s16, w400s18, w400s20, w400s23, w400s24, w400s30, w500
 
 ### Community 45 - "program_fitness_model.dart"
 Cohesion: 0.06
-Nodes (34): coach, coachId, comment, createdAt, id, isArchive, isDelete, name (+26 more)
+Nodes (33): coach, coachId, createdAt, id, isArchive, isDelete, name, number (+25 more)
 
 ### Community 46 - "session_status_enum.dart"
 Cohesion: 0.06
@@ -1072,19 +1076,19 @@ Nodes (32): AppointmentStatusEnum, completed, _, entity, inProgress, model, plan
 
 ### Community 47 - "workout_appointment_model.dart"
 Cohesion: 0.06
-Nodes (32): coach, duration, endAt, id, notes, programId, startAt, status (+24 more)
+Nodes (33): coach, duration, endAt, id, notes, programId, startAt, status (+25 more)
 
 ### Community 48 - "class_description_model.dart"
-Cohesion: 0.04
-Nodes (52): active, category, categoryId, description, id, imageURL, lastUpdated, level (+44 more)
+Cohesion: 0.06
+Nodes (32): active, category, categoryId, description, id, imageURL, lastUpdated, level (+24 more)
 
 ### Community 49 - "client_service_model.dart"
 Cohesion: 0.06
 Nodes (31): action, activeDate, clientID, count, current, expirationDate, id, name (+23 more)
 
 ### Community 50 - "text_field_widget.dart"
-Cohesion: 0.08
-Nodes (23): ProgramMachineEntityExtension, WorkoutSessionEntityExtension, ProgramMachineEntity, WorkoutSessionEntity, _boundaryKey, getProgram, main, noSuchMethod (+15 more)
+Cohesion: 0.12
+Nodes (15): daily, _, monthly, serializer, valueOf, values, weekly, static const FrequencyTypeEnum (+7 more)
 
 ### Community 51 - "rive_common.podspec.json"
 Cohesion: 0.06
@@ -1095,16 +1099,16 @@ Cohesion: 0.07
 Nodes (30): coach, id, token, trainee, entity, fromJson, model, serializer (+22 more)
 
 ### Community 53 - "client_model.dart"
-Cohesion: 0.06
-Nodes (30): active, city, email, firstName, gender, homeLocation, id, lastName (+22 more)
+Cohesion: 0.07
+Nodes (29): active, city, email, firstName, gender, homeLocation, id, lastName (+21 more)
 
 ### Community 54 - "List"
-Cohesion: 0.11
-Nodes (19): dio, DioSettingsAuth, _setup, dio, DioSettingsBackend, setup, dio, setup (+11 more)
+Cohesion: 0.10
+Nodes (20): description, id, name, fromJson, LevelModel, serializer, toJson, _ (+12 more)
 
 ### Community 55 - "image_user_widget.dart"
 Cohesion: 0.06
-Nodes (53): ContactsBloc, props, searchQuery, _ContactDetailScreenState, _publishToContactsList, build, _clients, _confirmDelete (+45 more)
+Nodes (52): ContactsBloc, props, searchQuery, _ContactDetailScreenState, _publishToContactsList, build, _clients, _confirmDelete (+44 more)
 
 ### Community 56 - "Testing Files Documentation"
 Cohesion: 0.06
@@ -1128,7 +1132,7 @@ Nodes (29): availableForAddOn, category, categoryId, defaultTimeLength, id, name
 
 ### Community 61 - "program_fitness_entity.dart"
 Cohesion: 0.07
-Nodes (29): coach, coachId, comment, createdAt, id, isArchive, isDelete, name (+21 more)
+Nodes (29): coach, coachId, createdAt, id, isArchive, isDelete, name, number (+21 more)
 
 ### Community 62 - "test_avatar_upload.py"
 Cohesion: 0.08
@@ -1140,7 +1144,7 @@ Nodes (14): ABC, LocalService, datetime, Session, ExternalAppointment, ExternalC
 
 ### Community 64 - "workout_appointment_entity.dart"
 Cohesion: 0.07
-Nodes (29): abstract class WorkoutAppointmentEntity, coach, duration, endAt, id, implements, notes, programId (+21 more)
+Nodes (28): abstract class WorkoutAppointmentEntity, coach, duration, endAt, id, implements, notes, programId (+20 more)
 
 ### Community 65 - "workout_appointment_result_model.dart"
 Cohesion: 0.07
@@ -1148,7 +1152,7 @@ Nodes (28): abstract class WorkoutAppointmentResultModel, appointments, implemen
 
 ### Community 66 - "trainee_out_model.dart"
 Cohesion: 0.07
-Nodes (30): totalCount, trainees, entity, fromJson, model, serializer, toJson, TraineeOutEntityExtension (+22 more)
+Nodes (28): totalCount, trainees, entity, fromJson, model, serializer, toJson, TraineeOutModel (+20 more)
 
 ### Community 67 - "user_fitness_entity.dart"
 Cohesion: 0.07
@@ -1156,11 +1160,11 @@ Nodes (28): UserFitnessEntityExtension, authorization, coach, id, token, trainee
 
 ### Community 68 - "change_info_screen.dart"
 Cohesion: 0.05
-Nodes (42): build, ChangeInfoScreen, _ChangeInfoScreenState, coach, controller, createState, _deleteAvatar, dispose (+34 more)
+Nodes (39): @InjectableInit, app.dart, createProgramMachine, deleteProgramMachine, fitness, FitnessRepository, getProgramMachine, getProgramMachineByProgramAndMachine (+31 more)
 
 ### Community 69 - "stopwatch_timer_screens.dart"
-Cohesion: 0.19
-Nodes (18): create_a_machine(), delete_a_machine(), Session, read_machine(), read_machines(), update_a_machine(), create_machine(), delete_machine() (+10 more)
+Cohesion: 0.17
+Nodes (11): build, _confirmPasswordCtrl, createState, dispose, _emailCtrl, _firstNameCtrl, _lastNameCtrl, _passwordCtrl (+3 more)
 
 ### Community 70 - "oauth.py"
 Cohesion: 0.09
@@ -1175,8 +1179,8 @@ Cohesion: 0.07
 Nodes (27): abstract class ProgramUpdateMachinesModel, implements, machineIds, programId, entity, fromJson, model, ProgramUpdateMachinesModel (+19 more)
 
 ### Community 73 - "Built"
-Cohesion: 0.22
-Nodes (17): create_a_program_machine(), delete_a_program_machine(), Session, read_program_machine(), read_program_machine_by_program_machine(), read_program_machines(), update_a_program_machine(), create_program_machine() (+9 more)
+Cohesion: 0.07
+Nodes (25): firstName, id, lastName, type, fromJson, serializer, toJson, hsb (+17 more)
 
 ### Community 74 - "workout_session_model.dart"
 Cohesion: 0.07
@@ -1184,15 +1188,15 @@ Nodes (28): coachId, createdAt, dateSession, id, programMachineId, sessionStatus
 
 ### Community 75 - "class"
 Cohesion: 0.05
-Nodes (39): AmenitiesModel, id, name, fromJson, serializer, toJson, id, index (+31 more)
+Nodes (38): abstract class, id, name, fromJson, serializer, toJson, id, name (+30 more)
 
 ### Community 76 - "course_model.dart"
-Cohesion: 0.13
-Nodes (20): MachinesProgramScreenBloc, build, createState, initState, _MachinesProgramScreenState, _onFinishPressed, program, _refresh (+12 more)
+Cohesion: 0.05
+Nodes (48): ProgramFitnessEntityExtension, TraineeEntityExtension, ProgramFitnessEntity, TraineeEntity, build, HomeScreen, createState, _onFinishPressed (+40 more)
 
 ### Community 77 - "token_storage.dart"
-Cohesion: 0.08
-Nodes (24): add, clear, _key, _maxEntries, read, clear, isExpired, _key (+16 more)
+Cohesion: 0.12
+Nodes (16): clear, isExpired, _key, read, save, _storage, _api, AuthUsecase (+8 more)
 
 ### Community 78 - "appointment_status_enum.dart"
 Cohesion: 0.08
@@ -1203,16 +1207,16 @@ Cohesion: 0.08
 Nodes (25): id, index, name, entity, fromJson, MachineModel, MachineModelExtension, model (+17 more)
 
 ### Community 80 - "trainee.dart"
-Cohesion: 0.10
-Nodes (19): id, name, fromJson, ResourceSlimModel, serializer, toJson, _, build (+11 more)
+Cohesion: 0.08
+Nodes (27): UpdateWorkoutDateModel, AmenitiesModel, AppointmentModel, AvailabilityModel, ClassDescriptionModel, ClassModel, ClassScheduleModel, ClientModel (+19 more)
 
 ### Community 81 - "workout_session_entity.dart"
 Cohesion: 0.07
 Nodes (28): coachId, createdAt, dateSession, id, programMachineId, sessionStatus, sessionTime, traineeId (+20 more)
 
 ### Community 82 - "generate_fake_schedule"
-Cohesion: 0.67
-Nodes (3): build, CreateProgramRoute, CreateProgramRouteArgs
+Cohesion: 0.33
+Nodes (6): build, build, CreateProgramRoute, CreateProgramRouteArgs, SettingsProgramRoute, SettingsProgramRouteArgs
 
 ### Community 83 - "test_trainee_avatar.py"
 Cohesion: 0.11
@@ -1231,8 +1235,8 @@ Cohesion: 0.17
 Nodes (11): archievePrograms, birthday, currentPrograms, height, id, name, notes, phoneNumber (+3 more)
 
 ### Community 87 - "login_screen.dart"
-Cohesion: 0.22
-Nodes (17): SettingsProgramBloc, props, build, _editUpcomingWeight, _saveNote, _SettingsProgramScreenState, Equatable, GetMachineSettingEvent (+9 more)
+Cohesion: 0.07
+Nodes (26): add, clear, EmailHistoryStorage, _key, _maxEntries, read, _callbackUrlScheme, createState (+18 more)
 
 ### Community 88 - "wakelock_plus.podspec.json"
 Cohesion: 0.08
@@ -1243,12 +1247,12 @@ Cohesion: 0.08
 Nodes (23): abstract class ProgramUpdateMachinesEntity, ProgramUpdateMachinesEntityX, implements, machineIds, programId, fromJson, ProgramUpdateMachinesEntity, serializer (+15 more)
 
 ### Community 90 - "program_model.dart"
-Cohesion: 0.09
-Nodes (22): cancelOffset, contentFormats, id, name, scheduleType, fromJson, serializer, toJson (+14 more)
+Cohesion: 0.08
+Nodes (23): cancelOffset, contentFormats, id, name, scheduleType, fromJson, ProgramModel, serializer (+15 more)
 
 ### Community 91 - "token_model.dart"
-Cohesion: 0.04
-Nodes (43): accessToken, expires, tokenType, user, fromJson, serializer, toJson, TokenModel (+35 more)
+Cohesion: 0.08
+Nodes (23): accessToken, expires, tokenType, user, fromJson, serializer, toJson, mindbody.dart (+15 more)
 
 ### Community 92 - "url_launcher_macos.podspec.json"
 Cohesion: 0.08
@@ -1287,20 +1291,20 @@ Cohesion: 0.09
 Nodes (22): Async, Async with Custom Error Handling, Async with Custom Loading, Behavior, Clearable, CLI, Custom Formatting, Detailed (+14 more)
 
 ### Community 101 - "trainee_out_entity.dart"
-Cohesion: 0.18
-Nodes (16): create_test_trainees(), delete_test_trainees(), list_trainees(), main(), Save trainee credentials to a file, List all existing trainees, Delete all test trainees (with @test.com emails), Create test trainees with realistic data (+8 more)
+Cohesion: 0.10
+Nodes (19): id, index, name, fromJson, serializer, toJson, _, build (+11 more)
 
 ### Community 102 - "booking_window_model.dart"
-Cohesion: 0.09
-Nodes (21): BookingWindowModel, dailyEndTime, dailyStartTime, endDateTime, startDateTime, fromJson, serializer, toJson (+13 more)
+Cohesion: 0.05
+Nodes (39): workoutDate, fromJson, serializer, toJson, BookingWindowModel, dailyEndTime, dailyStartTime, endDateTime (+31 more)
 
 ### Community 103 - "unavailability_model.dart"
-Cohesion: 0.03
-Nodes (65): abstract class, workoutDate, fromJson, serializer, toJson, showStaffLastNamesOnSchedules, useStaffNicknames, fromJson (+57 more)
+Cohesion: 0.09
+Nodes (21): description, endDateTime, id, startDateTime, fromJson, serializer, toJson, UnavailabilityModel (+13 more)
 
 ### Community 104 - "appointment_usecase.dart"
-Cohesion: 0.10
-Nodes (20): MindbodyRepository, _api, AppointmentUsecase, dio, getAppointment, getClients, _preferences, _api (+12 more)
+Cohesion: 0.04
+Nodes (51): dio, DioSettingsAuth, _setup, dio, setup, FitnessRepository, onException, dio (+43 more)
 
 ### Community 105 - "package_info_plus.podspec.json"
 Cohesion: 0.09
@@ -1312,39 +1316,39 @@ Nodes (15): NSObject, PodsDummy_audioplayers_darwin, NSObject, PodsDummy_flutter
 
 ### Community 107 - "coach_repository_avatar_test.dart"
 Cohesion: 0.10
-Nodes (21): adapter, backend, captured, _CapturingAdapter, close, fetch, main, adapter (+13 more)
+Nodes (20): adapter, backend, captured, _CapturingAdapter, close, fetch, main, adapter (+12 more)
 
 ### Community 108 - "abstract class"
-Cohesion: 0.13
-Nodes (14): createProgram, createProgramWithMachines, deleteProgram, fitness, FitnessRepository, getArchives, getProgram, getPrograms (+6 more)
+Cohesion: 0.10
+Nodes (19): showStaffLastNamesOnSchedules, useStaffNicknames, fromJson, serializer, StaffSettingsModel, toJson, _, build (+11 more)
 
 ### Community 109 - "settings_program_screen_test.dart"
-Cohesion: 0.11
-Nodes (18): calls, _cardTitled, getProgramMachineByProgramAndMachine, _machine, main, noSuchMethod, previousOnError, _program (+10 more)
+Cohesion: 0.10
+Nodes (20): ProgramMachineEntityExtension, ProgramMachineEntity, calls, _cardTitled, getProgramMachineByProgramAndMachine, _machine, main, noSuchMethod (+12 more)
 
 ### Community 110 - "appointment_addon_model.dart"
 Cohesion: 0.09
 Nodes (21): AppointmentAddOnModel, id, name, staffId, typeId, fromJson, serializer, toJson (+13 more)
 
 ### Community 111 - "String? get"
-Cohesion: 0.10
-Nodes (20): createWorkoutAppointment, deleteWorkoutAppointment, fitness, FitnessRepository, getAllWorkoutAppointments, getWorkoutAppointment, setWorkoutCompleted, updateWorkoutAppointment (+12 more)
+Cohesion: 0.18
+Nodes (10): createWorkoutAppointment, deleteWorkoutAppointment, fitness, FitnessRepository, getAllWorkoutAppointments, getWorkoutAppointment, setWorkoutCompleted, updateWorkoutAppointment (+2 more)
 
 ### Community 112 - "payment_info_model.dart"
 Cohesion: 0.10
-Nodes (20): paidBy, paysFor, fromJson, PaymentInfoModel, serializer, toJson, ListBuilder, _ (+12 more)
+Nodes (19): paidBy, paysFor, fromJson, PaymentInfoModel, serializer, toJson, _, build (+11 more)
 
 ### Community 113 - "pricing_model.dart"
 Cohesion: 0.10
-Nodes (19): paidBy, paysFor, fromJson, PricingModel, serializer, toJson, _, build (+11 more)
+Nodes (20): paidBy, paysFor, fromJson, PricingModel, serializer, toJson, BuiltList, _ (+12 more)
 
 ### Community 114 - "status_enum.dart"
-Cohesion: 0.17
-Nodes (10): main, hint, main, _pump, pumpAndSettle, pumpWidget, package:fitness_training/domain/entities/fitness/fitness.dart, package:fitness_training/presentation/widgets/grid_contacts_widget.dart (+2 more)
+Cohesion: 0.10
+Nodes (20): arrived, booked, cancelled, completed, confirmed, _, lateCancelled, none (+12 more)
 
 ### Community 115 - "user_model.dart"
-Cohesion: 0.08
-Nodes (25): @InjectableInit, app.dart, _configureDependencies, main, ActiveStopwatchBar, _ActiveStopwatchBarState, _Bar, build (+17 more)
+Cohesion: 0.12
+Nodes (17): ActiveStopwatchBar, _ActiveStopwatchBarState, _Bar, build, child, createState, dispose, initState (+9 more)
 
 ### Community 116 - "update_workout_date_entity.dart"
 Cohesion: 0.09
@@ -1352,7 +1356,7 @@ Nodes (21): workoutDate, fromJson, serializer, toJson, UpdateWorkoutDateEntity, 
 
 ### Community 117 - "main.config.dart"
 Cohesion: 0.07
-Nodes (37): @singleton, EmailHistoryStorage, AuthRepository, AuthRepositoryImpl, CoachRepository, CoachRepositoryImpl, MachineRepository, MachineRepositoryImpl (+29 more)
+Nodes (36): @singleton, AuthRepository, AuthRepositoryImpl, CoachRepository, CoachRepositoryImpl, MachineRepository, MachineRepositoryImpl, ProgramFitnessRepository (+28 more)
 
 ### Community 118 - "desktop_webview_window.podspec.json"
 Cohesion: 0.10
@@ -1367,8 +1371,8 @@ Cohesion: 0.10
 Nodes (20): authors, Sumit Vekariya, dependencies, FlutterMacOS, description, homepage, license, file (+12 more)
 
 ### Community 121 - "ProgramMachine"
-Cohesion: 0.20
-Nodes (9): createWorkoutSession, deleteWorkoutSession, fitness, FitnessRepository, getAllWorkoutSessions, getHistory, getWorkoutSession, updateWorkoutSession (+1 more)
+Cohesion: 0.18
+Nodes (17): MachinesProgramScreenBloc, props, _MachinesProgramScreenState, build, SelectTrainingScreen, class, ../../../../domain/usecases/fitness/program_fitness_usecase.dart, MachinesProgramScreenState (+9 more)
 
 ### Community 122 - "Trainee"
 Cohesion: 0.09
@@ -1387,32 +1391,32 @@ Cohesion: 0.10
 Nodes (20): _cardTitled, _FakeProgramMachineUsecase, getProgramMachineByProgramAndMachine, _machine, main, noSuchMethod, previousOnError, _program (+12 more)
 
 ### Community 126 - "appointments_model.dart"
-Cohesion: 0.06
-Nodes (41): @RoutePage, build, _calendarFormat, createState, currentDate, _focusedDay, initState, _onDaySelectedA (+33 more)
+Cohesion: 0.12
+Nodes (15): build, _calendarFormat, createState, currentDate, _focusedDay, initState, _onDaySelectedA, _onRangeSelected (+7 more)
 
 ### Community 127 - "resource_slim_model.dart"
 Cohesion: 0.14
 Nodes (13): @immutable, accent, AppThemeState, copyWith, hashCode, mode, operator, _prefs (+5 more)
 
 ### Community 128 - "machine_entity.dart"
-Cohesion: 0.06
-Nodes (35): _auth, getCoachMe, getGoogleAuthUrl, login, register, createCoach, deleteAvatar, deleteCoach (+27 more)
+Cohesion: 0.04
+Nodes (54): dio, DioSettingsBackend, setup, _auth, getCoachMe, getGoogleAuthUrl, login, register (+46 more)
 
 ### Community 129 - "calendar_bloc.dart"
-Cohesion: 0.08
-Nodes (34): createProgramMachine, deleteProgramMachine, fitness, FitnessRepository, getProgramMachine, getProgramMachineByProgramAndMachine, getProgramMachines, updateProgramMachine (+26 more)
+Cohesion: 0.19
+Nodes (18): CalendarBloc, props, selectedDay, _submit, DateTime get, Object?, appointmentsFilteredList, CalendarEmptySuccess (+10 more)
 
 ### Community 130 - "FastAPI"
-Cohesion: 0.15
-Nodes (11): FastAPI, current_user(), get_current_coach(), get_current_user(), is_admin(), Session, Get current user by JWT token in Authorization header. If token expired, 401, Require the token to belong to a coach. Raises 403 otherwise. (+3 more)
+Cohesion: 0.10
+Nodes (18): FastAPI, ModelView, current_user(), get_current_coach(), get_current_user(), is_admin(), Session, Get current user by JWT token in Authorization header. If token expired, 401 (+10 more)
 
 ### Community 131 - "Machine"
-Cohesion: 0.15
-Nodes (11): AppointmentEntity, client, date, duration, ClientEntity, date, HistoryTrainihgEntity, time (+3 more)
+Cohesion: 0.29
+Nodes (6): AppointmentEntity, client, date, duration, ClientEntity, client_entity.dart
 
 ### Community 132 - "programs.py"
-Cohesion: 0.13
-Nodes (33): create_program_endpoint(), create_program_with_machines(), delete_program_endpoint(), Session, read_archive_programs(), read_program(), read_programs(), reorder_program_machines_endpoint() (+25 more)
+Cohesion: 0.06
+Nodes (68): create_a_machine(), delete_a_machine(), Session, read_machine(), read_machines(), update_a_machine(), create_a_program_machine(), delete_a_program_machine() (+60 more)
 
 ### Community 133 - "Appearance"
 Cohesion: 0.11
@@ -1423,20 +1427,20 @@ Cohesion: 0.15
 Nodes (15): GeneratedPluginRegistrant, +registerWithRegistry, NSObject, audioplayers_darwin, desktop_webview_window, file_selector_macos, flutter_secure_storage_macos, flutter_web_auth_2 (+7 more)
 
 ### Community 135 - "../models.dart"
-Cohesion: 0.10
-Nodes (19): totalCount, trainees, fromJson, serializer, toJson, BuiltList, _, build (+11 more)
+Cohesion: 0.09
+Nodes (21): TraineeOutEntityExtension, totalCount, trainees, fromJson, serializer, toJson, TraineeOutEntity, ListBuilder (+13 more)
 
 ### Community 136 - "schedule_type_enum.dart"
 Cohesion: 0.07
-Nodes (27): all, appointment, arrival, classType, _, enrollment, media, resource (+19 more)
+Nodes (28): all, appointment, arrival, classType, _, enrollment, media, resource (+20 more)
 
 ### Community 137 - "win32_window.cpp"
 Cohesion: 0.16
 Nodes (15): wchar_t, Scale(), Create, Destroy, SetQuitOnClose, Show, Win32Window::Win32Window(), WindowClassRegistrar (+7 more)
 
 ### Community 138 - "gender_enum.dart"
-Cohesion: 0.40
-Nodes (5): About Forui, Core Principles, FAQ, Quick Links, Why Choose Forui?
+Cohesion: 0.11
+Nodes (17): added, _, failed, none, removed, serializer, updated, valueOf (+9 more)
 
 ### Community 139 - "Cocoa"
 Cohesion: 0.12
@@ -1454,21 +1458,29 @@ Nodes (17): Appearance, Behavior, CLI, Custom Icons, Examples, `FSelectTile(...)
 Cohesion: 0.11
 Nodes (17): accessToken, apiKey, apiVersion, AppConsts, back, handle, isLogined, password (+9 more)
 
+### Community 143 - "package:dio/dio.dart"
+Cohesion: 0.33
+Nodes (5): date, HistoryTrainihgEntity, time, weight, Duration
+
 ### Community 144 - "fitness.dart"
 Cohesion: 0.12
 Nodes (16): appointment_status_enum.dart, coach_model.dart, machine_model.dart, program_create_model.dart, program_fitness_model.dart, program_machine_model.dart, program_update_machines_model.dart, session_status_enum.dart (+8 more)
 
 ### Community 145 - "program_fitness.dart"
-Cohesion: 0.06
-Nodes (44): ProgramFitnessEntityExtension, ProgramFitnessEntity, apparatusModels, apparatusNames, name, TrainingApparatusEntity, ArchieveProgramScreen, _ArchieveProgramScreenState (+36 more)
+Cohesion: 0.24
+Nodes (14): CreateProgramBloc, props, _buildMachineChip, _CreateProgramScreenState, Bloc, package:equatable/equatable.dart, CreateProgramEvent, CreateProgramInitial (+6 more)
+
+### Community 146 - "mindbody_repository.dart"
+Cohesion: 0.50
+Nodes (4): `FPortal(...)`, Portal, Usage, Visualization
 
 ### Community 147 - "create_program_bloc.dart"
-Cohesion: 0.12
-Nodes (16): _openPrograms, routing, PageRouteInfo, CalendarInfoRoutes, CalendarInfoRoutesArgs, CalendarRoute, ContactsRoute, LoginRoute (+8 more)
+Cohesion: 0.16
+Nodes (15): _openPrograms, build, routing, _routing, PageRouteInfo, CalendarRoute, ContactsRoute, HomeRoute (+7 more)
 
 ### Community 148 - "Program"
-Cohesion: 0.05
-Nodes (37): build, controller, createState, CustomTextFieldWidget, _CustomTextFieldWidgetState, dispose, errorText, hintText (+29 more)
+Cohesion: 0.04
+Nodes (45): build, controller, createState, CustomTextFieldWidget, _CustomTextFieldWidgetState, dispose, errorText, hintText (+37 more)
 
 ### Community 149 - "Usage"
 Cohesion: 0.12
@@ -1483,8 +1495,8 @@ Cohesion: 0.12
 Nodes (16): Clearable, CLI, Disabled, Email, Enabled, Examples, `FTextField(...)`, `FTextField.email(...)` (+8 more)
 
 ### Community 152 - "package:built_value/built_value.dart"
-Cohesion: 0.22
-Nodes (8): ActiveStopwatch, main, now, stopwatch, _target, ChangeNotifier, package:fitness_training/presentation/screens/stopwatch_timer/active_stopwatch.dart, package:fitness_training/presentation/screens/stopwatch_timer/stopwatch_timer_screens.dart
+Cohesion: 0.15
+Nodes (11): ActiveStopwatch, main, now, stopwatch, _target, main, ChangeNotifier, package:fitness_training/domain/entities/fitness/fitness.dart (+3 more)
 
 ### Community 153 - "fitness.dart"
 Cohesion: 0.12
@@ -1515,8 +1527,8 @@ Cohesion: 0.13
 Nodes (14): registerPlugins, registrar, package:audioplayers_web/audioplayers_web.dart, package:flutter_secure_storage_web/flutter_secure_storage_web.dart, package:flutter_web_auth_2/src/web.dart, package:flutter_web_plugins/flutter_web_plugins.dart, package:image_picker_for_web/image_picker_for_web.dart, package:package_info_plus/src/package_info_plus_web.dart (+6 more)
 
 ### Community 160 - "user_avatar_widget.dart"
-Cohesion: 0.10
-Nodes (17): build, ButtonWidget, onPressed, title, build, data, FixedWidthText, style (+9 more)
+Cohesion: 0.13
+Nodes (13): build, data, FixedWidthText, style, width, build, initials, photoUrl (+5 more)
 
 ### Community 161 - "Behavior"
 Cohesion: 0.14
@@ -1527,8 +1539,8 @@ Cohesion: 0.14
 Nodes (14): Appearance, Behavior, CLI, Examples, `FTileGroup(...)`, `FTileGroup.builder(...)`, `FTileGroup.merge(...)`, Full Divider (+6 more)
 
 ### Community 163 - "program_fitness_usecase.dart"
-Cohesion: 0.13
-Nodes (13): capitalizeEachWord, capitalizeFirstWord, formatPhone, PhoneFormatX, StringX, build, _EditWeightButton, HistoryWidget (+5 more)
+Cohesion: 0.29
+Nodes (6): capitalizeEachWord, capitalizeFirstWord, formatPhone, PhoneFormatX, StringX, package:intl/intl.dart
 
 ### Community 164 - "MyAuthProvider"
 Cohesion: 0.21
@@ -1546,13 +1558,17 @@ Nodes (12): AppColors, black, colorMain, colotSearch, gradientBGColor, green, gr
 Cohesion: 0.17
 Nodes (12): AutoChangingImages, _AutoChangingImagesState, build, _controller, createState, _currentPage, dispose, _images (+4 more)
 
+### Community 168 - "register_screen.dart"
+Cohesion: 0.08
+Nodes (36): @RoutePage, CalendarScreen, _CalendarScreenState, createState, initState, _openAppointment, _selectDay, TableCalendarScreen (+28 more)
+
 ### Community 169 - "Win32Window"
 Cohesion: 0.22
 Nodes (13): OnCreate, OnDestroy, HWND, Win32Window, child_content_, GetClientArea, GetHandle, OnCreate (+5 more)
 
 ### Community 170 - "Log"
-Cohesion: 0.13
-Nodes (11): GeneratedPluginRegistrant, FlutterEngine, Keep, ModelView, MachineView, Any, Request, Deleting a machine used by programs hides it instead of breaking the FK. (+3 more)
+Cohesion: 0.23
+Nodes (5): GeneratedPluginRegistrant, FlutterEngine, Keep, DatabaseLogHandler, Log
 
 ### Community 171 - "Examples"
 Cohesion: 0.17
@@ -1607,16 +1623,16 @@ Cohesion: 0.18
 Nodes (11): CLI, Examples, `FPicker(...)`, `FPickerWheel(...)`, `FPickerWheel.builder(...)`, Lazy, Loop, Multiple Wheels (+3 more)
 
 ### Community 185 - "package:built_collection/built_collection.dart"
-Cohesion: 0.10
-Nodes (20): build, createState, didChangeDependencies, didUpdateWidget, dispose, initState, _onChanged, onPressed (+12 more)
+Cohesion: 0.09
+Nodes (22): WorkoutSessionEntityExtension, WorkoutSessionEntity, build, createState, didChangeDependencies, didUpdateWidget, dispose, initState (+14 more)
 
 ### Community 186 - "workout_session_usecase.dart"
-Cohesion: 0.12
-Nodes (17): build, _cancel, _controller, createState, didUpdateWidget, dispose, hintText, _isDirty (+9 more)
+Cohesion: 0.15
+Nodes (13): build, _cancel, _controller, createState, didUpdateWidget, dispose, _isDirty, ProgramNoteCard (+5 more)
 
 ### Community 187 - "contacts_bloc_test.dart"
-Cohesion: 0.18
-Nodes (10): getTrainees, getTraineesCalls, main, noSuchMethod, seededBloc, _trainee, trainees, usecase (+2 more)
+Cohesion: 0.17
+Nodes (12): TraineeUsecase, getTrainees, getTraineesCalls, main, noSuchMethod, seededBloc, _StubTraineeUsecase, _trainee (+4 more)
 
 ### Community 188 - "manifest.json"
 Cohesion: 0.18
@@ -1667,8 +1683,8 @@ Cohesion: 0.20
 Nodes (9): auth.dart, coach.dart, fitness_repository.dart, machine.dart, program_fitness.dart, program_machine.dart, trainee.dart, workout_appointment.dart (+1 more)
 
 ### Community 200 - "hive_repository.dart"
-Cohesion: 0.02
-Nodes (98): added, _, failed, none, removed, serializer, updated, valueOf (+90 more)
+Cohesion: 0.05
+Nodes (45): bookAndPayLater, _, free, paymentRequired, serializer, valueOf, values, _ (+37 more)
 
 ### Community 201 - "Exception"
 Cohesion: 0.20
@@ -1681,6 +1697,10 @@ Nodes (10): HWND, LPARAM, LRESULT, UINT, WPARAM, EnableFullDpiSupportIfAvailable
 ### Community 203 - "test_google_oauth.py"
 Cohesion: 0.20
 Nodes (3): Unit tests for the Google OAuth state + redirect handling.  Run: pytest tests/te, Unconfigured FRONTEND_URL -> the callback answers with JSON instead., test_web_client_without_frontend_returns_none()
+
+### Community 204 - "package:injectable/injectable.dart"
+Cohesion: 0.18
+Nodes (11): build, controller, createState, dispose, hintText, initialValue, initState, text (+3 more)
 
 ### Community 205 - "Trainee & Coach CRUD API — Flutter Integration Guide"
 Cohesion: 0.22
@@ -1707,8 +1727,8 @@ Cohesion: 0.25
 Nodes (5): RunnerTests, RunnerTests, Flutter, UIKit, XCTestCase
 
 ### Community 211 - "create_user"
-Cohesion: 0.29
-Nodes (6): id, name, ProgramEntity, programNames, settings, program_settings_entity.dart
+Cohesion: 0.15
+Nodes (11): id, name, ProgramEntity, programNames, settings, apparatusModels, apparatusNames, name (+3 more)
 
 ### Community 212 - "Global Constraints"
 Cohesion: 0.22
@@ -1847,8 +1867,8 @@ Cohesion: 0.33
 Nodes (5): RegisterGeneratedPlugins(), MainFlutterWindow, FlutterPluginRegistry, FlutterViewController, NSWindow
 
 ### Community 248 - "7e5c6230d475_fix_tasks_and_logs.py"
-Cohesion: 0.18
-Nodes (11): _api, CoachUsecase, CoachUsecaseImpl, createCoach, deleteAvatar, deleteCoach, getCoach, getCoaches (+3 more)
+Cohesion: 0.09
+Nodes (21): _api, CoachUsecase, CoachUsecaseImpl, createCoach, deleteAvatar, deleteCoach, getCoach, getCoaches (+13 more)
 
 ### Community 249 - "gradlew"
 Cohesion: 0.60
@@ -1864,7 +1884,7 @@ Nodes (5): Google OAuth, Step 1 — Отримати URL авторизації,
 
 ### Community 252 - "MetronomeControl"
 Cohesion: 0.05
-Nodes (41): @lazySingleton, _api, createMachine, deleteMachine, getMachine, getMachines, MachineUsecase, MachineUsecaseImpl (+33 more)
+Nodes (43): @lazySingleton, _api, createMachine, deleteMachine, getMachine, getMachines, MachineUsecase, MachineUsecaseImpl (+35 more)
 
 ### Community 253 - "Bottom Navigation Bar"
 Cohesion: 0.40
@@ -1927,8 +1947,8 @@ Cohesion: 0.50
 Nodes (4): @AutoRouterConfig, AppRouter, _TestRouter, RootStackRouter
 
 ### Community 273 - "desktop_webview_window-dummy.m"
-Cohesion: 0.07
-Nodes (27): dio, getAppointments, getClients, getlocations, getToken, getVisits, login, _onException (+19 more)
+Cohesion: 0.17
+Nodes (11): cleanToken, getAccent, getThemeMode, getToken, PreferencesRepository, saveAccent, saveThemeMode, saveToken (+3 more)
 
 ### Community 308 - "client_entity.dart"
 Cohesion: 0.50
@@ -1939,8 +1959,8 @@ Cohesion: 0.50
 Nodes (4): CLI, Customizing Widget Styles, Deltas, Variants
 
 ### Community 885 - "workout_session_usecase.dart"
-Cohesion: 0.10
-Nodes (21): WorkoutSessionUsecase, _FakeWorkoutSessionUsecase, bar, creates, createWorkoutSession, _FakeWorkoutSessionUsecase, _home, main (+13 more)
+Cohesion: 0.09
+Nodes (22): WorkoutSessionUsecase, WorkoutSessionUsecaseImpl, _FakeWorkoutSessionUsecase, bar, creates, createWorkoutSession, _FakeWorkoutSessionUsecase, _home (+14 more)
 
 ### Community 888 - "link_hooks_result.json"
 Cohesion: 0.33
@@ -1966,9 +1986,9 @@ Nodes (4): CLI, Determinate Progress, `FDeterminateProgress(...)`, Usage
 Cohesion: 0.67
 Nodes (3): _openClient, ContactDetailRoute, ContactDetailRouteArgs
 
-### Community 895 - "About Forui"
-Cohesion: 0.67
-Nodes (3): build, ArchieveProgramRoute, ArchieveProgramRouteArgs
+### Community 897 - "Scaffold"
+Cohesion: 0.50
+Nodes (4): CLI, `FScaffold(...)`, Scaffold, Usage
 
 ### Community 898 - "ChangeInfoRoute"
 Cohesion: 0.67
@@ -1979,24 +1999,24 @@ Cohesion: 0.67
 Nodes (3): build, SelectTrainingRoute, SelectTrainingRouteArgs
 
 ## Knowledge Gaps
-- **4071 isolated node(s):** `registrar`, `registerPlugins`, `build_start`, `build_end`, `dependencies` (+4066 more)
+- **4033 isolated node(s):** `registrar`, `registerPlugins`, `build_start`, `build_end`, `dependencies` (+4028 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **563 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `UserModel` connect `users.py` to `token_model.dart`, `class_schedule_model.dart`?**
-  _High betweenness centrality (0.132) - this node is a cross-community bridge._
-- **Why does `Coach` connect `static Serializer` to `programs.py`, `State`, `workout_appointment.py`, `Built`, `Log`, `WorkoutSession`, `Coach`, `users.py`, `auth.py`, `test_avatar_upload.py`, `LocalService`?**
-  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Why does `UserModel` connect `users.py` to `trainee.dart`, `Built`?**
+  _High betweenness centrality (0.120) - this node is a cross-community bridge._
+- **Why does `Coach` connect `State` to `FastAPI`, `programs.py`, `workout_appointment.py`, `WorkoutSession`, `Coach`, `users.py`, `auth.py`, `test_avatar_upload.py`, `LocalService`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **What connects `registrar`, `registerPlugins`, `build_start` to the rest of the system?**
-  _4170 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _4132 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `router.dart` be split into smaller, more focused modules?**
   _Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected._
 - **Should `app_localizations.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.029411764705882353 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.03076923076923077 - nodes in this community are weakly interconnected._
 - **Should `contacts_screen.dart` be split into smaller, more focused modules?**
-  _Cohesion score 0.04180790960451977 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0625 - nodes in this community are weakly interconnected._
 - **Should `fitness.dart` be split into smaller, more focused modules?**
   _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
