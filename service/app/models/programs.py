@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean, Text
 from sqlalchemy.orm import relationship, backref
 
 from app.db.base_class import Base
@@ -26,3 +26,4 @@ class Program(Base):
     is_archive = Column(Boolean, default=False)
     is_delete = Column(Boolean, nullable=False, default=False)
     workout_date = Column(DateTime, nullable=True)
+    comment = Column(Text, nullable=True)

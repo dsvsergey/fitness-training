@@ -2,7 +2,8 @@ import "package:fitness_training/core/resources/localization/l10n/app_localizati
 import "package:flutter/material.dart";
 import "package:forui/forui.dart";
 
-/// Editable note for a machine in a program.
+/// Editable note for a machine in a program (or a comment on the program
+/// itself — see [title], [hintText]).
 ///
 /// Owns its [TextEditingController] so that parent rebuilds (e.g. the
 /// keyboard changing `MediaQuery`) never wipe out what the coach is typing.
@@ -10,11 +11,19 @@ import "package:forui/forui.dart";
 class ProgramNoteCard extends StatefulWidget {
   final String? savedNote;
   final Future<void> Function(String note) onSave;
+  final String? title;
+  final String? hintText;
+  final int minLines;
+  final int maxLines;
 
   const ProgramNoteCard({
     super.key,
     required this.savedNote,
     required this.onSave,
+    this.title,
+    this.hintText,
+    this.minLines = 5,
+    this.maxLines = 8,
   });
 
   @override
@@ -74,7 +83,7 @@ class _ProgramNoteCardState extends State<ProgramNoteCard> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            l10n.note,
+            widget.title ?? l10n.note,
             style: context.theme.typography.lg.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -82,13 +91,13 @@ class _ProgramNoteCardState extends State<ProgramNoteCard> {
           const SizedBox(height: 12),
           TextField(
             controller: _controller,
-            minLines: 5,
-            maxLines: 8,
+            minLines: widget.minLines,
+            maxLines: widget.maxLines,
             enabled: !_saving,
             textCapitalization: TextCapitalization.sentences,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
-              hintText: l10n.noteHint,
+              hintText: widget.hintText ?? l10n.noteHint,
               hintStyle: TextStyle(color: colors.mutedForeground),
               filled: true,
               fillColor: colors.muted,

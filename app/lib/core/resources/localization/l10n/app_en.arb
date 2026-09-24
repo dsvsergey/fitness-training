@@ -47,6 +47,8 @@
     "metronome": "Metronome",
     "noteHint": "Enter your note here",
     "note": "Note",
+    "programComment": "Comment",
+    "programCommentHint": "Add a comment to this program",
     "history": "History",
     "historyPeriodDays": "{count} days",
     "@historyPeriodDays": {
