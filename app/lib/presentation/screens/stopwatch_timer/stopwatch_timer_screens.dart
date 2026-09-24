@@ -291,36 +291,38 @@ class _SessionHeaderCard extends StatelessWidget {
         border: Border.all(color: context.theme.colors.border),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (traineeName.isNotEmpty)
             Text(
               traineeName,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 20,
                 fontWeight: FontWeight.w700,
                 color: context.theme.colors.foreground,
               ),
             ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(FIcons.user,
-                  size: 14, color: context.theme.colors.mutedForeground),
+                  size: 16, color: context.theme.colors.mutedForeground),
               const SizedBox(width: 6),
               Text(
                 trainerName,
                 style: TextStyle(
-                    fontSize: 13, color: context.theme.colors.mutedForeground),
+                    fontSize: 16, color: context.theme.colors.mutedForeground),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 16),
               Icon(FIcons.dumbbell,
-                  size: 14, color: context.theme.colors.mutedForeground),
+                  size: 16, color: context.theme.colors.mutedForeground),
               const SizedBox(width: 6),
               Text(
                 '$weight lb',
                 style: TextStyle(
-                    fontSize: 13, color: context.theme.colors.mutedForeground),
+                    fontSize: 16, color: context.theme.colors.mutedForeground),
               ),
             ],
           ),
