@@ -22,6 +22,7 @@ class UserCardWidget extends StatelessWidget {
     final height = model.height != null
         ? model.height!.toStringAsFixed(0)
         : '—';
+    final notes = model.notes?.trim() ?? '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -40,14 +41,19 @@ class UserCardWidget extends StatelessWidget {
             const SizedBox(height: 10),
             _InfoRow(icon: FIcons.phone, text: model.mobilePhone!.formatPhone()),
           ],
-          if (model.notes?.trim().isNotEmpty == true) ...[
+          // Always shown when editable so the coach can add the first
+          // comment straight from the profile.
+          if (notes.isNotEmpty || onNotesEdited != null) ...[
             const SizedBox(height: 8),
             _InfoRow(
               icon: FIcons.notebookPen,
-              text: model.notes!.trim(),
+              text: notes.isNotEmpty
+                  ? notes
+                  : AppLocalizations.of(context)!.traineeCommentHint,
+              isPlaceholder: notes.isEmpty,
               onTap: onNotesEdited == null
                   ? null
-                  : () => _editNotes(context, model.notes!.trim()),
+                  : () => _editNotes(context, notes),
             ),
           ],
         ],
@@ -70,7 +76,7 @@ class UserCardWidget extends StatelessWidget {
         contentPadding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
         actionsPadding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
         title: Text(
-          'Notes',
+          AppLocalizations.of(context)!.programComment,
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
@@ -81,7 +87,7 @@ class UserCardWidget extends StatelessWidget {
           width: 480,
           child: FTextField.multiline(
             control: FTextFieldControl.managed(controller: controller),
-            hint: 'Notes',
+            hint: AppLocalizations.of(context)!.traineeCommentHint,
             minLines: 4,
             maxLines: 8,
             autofocus: true,
@@ -181,11 +187,17 @@ class _StatCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.text, this.onTap});
+  const _InfoRow({
+    required this.icon,
+    required this.text,
+    this.onTap,
+    this.isPlaceholder = false,
+  });
 
   final IconData icon;
   final String text;
   final VoidCallback? onTap;
+  final bool isPlaceholder;
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +216,9 @@ class _InfoRow extends StatelessWidget {
             child: Text(
               text,
               style: context.theme.typography.sm.copyWith(
-                color: context.theme.colors.foreground,
+                color: isPlaceholder
+                    ? context.theme.colors.mutedForeground
+                    : context.theme.colors.foreground,
               ),
             ),
           ),

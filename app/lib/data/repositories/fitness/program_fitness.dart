@@ -80,7 +80,10 @@ class ProgramFitnessRepositoryImpl
   Future<ProgramFitnessModel> updateProgram(
           int programId, ProgramFitnessModel program) =>
       fitness.dio
-          .put("/programs/$programId/", data: program.toJson())
+          // built_value drops null fields and the backend only updates the
+          // keys it receives, so send comment explicitly to allow clearing it.
+          .put("/programs/$programId/",
+              data: {...program.toJson(), 'comment': program.comment})
           .then((value) => ProgramFitnessModel.fromJson(value.data))
           .catchError(onException);
 
