@@ -116,17 +116,23 @@ class _SettingsProgramScreenState extends State<SettingsProgramScreen> {
           child: BlocBuilder<SettingsProgramBloc, SettingsProgramState>(
             buildWhen: (_, current) => current is LoadedMachineSetting,
             builder: (context, state) {
+              // Edit must stay reachable whenever the settings layout is shown
+              // (it has no other entry point to the dialog), regardless of
+              // which — if any — setting values are filled in.
+              final pm = state.programMachine;
               final isEditAvailable =
-                  state.programMachine != null &&
-                  (state.programMachine?.angal != null ||
-                      state.programMachine?.back != null ||
-                      state.programMachine?.chest != null ||
-                      state.programMachine?.handle != null ||
-                      state.programMachine?.knees != null ||
-                      state.programMachine?.legs != null ||
-                      state.programMachine?.pin != null ||
-                      (state.programMachine?.seats != null &&
-                          state.programMachine!.workouts.isNotEmpty));
+                  pm != null &&
+                  (pm.workouts.isNotEmpty ||
+                      pm.seats != null ||
+                      pm.pin != null ||
+                      pm.back != null ||
+                      pm.handle != null ||
+                      pm.knees != null ||
+                      pm.legs != null ||
+                      pm.chest != null ||
+                      pm.thighs != null ||
+                      pm.grip != null ||
+                      pm.angal != null);
 
               return AppBar(
                 backgroundColor: context.theme.colors.background,

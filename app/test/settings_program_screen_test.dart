@@ -178,6 +178,25 @@ void main() {
     );
   });
 
+  group('edit button', () {
+    testWidgets('shown when only grip is filled in', (tester) async {
+      register(_programMachine([_session()])
+          .rebuild((b) => b
+            ..seats = null
+            ..grip = 'in'));
+      await _pumpScreen(tester);
+
+      expect(find.text('Edit'), findsOneWidget);
+    });
+
+    testWidgets('shown when no setting has a value yet', (tester) async {
+      register(_programMachine([_session()]).rebuild((b) => b..seats = null));
+      await _pumpScreen(tester);
+
+      expect(find.text('Edit'), findsOneWidget);
+    });
+  });
+
   group('background stopwatch', () {
     testWidgets(
       'a stopwatch running for another set is offered, not replaced',
