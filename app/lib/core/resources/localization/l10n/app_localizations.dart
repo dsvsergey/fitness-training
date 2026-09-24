@@ -394,6 +394,12 @@ abstract class AppLocalizations {
   /// **'Add a comment to this program'**
   String get programCommentHint;
 
+  /// No description provided for @traineeCommentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment about this client'**
+  String get traineeCommentHint;
+
   /// No description provided for @history.
   ///
   /// In en, this message translates to:

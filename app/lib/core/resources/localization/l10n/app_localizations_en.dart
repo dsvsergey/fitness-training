@@ -160,6 +160,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get programCommentHint => 'Add a comment to this program';
 
   @override
+  String get traineeCommentHint => 'Add a comment about this client';
+
+  @override
   String get history => 'History';
 
   @override
