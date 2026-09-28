@@ -23,6 +23,7 @@ abstract class ProgramFitnessEntity
   bool? get isArchive;
   bool? get isDelete;
   DateTime? get workoutDate;
+  String? get comment;
 
   ProgramFitnessEntity._();
 

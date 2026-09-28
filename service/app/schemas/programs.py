@@ -19,6 +19,7 @@ class ProgramSchema(BaseModel):
     is_archive: bool = False
     is_delete: bool = False
     workout_date: Optional[datetime] = None
+    comment: Optional[str] = None
 
     class Config:
         from_attributes = True

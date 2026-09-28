@@ -13,6 +13,7 @@ import '../../utils/dialogs_utils.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/button_widget.dart';
 import '../calendar/bloc/calendar_bloc.dart';
+import '../settings_program/widgets/program_note_card.dart';
 import 'bloc/machines_program_screen_bloc.dart';
 
 @RoutePage()
@@ -35,10 +36,27 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
   final DateTime _startedAt = DateTime.now();
 
   @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  // Fetching in initState (not build) so keyboard-driven rebuilds while the
+  // coach types a comment don't refetch the program.
+  void _refresh() => context
+      .read<MachinesProgramScreenBloc>()
+      .add(ProgramFitnessUpdateEvent(programId: widget.program.id!));
+
+  Future<void> _saveComment(ProgramFitnessEntity program, String text) async {
+    await GetIt.I<ProgramFitnessUsecase>().updateProgram(
+      program.id!,
+      program.rebuild((b) => b..comment = text.isEmpty ? null : text),
+    );
+    if (mounted) _refresh();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    context
-        .read<MachinesProgramScreenBloc>()
-        .add(ProgramFitnessUpdateEvent(programId: widget.program.id!));
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -56,12 +74,16 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
                 final state =
                     context.read<MachinesProgramScreenBloc>().state;
                 if (state is ProgramFitnessUpdated) {
-                  AutoRouter.of(context).push(
-                    CreateProgramRoute(
-                      model: widget.trainee,
-                      program: state.program,
-                    ),
-                  );
+                  AutoRouter.of(context)
+                      .push(
+                        CreateProgramRoute(
+                          model: widget.trainee,
+                          program: state.program,
+                        ),
+                      )
+                      .whenComplete(() {
+                        if (mounted) _refresh();
+                      });
                 }
               },
               child: Text(
@@ -102,6 +124,18 @@ class _MachinesProgramScreenState extends State<MachinesProgramScreen> {
               Expanded(
                 child: ReorderableListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
+                  header: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ProgramNoteCard(
+                      savedNote: state.program!.comment,
+                      title: AppLocalizations.of(context)!.programComment,
+                      hintText:
+                          AppLocalizations.of(context)!.programCommentHint,
+                      minLines: 2,
+                      maxLines: 6,
+                      onSave: (text) => _saveComment(state.program!, text),
+                    ),
+                  ),
                   itemCount: state.program!.programMachines!.length,
                   onReorder: (oldIndex, newIndex) {
                     if (newIndex > oldIndex) newIndex -= 1;

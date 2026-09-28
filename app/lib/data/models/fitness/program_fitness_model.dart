@@ -44,6 +44,9 @@ abstract class ProgramFitnessModel
   @BuiltValueField(wireName: 'workout_date')
   DateTime? get workoutDate;
 
+  @BuiltValueField(wireName: 'comment')
+  String? get comment;
+
   @BuiltValueField(wireName: 'program_machines')
   BuiltList<ProgramMachineModel>? get programMachines;
 
@@ -83,7 +86,8 @@ extension ProgramFitnessModelExtension on ProgramFitnessModel {
           .toBuilder()
       ..isArchive = isArchive
       ..isDelete = isDelete
-      ..workoutDate = workoutDate,
+      ..workoutDate = workoutDate
+      ..comment = comment,
   );
 }
 
@@ -104,6 +108,7 @@ extension ProgramFitnessEntityExtension on ProgramFitnessEntity {
           .toBuilder()
       ..isArchive = isArchive
       ..isDelete = isDelete
-      ..workoutDate = workoutDate,
+      ..workoutDate = workoutDate
+      ..comment = comment,
   );
 }

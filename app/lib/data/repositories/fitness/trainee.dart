@@ -86,7 +86,10 @@ class TraineeRepositoryImpl
   ) async {
     try {
       final body = Map<String, dynamic>.from(trainee.toJson())
-        ..removeWhere((_, v) => v == null);
+        ..removeWhere((_, v) => v == null)
+        // Every caller edits notes, and the backend only updates the keys it
+        // receives, so send notes explicitly to allow clearing the comment.
+        ..['notes'] = trainee.notes;
       final value = await fitness.dio.put("/trainees/$traineeId", data: body);
       return TraineeModel.fromJson(value.data);
     } on DioException catch (e) {
